@@ -8,7 +8,7 @@ export default function Home() {
       <Header />
       <TypingModeBox visability={false} />
       <TypingMain />
-      <Footer />
+      {/*<Footer />*/}
     </>
   );
 }
