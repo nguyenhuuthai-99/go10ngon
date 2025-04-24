@@ -49,6 +49,12 @@ export function TypingArea({ text }: Props) {
 
       //move to next character
       let newIndex = currentCharIndex + 1;
+
+      if (isTypeSessionEnd(newIndex)) {
+        onTypeSessionEnd();
+        return;
+      }
+
       setCurrentCharIndex(newIndex);
 
       console.log(value);
@@ -56,10 +62,26 @@ export function TypingArea({ text }: Props) {
     [currentTypedWord, words, currentWordIndex, currentCharIndex],
   );
 
-  function onSpacePress() {
-    //todo check if last word, if last word and
-    // space that mean game end
+  function isTypeSessionEnd(index: number) {
+    return (
+      currentWordIndex === words.length - 1 && index === words[-1].length - 1
+    );
+  }
 
+  function onTypeSessionEnd() {
+    setIsEnded(true);
+    //todo request a new words list
+
+    //reset fields
+    setCurrentWordIndex(0);
+    setCurrentCharIndex(0);
+    setTypedWords({});
+    setCurrentTypedWord("");
+    setIsTyping(false);
+    setIsStarted(false);
+  }
+
+  function onSpacePress() {
     // check the correction of typed word,
 
     // calculate wpm,
