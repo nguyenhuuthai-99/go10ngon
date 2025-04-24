@@ -30,6 +30,7 @@ export default function RootLayout({
       className={`${chivoMono.variable} ${geistSans.variable}`}
     >
       <head>
+        <meta charSet="utf-8" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

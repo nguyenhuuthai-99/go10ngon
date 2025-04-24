@@ -19,7 +19,6 @@ export function TypingPanel({ text, reference }: Props) {
 
   return (
     <div className="relative">
-      <AutoFocusTrigger />
       <TypingArea text={text} />
       <Citation visible={!isStarted} reference={reference} />
     </div>
