@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Chivo_Mono } from "next/font/google";
+import { Geist, Chivo_Mono, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -11,6 +11,11 @@ const geistSans = Geist({
 const chivoMono = Chivo_Mono({
   variable: "--font-chivo-mono",
   subsets: ["vietnamese"],
+});
+
+const robotoMono = Roboto_Mono({
+  variable: "--font-roboto-mono",
+  subsets: ["vietnamese", "latin"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +32,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${chivoMono.variable} ${geistSans.variable}`}
+      className={`${chivoMono.variable} ${geistSans.variable} ${robotoMono.variable}`}
     >
       <head>
         <meta charSet="utf-8" />

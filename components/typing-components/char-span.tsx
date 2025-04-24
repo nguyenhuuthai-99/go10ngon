@@ -1,4 +1,4 @@
-import { FC, memo, MemoExoticComponent, ReactNode } from "react";
+import { FC, memo, MemoExoticComponent, ReactNode, Ref } from "react";
 
 interface CharSpanProps {
   char: string;
@@ -6,22 +6,30 @@ interface CharSpanProps {
   isCorrect: boolean;
   isIncorrect: boolean;
   children?: ReactNode;
+  ref: Ref<HTMLSpanElement>;
 }
 
 const CharSpan = memo(
-  ({ char, isActive, isCorrect, isIncorrect, children }: CharSpanProps) => {
+  ({
+    char,
+    isActive,
+    isCorrect,
+    isIncorrect,
+    children,
+    ref,
+  }: CharSpanProps) => {
     let className = "";
 
     if (isCorrect) {
       className += " text-primary";
     } else if (isIncorrect) {
-      className += " text-red-600";
+      className += " text-red-500";
     } else if (isActive) {
-      className += " bg-card";
+      className += "";
     }
 
     return (
-      <span className={`relative ml-[0.1rem] ${className}`}>
+      <span ref={ref} className={`ml-[0.1rem] whitespace-pre ${className}`}>
         {children}
         {char}
       </span>

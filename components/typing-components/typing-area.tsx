@@ -14,14 +14,22 @@ export function TypingArea({ text }: Props) {
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
   const [currentTypedWord, setCurrentTypedWord] = useState("");
-  // const [currentTypedWord, setCurrentTypedWord] = useState("");
+  const [caret, setCaret] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  }>({ top: 7, left: 0, width: 2, height: 7 });
 
   //Game state
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [isStarted, setIsStarted] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
 
+  const typingAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const activeCharRef = useRef<HTMLSpanElement>(null);
+  const activeSpaceRef = useRef<HTMLSpanElement>(null);
 
   //initialize typed words
   useEffect(() => {
@@ -32,11 +40,43 @@ export function TypingArea({ text }: Props) {
     setTypedWords(initialTypedWords);
   }, []);
 
+  useEffect(() => {
+    let offsetTop: number = 0;
+    let offsetLeft: number = 0;
+    let width: number = 0;
+    let height: number = 0;
+
+    const element = activeCharRef.current;
+    const space = activeSpaceRef.current;
+    if (space) {
+      offsetTop = space.offsetTop;
+      offsetLeft = space.offsetLeft;
+      height = space.offsetHeight;
+      width = space.offsetWidth;
+    } else if (element) {
+      offsetTop = element.offsetTop;
+      offsetLeft = element.offsetLeft;
+      width = element.offsetWidth;
+      height = element.offsetHeight;
+    }
+
+    setCaret({
+      top: offsetTop,
+      left: offsetLeft,
+      width: width,
+      height: height,
+    });
+  }, [currentCharIndex, currentWordIndex]);
+
   const handleKeyPress = useCallback(
     (key: string, value: string) => {
       if (isEnded) return;
 
       if (!isValidKey(key)) return;
+
+      if (!isTyping) {
+        setIsTyping(true);
+      }
 
       if (key === " ") {
         onSpacePress();
@@ -124,32 +164,55 @@ export function TypingArea({ text }: Props) {
     return typedWords[wordIndex]?.[charIndex] !== words[wordIndex][charIndex];
   }
 
+  function checkIsActiveSpace(wordIndex: number) {
+    return (
+      currentWordIndex === wordIndex &&
+      currentCharIndex === words[wordIndex].length
+    );
+  }
+
   return (
     <div
-      className="flex h-30 flex-wrap overflow-hidden text-2xl leading-10 text-clip text-gray-600"
+      className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 text-clip text-gray-500"
       onClick={focusInput}
     >
       <AutoFocusTrigger ref={inputRef} handleKeyDown={handleKeyPress} />
+      <Caret
+        top={caret.top}
+        left={caret.left}
+        width={caret.width}
+        height={caret.height}
+        visible={true}
+        isLeft={!isStarted}
+        isTyping={isTyping}
+      />
       {words.map((word, index) => {
         return (
-          <WordContainer key={index} isActive={isWordActive(index)}>
-            {destructWord(word).map((char, i) => (
-              <CharSpan
-                key={i}
-                char={char}
-                isActive={isCharActive(index, i)}
-                isCorrect={checkIsCorrect(index, i)}
-                isIncorrect={checkIsIncorrect(index, i)}
-              >
-                <Caret
-                  visible={currentWordIndex === index && currentCharIndex === i}
-                  isLeft={!isStarted}
-                  isTyping={isTyping}
+          <div key={index} className="flex">
+            <WordContainer isActive={isWordActive(index)}>
+              {destructWord(word).map((char, i) => (
+                <CharSpan
+                  key={i}
+                  char={char}
+                  ref={isCharActive(index, i) ? activeCharRef : null}
+                  isActive={isCharActive(index, i)}
+                  isCorrect={checkIsCorrect(index, i)}
+                  isIncorrect={checkIsIncorrect(index, i)}
+                ></CharSpan>
+              ))}
+            </WordContainer>
+            {index < words.length - 1 && (
+              <div>
+                <CharSpan
+                  char=" "
+                  ref={checkIsActiveSpace(index) ? activeCharRef : null}
+                  isActive={checkIsActiveSpace(index)}
+                  isCorrect={false}
+                  isIncorrect={false}
                 />
-              </CharSpan>
-            ))}
-            {/*{index < words.length - 1 && <span>&nbsp;</span>}*/}
-          </WordContainer>
+              </div>
+            )}
+          </div>
         );
       })}
     </div>

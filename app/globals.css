@@ -4,10 +4,6 @@
 @tailwind base;
 @tailwind utilities;
 
-/* .font-mono{
-  font-family: 'Chivo Mono';
-  font-weight: 500;
-} */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -15,7 +11,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-chivo-mono);
-  --font-chivo: [ "Chivo Mono"];
+  --font-roboto-mono: var(--font-roboto-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -125,6 +121,13 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-mono;
+    @apply bg-background text-foreground font-roboto-mono;
+    width: 100%;
+    margin: 50%;
   }
+}
+body {
+  display: grid;
+  place-items: center;
+  margin: 0;
 }
