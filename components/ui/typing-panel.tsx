@@ -1,8 +1,8 @@
 "use client";
 import { Citation } from "@/components/ui/citation";
 import { useEffect, useRef, useState } from "react";
-import { TypingArea } from "@/components/ui/typing-area";
-import AutoFocusTrigger from "@/components/ui/auto-focus-trigger";
+import { TypingArea } from "@/components/typing-components/typing-area";
+import AutoFocusTrigger from "@/components/typing-components/auto-focus-trigger";
 
 type Props = {
   text: string;

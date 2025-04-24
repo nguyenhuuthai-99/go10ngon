@@ -33,7 +33,13 @@ export default function AutoFocusTrigger({ ref, handleKeyDown }: Props) {
 
   function handelKeyPress(event: KeyboardEvent<HTMLInputElement>) {
     handleKeyDown(event.key, inputValue);
-    // console.log(inputValue);
+    if (event.key === " ") {
+      onSpaceKeyPress();
+    }
+  }
+
+  function onSpaceKeyPress() {
+    setInputValue("");
   }
 
   return (
