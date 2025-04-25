@@ -80,7 +80,11 @@ export function TypingArea({ text }: Props) {
 
   const handleKeyPress = useCallback(
     (key: string, value: string) => {
-      if (isEnded || !isValidKey(key) || !isTyping) return;
+      if (isEnded || !isValidKey(key)) return;
+
+      if (!isTyping) {
+        setIsTyping(true);
+      }
 
       if (key === " ") {
         onSpacePress();
