@@ -106,6 +106,10 @@ export function TypingArea({ text }: Props) {
         setIsTyping(true);
       }
 
+      if (!isStarted) {
+        setIsStarted(true);
+      }
+
       if (key === " ") {
         onSpacePress();
         return;
@@ -196,6 +200,10 @@ export function TypingArea({ text }: Props) {
 
   function onBackspace(setInputValue: Dispatch<SetStateAction<string>>) {
     if (currentCharIndex > 0) {
+      if (currentCharIndex === 1) {
+        console.log(typedWords);
+      }
+
       const updateWord = currentTypedWord.slice(0, -1);
       setCurrentTypedWord(updateWord);
       updateTypedWords(updateWord);
@@ -251,15 +259,13 @@ export function TypingArea({ text }: Props) {
   }
 
   function checkIsCorrectChar(wordIndex: number, charIndex: number): boolean {
-    if (currentTypedWord === "" || typedWords[wordIndex]?.length <= charIndex)
-      return false;
+    if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
 
     return typedWords[wordIndex]?.[charIndex] === words[wordIndex][charIndex];
   }
 
   function checkIsIncorrectChar(wordIndex: number, charIndex: number): boolean {
-    if (currentTypedWord === "" || typedWords[wordIndex]?.length <= charIndex)
-      return false;
+    if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
 
     return typedWords[wordIndex]?.[charIndex] !== words[wordIndex][charIndex];
   }

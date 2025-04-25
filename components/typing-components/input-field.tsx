@@ -18,7 +18,6 @@ type Props = {
 };
 export default function InputField({ ref, handleKeyDown }: Props) {
   const [inputValue, setInputValue] = useState("");
-  console.log(inputValue);
   // focus input on mount
   useEffect(() => {
     ref.current?.focus();
