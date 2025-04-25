@@ -80,13 +80,7 @@ export function TypingArea({ text }: Props) {
 
   const handleKeyPress = useCallback(
     (key: string, value: string) => {
-      if (isEnded) return;
-
-      if (!isValidKey(key)) return;
-
-      if (!isTyping) {
-        setIsTyping(true);
-      }
+      if (isEnded || !isValidKey(key) || !isTyping) return;
 
       if (key === " ") {
         onSpacePress();
@@ -97,17 +91,8 @@ export function TypingArea({ text }: Props) {
       let newIndex = currentCharIndex + 1;
       setCurrentCharIndex(newIndex);
 
-      if (newIndex > words[currentWordIndex].length) {
-        const extras = value.slice(words[currentWordIndex].length);
-
-        console.log(extras);
-
-        setExtraChars((prevState) => {
-          return {
-            ...prevState,
-            [currentWordIndex]: extras,
-          };
-        });
+      if (isExtraChars(newIndex)) {
+        handleExtraCharsChange(value);
       }
 
       //set typed word
@@ -118,6 +103,19 @@ export function TypingArea({ text }: Props) {
     },
     [currentTypedWord, words, currentWordIndex, currentCharIndex],
   );
+
+  function isExtraChars(index: number): boolean {
+    return index > words[currentWordIndex].length;
+  }
+  function handleExtraCharsChange(typedValue: string) {
+    const extras = typedValue.slice(words[currentWordIndex].length);
+    setExtraChars((prevState) => {
+      return {
+        ...prevState,
+        [currentWordIndex]: extras,
+      };
+    });
+  }
 
   const scrollToCaret = useCallback(() => {
     if (!typingAreaRef.current) return;
