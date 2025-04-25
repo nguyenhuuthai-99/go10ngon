@@ -13,6 +13,7 @@ export function TypingArea({ text }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
+  const [extraChars, setExtraChars] = useState<{ [key: number]: string }>({});
   const [currentTypedWord, setCurrentTypedWord] = useState("");
   const [caret, setCaret] = useState<{
     top: number;
@@ -30,6 +31,15 @@ export function TypingArea({ text }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const activeCharRef = useRef<HTMLSpanElement>(null);
   const activeSpaceRef = useRef<HTMLSpanElement>(null);
+  const activeWordRef = useRef<HTMLDivElement>(null);
+
+  //trigger endgame
+  useEffect(() => {
+    if (isTypeSessionEnd(currentCharIndex)) {
+      onTypeSessionEnd();
+      return;
+    }
+  }, [currentCharIndex, currentWordIndex]);
 
   //initialize typed words
   useEffect(() => {
@@ -83,19 +93,26 @@ export function TypingArea({ text }: Props) {
         return;
       }
 
+      //move to next character
+      let newIndex = currentCharIndex + 1;
+      setCurrentCharIndex(newIndex);
+
+      if (newIndex > words[currentWordIndex].length) {
+        const extras = value.slice(words[currentWordIndex].length);
+
+        console.log(extras);
+
+        setExtraChars((prevState) => {
+          return {
+            ...prevState,
+            [currentWordIndex]: extras,
+          };
+        });
+      }
+
       //set typed word
       setCurrentTypedWord(value);
       updateTypedWords(value);
-
-      //move to next character
-      let newIndex = currentCharIndex + 1;
-
-      if (isTypeSessionEnd(newIndex)) {
-        onTypeSessionEnd();
-        return;
-      }
-
-      setCurrentCharIndex(newIndex);
 
       console.log(value);
     },
@@ -128,7 +145,8 @@ export function TypingArea({ text }: Props) {
 
   function isTypeSessionEnd(index: number) {
     return (
-      currentWordIndex === words.length - 1 && index === words[-1].length - 1
+      currentWordIndex >= words.length ||
+      (index === words[-1]?.length - 1 && currentWordIndex === words.length - 1)
     );
   }
 
@@ -191,7 +209,7 @@ export function TypingArea({ text }: Props) {
   function checkIsActiveSpace(wordIndex: number) {
     return (
       currentWordIndex === wordIndex &&
-      currentCharIndex === words[wordIndex].length
+      currentCharIndex >= words[wordIndex].length
     );
   }
 
@@ -199,7 +217,7 @@ export function TypingArea({ text }: Props) {
     <div>
       <AutoFocusTrigger ref={inputRef} handleKeyDown={handleKeyPress} />
       <div
-        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 text-clip text-gray-500"
+        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-500"
         ref={typingAreaRef}
         onClick={focusInput}
       >
@@ -215,7 +233,10 @@ export function TypingArea({ text }: Props) {
         {words.map((word, index) => {
           return (
             <div key={index} className="flex">
-              <WordContainer isActive={isWordActive(index)}>
+              <WordContainer
+                ref={index === currentWordIndex ? activeWordRef : null}
+                isActive={isWordActive(index)}
+              >
                 {destructWord(word).map((char, i) => (
                   <CharSpan
                     key={i}
@@ -226,6 +247,17 @@ export function TypingArea({ text }: Props) {
                     isIncorrect={checkIsIncorrect(index, i)}
                   ></CharSpan>
                 ))}
+                {extraChars[index] &&
+                  destructWord(extraChars[index]).map((char, i) => (
+                    <CharSpan
+                      key={`extra-${i}`}
+                      char={char}
+                      isActive={false}
+                      isCorrect={false}
+                      isIncorrect={true}
+                      ref={null}
+                    />
+                  ))}
               </WordContainer>
               {index < words.length - 1 && (
                 <div>
