@@ -102,6 +102,30 @@ export function TypingArea({ text }: Props) {
     [currentTypedWord, words, currentWordIndex, currentCharIndex],
   );
 
+  const scrollToCaret = useCallback(() => {
+    if (!typingAreaRef.current) return;
+
+    const typingArea = typingAreaRef.current;
+    const caretTop = caret.top;
+    const caretHeight = caret.height;
+
+    const visibleHeight = typingArea.clientHeight;
+    const currentScroll = typingArea.scrollTop;
+
+    const caretMid = caretTop + caretHeight / 2;
+
+    const idealScroll = caretMid - visibleHeight / 2;
+
+    typingArea.scrollTo({
+      top: idealScroll,
+      behavior: "smooth",
+    });
+  }, [caret]);
+
+  useEffect(() => {
+    scrollToCaret();
+  }, [caret, scrollToCaret]);
+
   function isTypeSessionEnd(index: number) {
     return (
       currentWordIndex === words.length - 1 && index === words[-1].length - 1
@@ -172,49 +196,52 @@ export function TypingArea({ text }: Props) {
   }
 
   return (
-    <div
-      className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 text-clip text-gray-500"
-      onClick={focusInput}
-    >
+    <div>
       <AutoFocusTrigger ref={inputRef} handleKeyDown={handleKeyPress} />
-      <Caret
-        top={caret.top}
-        left={caret.left}
-        width={caret.width}
-        height={caret.height}
-        visible={true}
-        isLeft={!isStarted}
-        isTyping={isTyping}
-      />
-      {words.map((word, index) => {
-        return (
-          <div key={index} className="flex">
-            <WordContainer isActive={isWordActive(index)}>
-              {destructWord(word).map((char, i) => (
-                <CharSpan
-                  key={i}
-                  char={char}
-                  ref={isCharActive(index, i) ? activeCharRef : null}
-                  isActive={isCharActive(index, i)}
-                  isCorrect={checkIsCorrect(index, i)}
-                  isIncorrect={checkIsIncorrect(index, i)}
-                ></CharSpan>
-              ))}
-            </WordContainer>
-            {index < words.length - 1 && (
-              <div>
-                <CharSpan
-                  char=" "
-                  ref={checkIsActiveSpace(index) ? activeCharRef : null}
-                  isActive={checkIsActiveSpace(index)}
-                  isCorrect={false}
-                  isIncorrect={false}
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
+      <div
+        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 text-clip text-gray-500"
+        ref={typingAreaRef}
+        onClick={focusInput}
+      >
+        <Caret
+          top={caret.top}
+          left={caret.left}
+          width={caret.width}
+          height={caret.height}
+          visible={true}
+          isLeft={!isStarted}
+          isTyping={isTyping}
+        />
+        {words.map((word, index) => {
+          return (
+            <div key={index} className="flex">
+              <WordContainer isActive={isWordActive(index)}>
+                {destructWord(word).map((char, i) => (
+                  <CharSpan
+                    key={i}
+                    char={char}
+                    ref={isCharActive(index, i) ? activeCharRef : null}
+                    isActive={isCharActive(index, i)}
+                    isCorrect={checkIsCorrect(index, i)}
+                    isIncorrect={checkIsIncorrect(index, i)}
+                  ></CharSpan>
+                ))}
+              </WordContainer>
+              {index < words.length - 1 && (
+                <div>
+                  <CharSpan
+                    char=" "
+                    ref={checkIsActiveSpace(index) ? activeCharRef : null}
+                    isActive={checkIsActiveSpace(index)}
+                    isCorrect={false}
+                    isIncorrect={false}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
