@@ -50,6 +50,7 @@ export function TypingArea({ text }: Props) {
     setTypedWords(initialTypedWords);
   }, []);
 
+  // handle scrolling
   useEffect(() => {
     let offsetTop: number = 0;
     let offsetLeft: number = 0;
@@ -80,11 +81,19 @@ export function TypingArea({ text }: Props) {
 
   const handleKeyPress = useCallback(
     (key: string, value: string) => {
-      if (isEnded || !isValidKey(key) || !isTyping) return;
+      if (isEnded || !isValidKey(key)) return;
+
+      if (!isTyping) {
+        setIsTyping(true);
+      }
 
       if (key === " ") {
         onSpacePress();
         return;
+      }
+
+      if (key === "backspace") {
+        console.log(true);
       }
 
       //move to next character
@@ -277,5 +286,6 @@ export function TypingArea({ text }: Props) {
 }
 
 function isValidKey(key: string): boolean {
+  if (key === "backspace") return true;
   return !(key.length !== 1 && key !== " ");
 }
