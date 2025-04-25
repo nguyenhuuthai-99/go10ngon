@@ -1,18 +1,24 @@
 import {
   ChangeEvent,
+  Dispatch,
   KeyboardEvent,
   RefObject,
+  SetStateAction,
   useEffect,
   useState,
 } from "react";
 
 type Props = {
   ref: RefObject<HTMLInputElement | null>;
-  handleKeyDown: (key: string, value: string) => void;
+  handleKeyDown: (
+    key: string,
+    value: string,
+    setInputValue: Dispatch<SetStateAction<string>>,
+  ) => void;
 };
-export default function AutoFocusTrigger({ ref, handleKeyDown }: Props) {
+export default function InputField({ ref, handleKeyDown }: Props) {
   const [inputValue, setInputValue] = useState("");
-
+  console.log(inputValue);
   // focus input on mount
   useEffect(() => {
     ref.current?.focus();
@@ -32,7 +38,7 @@ export default function AutoFocusTrigger({ ref, handleKeyDown }: Props) {
   }
 
   function handelKeyPress(event: KeyboardEvent<HTMLInputElement>) {
-    handleKeyDown(event.key, inputValue);
+    handleKeyDown(event.key, inputValue, setInputValue);
     if (event.key === " ") {
       onSpaceKeyPress();
     }
