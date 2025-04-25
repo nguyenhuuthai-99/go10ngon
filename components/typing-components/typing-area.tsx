@@ -200,28 +200,29 @@ export function TypingArea({ text }: Props) {
 
   function onBackspace(setInputValue: Dispatch<SetStateAction<string>>) {
     if (currentCharIndex > 0) {
-      if (currentCharIndex === 1) {
-        console.log(typedWords);
-      }
-
-      const updateWord = currentTypedWord.slice(0, -1);
-      setCurrentTypedWord(updateWord);
-      updateTypedWords(updateWord);
-      setCurrentCharIndex((prev) => prev - 1);
-      if (hasExtraChars()) {
-        removeExtraChars();
-      }
-      return;
+      handleBackSpaceWithinWord();
+    } else if (currentCharIndex === 0 && currentWordIndex > 0) {
+      moveToPreviousWord(setInputValue);
     }
+  }
 
-    if (currentCharIndex === 0 && currentWordIndex > 0) {
-      const prevWordIndex = currentWordIndex - 1;
-      const prevWord = typedWords[prevWordIndex] ?? "";
-      setCurrentTypedWord(prevWord);
-      setCurrentCharIndex(prevWord.length);
-      setCurrentWordIndex(prevWordIndex);
-      setInputValue(prevWord);
+  function handleBackSpaceWithinWord() {
+    const updateWord = currentTypedWord.slice(0, -1);
+    setCurrentTypedWord(updateWord);
+    updateTypedWords(updateWord);
+    setCurrentCharIndex((prev) => prev - 1);
+    if (hasExtraChars()) {
+      removeExtraChars();
     }
+  }
+
+  function moveToPreviousWord(setInputValue: Dispatch<SetStateAction<string>>) {
+    const prevWordIndex = currentWordIndex - 1;
+    const prevWord = typedWords[prevWordIndex] ?? "";
+    setCurrentTypedWord(prevWord);
+    setCurrentCharIndex(prevWord.length);
+    setCurrentWordIndex(prevWordIndex);
+    setInputValue(prevWord);
   }
 
   function hasExtraChars(): boolean {
