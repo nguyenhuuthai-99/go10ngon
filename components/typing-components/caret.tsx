@@ -19,11 +19,11 @@ export function Caret({
   return (
     <div
       style={{
-        width: `0.2rem`,
+        width: `0.18rem`,
         height: `${height}px`,
         top: top,
-        left: left - 2,
-        transition: "all 0.15s linear",
+        left: left - 3,
+        transition: "all 0.1s linear",
       }}
       className={`${!isTyping && "animate-caret-blink"} ${visible ? "visible" : "invisible"} absolute rounded-3xl bg-blue-500`}
     ></div>

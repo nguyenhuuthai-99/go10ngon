@@ -2,7 +2,7 @@
 import { Citation } from "@/components/ui/citation";
 import { useEffect, useRef, useState } from "react";
 import { TypingArea } from "@/components/typing-components/typing-area";
-import AutoFocusTrigger from "@/components/typing-components/auto-focus-trigger";
+import InputField from "@/components/typing-components/input-field";
 
 type Props = {
   text: string;

@@ -1,9 +1,23 @@
-import { destructWord, stringToList } from "@/lib/utils";
-import { useCallback, useEffect, useRef, useState, KeyboardEvent } from "react";
+import {
+  destructWord,
+  isInParentMap,
+  isParent,
+  stringToList,
+} from "@/lib/utils";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  KeyboardEvent,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { Caret } from "@/components/typing-components/caret";
 import CharSpan from "@/components/typing-components/char-span";
-import AutoFocusTrigger from "@/components/typing-components/auto-focus-trigger";
+import InputField from "@/components/typing-components/input-field";
 import { WordContainer } from "@/components/typing-components/word-container";
+import { ParentCharSpan } from "@/components/typing-components/parent-char-span";
 
 type Props = {
   text: string;
@@ -50,6 +64,7 @@ export function TypingArea({ text }: Props) {
     setTypedWords(initialTypedWords);
   }, []);
 
+  // handle scrolling
   useEffect(() => {
     let offsetTop: number = 0;
     let offsetLeft: number = 0;
@@ -79,11 +94,26 @@ export function TypingArea({ text }: Props) {
   }, [currentCharIndex, currentWordIndex]);
 
   const handleKeyPress = useCallback(
-    (key: string, value: string) => {
-      if (isEnded || !isValidKey(key)) return;
+    (
+      key: string,
+      value: string,
+      setInputValue: Dispatch<SetStateAction<string>>,
+    ) => {
+      if (isEnded) return;
+
+      if (key === "Backspace" || key === "Delete") {
+        onBackspace(setInputValue);
+        return;
+      }
+
+      if (!isValidKey(key)) return;
 
       if (!isTyping) {
         setIsTyping(true);
+      }
+
+      if (!isStarted) {
+        setIsStarted(true);
       }
 
       if (key === " ") {
@@ -92,7 +122,7 @@ export function TypingArea({ text }: Props) {
       }
 
       //move to next character
-      let newIndex = currentCharIndex + 1;
+      let newIndex = value.length;
       setCurrentCharIndex(newIndex);
 
       if (isExtraChars(newIndex)) {
@@ -129,7 +159,6 @@ export function TypingArea({ text }: Props) {
     const caretHeight = caret.height;
 
     const visibleHeight = typingArea.clientHeight;
-    const currentScroll = typingArea.scrollTop;
 
     const caretMid = caretTop + caretHeight / 2;
 
@@ -174,6 +203,47 @@ export function TypingArea({ text }: Props) {
     setCurrentCharIndex(0);
   }
 
+  function onBackspace(setInputValue: Dispatch<SetStateAction<string>>) {
+    if (currentCharIndex > 0) {
+      handleBackSpaceWithinWord();
+    } else if (currentCharIndex === 0 && currentWordIndex > 0) {
+      moveToPreviousWord(setInputValue);
+    }
+  }
+
+  function handleBackSpaceWithinWord() {
+    const updateWord = currentTypedWord.slice(0, -1);
+    setCurrentTypedWord(updateWord);
+    updateTypedWords(updateWord);
+    setCurrentCharIndex((prev) => prev - 1);
+    if (hasExtraChars()) {
+      removeExtraChars();
+    }
+  }
+
+  function moveToPreviousWord(setInputValue: Dispatch<SetStateAction<string>>) {
+    const prevWordIndex = currentWordIndex - 1;
+    const prevWord = typedWords[prevWordIndex] ?? "";
+    setCurrentTypedWord(prevWord);
+    setCurrentCharIndex(prevWord.length);
+    setCurrentWordIndex(prevWordIndex);
+    setInputValue(prevWord);
+  }
+
+  function hasExtraChars(): boolean {
+    return extraChars[currentWordIndex]?.length > 0;
+  }
+
+  function removeExtraChars(): void {
+    const updateExtraChars = extraChars[currentWordIndex].slice(0, -1);
+    setExtraChars((prevState) => {
+      return {
+        ...prevState,
+        [currentWordIndex]: updateExtraChars,
+      };
+    });
+  }
+
   function updateTypedWords(value: string) {
     setTypedWords((prevState) => ({
       ...prevState,
@@ -194,18 +264,37 @@ export function TypingArea({ text }: Props) {
     return wordIndex === currentWordIndex && charIndex === currentCharIndex;
   }
 
-  function checkIsCorrect(wordIndex: number, charIndex: number): boolean {
-    if (currentTypedWord === "" || typedWords[wordIndex]?.length <= charIndex)
-      return false;
+  function checkIsCorrectChar(wordIndex: number, charIndex: number): boolean {
+    if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
 
     return typedWords[wordIndex]?.[charIndex] === words[wordIndex][charIndex];
   }
 
-  function checkIsIncorrect(wordIndex: number, charIndex: number): boolean {
-    if (currentTypedWord === "" || typedWords[wordIndex]?.length <= charIndex)
-      return false;
+  function checkIsIncorrectChar(wordIndex: number, charIndex: number): boolean {
+    if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
 
-    return typedWords[wordIndex]?.[charIndex] !== words[wordIndex][charIndex];
+    const originalChar = words[wordIndex][charIndex];
+    const typedChar = typedWords[wordIndex]?.[charIndex];
+
+    if (isInParentMap(originalChar)) {
+      return !isParent(originalChar, typedChar);
+    }
+
+    return typedChar !== originalChar;
+  }
+
+  function getParentIfExist(
+    wordIndex: number,
+    charIndex: number,
+  ): string | null {
+    const originalChar = words[wordIndex][charIndex];
+    const typedChar = typedWords[wordIndex]?.[charIndex];
+
+    if (isInParentMap(originalChar) && isParent(originalChar, typedChar)) {
+      return typedChar;
+    }
+
+    return null;
   }
 
   function checkIsActiveSpace(wordIndex: number) {
@@ -217,7 +306,7 @@ export function TypingArea({ text }: Props) {
 
   return (
     <div>
-      <AutoFocusTrigger ref={inputRef} handleKeyDown={handleKeyPress} />
+      <InputField ref={inputRef} handleKeyDown={handleKeyPress} />
       <div
         className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-500"
         ref={typingAreaRef}
@@ -245,9 +334,16 @@ export function TypingArea({ text }: Props) {
                     char={char}
                     ref={isCharActive(index, i) ? activeCharRef : null}
                     isActive={isCharActive(index, i)}
-                    isCorrect={checkIsCorrect(index, i)}
-                    isIncorrect={checkIsIncorrect(index, i)}
-                  ></CharSpan>
+                    isCorrect={checkIsCorrectChar(index, i)}
+                    isIncorrect={checkIsIncorrectChar(index, i)}
+                  >
+                    {(() => {
+                      const parentChar = getParentIfExist(index, i);
+                      return parentChar ? (
+                        <ParentCharSpan char={parentChar} />
+                      ) : null;
+                    })()}
+                  </CharSpan>
                 ))}
                 {extraChars[index] &&
                   destructWord(extraChars[index]).map((char, i) => (

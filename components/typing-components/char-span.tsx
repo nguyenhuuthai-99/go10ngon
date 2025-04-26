@@ -29,7 +29,10 @@ const CharSpan = memo(
     }
 
     return (
-      <span ref={ref} className={`ml-[0.1rem] whitespace-pre ${className}`}>
+      <span
+        ref={ref}
+        className={`relative ml-[0.1rem] whitespace-pre ${className}`}
+      >
         {children}
         {char}
       </span>
