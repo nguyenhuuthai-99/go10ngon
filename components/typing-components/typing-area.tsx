@@ -1,4 +1,9 @@
-import { destructWord, stringToList } from "@/lib/utils";
+import {
+  destructWord,
+  isInParentMap,
+  isParent,
+  stringToList,
+} from "@/lib/utils";
 import {
   useCallback,
   useEffect,
@@ -29,6 +34,8 @@ export function TypingArea({ text }: Props) {
     width: number;
     height: number;
   }>({ top: 7, left: 0, width: 2, height: 7 });
+
+  let hasParent = false;
 
   //Game state
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -153,7 +160,6 @@ export function TypingArea({ text }: Props) {
     const caretHeight = caret.height;
 
     const visibleHeight = typingArea.clientHeight;
-    const currentScroll = typingArea.scrollTop;
 
     const caretMid = caretTop + caretHeight / 2;
 
@@ -268,7 +274,14 @@ export function TypingArea({ text }: Props) {
   function checkIsIncorrectChar(wordIndex: number, charIndex: number): boolean {
     if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
 
-    return typedWords[wordIndex]?.[charIndex] !== words[wordIndex][charIndex];
+    const originalChar = words[wordIndex][charIndex];
+    const typedChar = typedWords[wordIndex]?.[charIndex];
+
+    if (isInParentMap(originalChar)) {
+      return !isParent(originalChar, typedChar);
+    }
+
+    return typedChar !== originalChar;
   }
 
   function checkIsActiveSpace(wordIndex: number) {
