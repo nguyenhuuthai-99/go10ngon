@@ -123,7 +123,7 @@ export function TypingArea({ text }: Props) {
       }
 
       //move to next character
-      let newIndex = currentCharIndex + 1;
+      let newIndex = value.length;
       setCurrentCharIndex(newIndex);
 
       if (isExtraChars(newIndex)) {
