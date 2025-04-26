@@ -17,6 +17,7 @@ import { Caret } from "@/components/typing-components/caret";
 import CharSpan from "@/components/typing-components/char-span";
 import InputField from "@/components/typing-components/input-field";
 import { WordContainer } from "@/components/typing-components/word-container";
+import { ParentCharSpan } from "@/components/typing-components/parent-char-span";
 
 type Props = {
   text: string;
@@ -34,8 +35,6 @@ export function TypingArea({ text }: Props) {
     width: number;
     height: number;
   }>({ top: 7, left: 0, width: 2, height: 7 });
-
-  let hasParent = false;
 
   //Game state
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -284,6 +283,20 @@ export function TypingArea({ text }: Props) {
     return typedChar !== originalChar;
   }
 
+  function getParentIfExist(
+    wordIndex: number,
+    charIndex: number,
+  ): string | null {
+    const originalChar = words[wordIndex][charIndex];
+    const typedChar = typedWords[wordIndex]?.[charIndex];
+
+    if (isInParentMap(originalChar) && isParent(originalChar, typedChar)) {
+      return typedChar;
+    }
+
+    return null;
+  }
+
   function checkIsActiveSpace(wordIndex: number) {
     return (
       currentWordIndex === wordIndex &&
@@ -323,7 +336,14 @@ export function TypingArea({ text }: Props) {
                     isActive={isCharActive(index, i)}
                     isCorrect={checkIsCorrectChar(index, i)}
                     isIncorrect={checkIsIncorrectChar(index, i)}
-                  ></CharSpan>
+                  >
+                    {(() => {
+                      const parentChar = getParentIfExist(index, i);
+                      return parentChar ? (
+                        <ParentCharSpan char={parentChar} />
+                      ) : null;
+                    })()}
+                  </CharSpan>
                 ))}
                 {extraChars[index] &&
                   destructWord(extraChars[index]).map((char, i) => (

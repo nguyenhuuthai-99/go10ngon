@@ -6,8 +6,6 @@ type Props = {
   ref: Ref<HTMLDivElement>;
 };
 
-export const WordContainer = memo(
-  ({ isActive = false, children, ref }: Props) => {
-    return <div ref={ref}>{children}</div>;
-  },
-);
+export const WordContainer = ({ isActive = false, children, ref }: Props) => {
+  return <div ref={ref}>{children}</div>;
+};
