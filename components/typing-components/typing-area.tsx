@@ -264,39 +264,6 @@ export function TypingArea({ text }: Props) {
     return wordIndex === currentWordIndex && charIndex === currentCharIndex;
   }
 
-  function checkIsCorrectChar(wordIndex: number, charIndex: number): boolean {
-    if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
-
-    return typedWords[wordIndex]?.[charIndex] === words[wordIndex][charIndex];
-  }
-
-  function checkIsIncorrectChar(wordIndex: number, charIndex: number): boolean {
-    if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
-
-    const originalChar = words[wordIndex][charIndex];
-    const typedChar = typedWords[wordIndex]?.[charIndex];
-
-    if (isInParentMap(originalChar)) {
-      return !isParent(originalChar, typedChar);
-    }
-
-    return typedChar !== originalChar;
-  }
-
-  function getParentIfExist(
-    wordIndex: number,
-    charIndex: number,
-  ): string | null {
-    const originalChar = words[wordIndex][charIndex];
-    const typedChar = typedWords[wordIndex]?.[charIndex];
-
-    if (isInParentMap(originalChar) && isParent(originalChar, typedChar)) {
-      return typedChar;
-    }
-
-    return null;
-  }
-
   function checkIsActiveSpace(wordIndex: number) {
     return (
       currentWordIndex === wordIndex &&
@@ -308,7 +275,7 @@ export function TypingArea({ text }: Props) {
     <div>
       <InputField ref={inputRef} handleKeyDown={handleKeyPress} />
       <div
-        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-500"
+        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-600"
         ref={typingAreaRef}
         onClick={focusInput}
       >
@@ -332,27 +299,18 @@ export function TypingArea({ text }: Props) {
                   <CharSpan
                     key={i}
                     char={char}
+                    typedChar={typedWords[index]?.[i] || null}
                     ref={isCharActive(index, i) ? activeCharRef : null}
                     isActive={isCharActive(index, i)}
-                    isCorrect={checkIsCorrectChar(index, i)}
-                    isIncorrect={checkIsIncorrectChar(index, i)}
-                  >
-                    {(() => {
-                      const parentChar = getParentIfExist(index, i);
-                      return parentChar ? (
-                        <ParentCharSpan char={parentChar} />
-                      ) : null;
-                    })()}
-                  </CharSpan>
+                  ></CharSpan>
                 ))}
                 {extraChars[index] &&
                   destructWord(extraChars[index]).map((char, i) => (
                     <CharSpan
                       key={`extra-${i}`}
                       char={char}
+                      typedChar={"extra"}
                       isActive={false}
-                      isCorrect={false}
-                      isIncorrect={true}
                       ref={null}
                     />
                   ))}
@@ -361,10 +319,9 @@ export function TypingArea({ text }: Props) {
                 <div>
                   <CharSpan
                     char=" "
+                    typedChar={null}
                     ref={checkIsActiveSpace(index) ? activeCharRef : null}
                     isActive={checkIsActiveSpace(index)}
-                    isCorrect={false}
-                    isIncorrect={false}
                   />
                 </div>
               )}
