@@ -37,6 +37,7 @@ export default function InputField({ ref, handleKeyDown }: Props) {
   }
 
   function handelKeyPress(event: KeyboardEvent<HTMLInputElement>) {
+    console.log(event.key);
     handleKeyDown(event.key, inputValue, setInputValue);
     if (event.key === " ") {
       onSpaceKeyPress();
