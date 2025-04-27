@@ -1,4 +1,5 @@
 import { memo, ReactNode, Ref } from "react";
+import { TypingWordPreview } from "@/components/typing-components/typing-word-preview";
 
 type Props = {
   isActive: boolean;

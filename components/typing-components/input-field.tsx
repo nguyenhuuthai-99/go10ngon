@@ -5,19 +5,22 @@ import {
   RefObject,
   SetStateAction,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
 type Props = {
   ref: RefObject<HTMLInputElement | null>;
-  handleKeyDown: (
+  handleKeyDownCallBack: (
     key: string,
     value: string,
     setInputValue: Dispatch<SetStateAction<string>>,
   ) => void;
 };
-export default function InputField({ ref, handleKeyDown }: Props) {
+export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   const [inputValue, setInputValue] = useState("");
+  const [inputSet, setInputSet] = useState<Set<string>>();
+
   // focus input on mount
   useEffect(() => {
     ref.current?.focus();
@@ -30,17 +33,32 @@ export default function InputField({ ref, handleKeyDown }: Props) {
     }, 100);
 
     return () => clearInterval(interval);
-  });
+  }, [ref]);
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
     setInputValue(event.target.value);
   }
 
-  function handelKeyPress(event: KeyboardEvent<HTMLInputElement>) {
-    handleKeyDown(event.key, inputValue, setInputValue);
+  function handleKeyUp(event: KeyboardEvent<HTMLInputElement>) {
+    console.log(event.key);
+    if (inputSet?.has("Backspace") && inputSet?.size > 1) {
+      setInputSet(new Set<string>());
+      return;
+    }
+
+    const currentValue = event.currentTarget.value;
+    handleKeyDownCallBack(event.key, currentValue, setInputValue);
     if (event.key === " ") {
       onSpaceKeyPress();
     }
+
+    setInputSet(new Set<string>());
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    setInputSet((prevState) => {
+      return new Set<string>(prevState).add(event.key);
+    });
   }
 
   function onSpaceKeyPress() {
@@ -54,8 +72,9 @@ export default function InputField({ ref, handleKeyDown }: Props) {
       value={inputValue}
       className="absolute opacity-0"
       onChange={handeInputChange}
+      onKeyDown={handleKeyDown}
+      onKeyUpCapture={handleKeyUp}
       autoFocus
-      onKeyUp={handelKeyPress}
     />
   );
 }

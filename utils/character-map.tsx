@@ -163,3 +163,5 @@ export const vietnameseParentMap: Record<string, string[]> = {
   // Consonants (uppercase)
   Đ: ["D"],
 };
+
+export const siblingMap: Record<string, Set<string>> = {};

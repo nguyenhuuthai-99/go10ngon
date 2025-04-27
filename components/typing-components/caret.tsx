@@ -1,6 +1,5 @@
 type Props = {
   visible: boolean;
-  isLeft?: boolean;
   isTyping?: boolean;
   top: number;
   left: number;
@@ -9,7 +8,6 @@ type Props = {
 };
 export function Caret({
   visible = false,
-  isLeft = false,
   isTyping,
   top,
   left,

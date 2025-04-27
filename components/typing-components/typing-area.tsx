@@ -18,6 +18,7 @@ import CharSpan from "@/components/typing-components/char-span";
 import InputField from "@/components/typing-components/input-field";
 import { WordContainer } from "@/components/typing-components/word-container";
 import { ParentCharSpan } from "@/components/typing-components/parent-char-span";
+import { TypingWordPreview } from "@/components/typing-components/typing-word-preview";
 
 type Props = {
   text: string;
@@ -35,6 +36,13 @@ export function TypingArea({ text }: Props) {
     width: number;
     height: number;
   }>({ top: 7, left: 0, width: 2, height: 7 });
+  const [typingPreview, setTypingPreview] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+    typedWord: string | null;
+  }>({ top: 0, left: 0, width: 0, height: 0, typedWord: null });
 
   //Game state
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -92,6 +100,22 @@ export function TypingArea({ text }: Props) {
       height: height,
     });
   }, [currentCharIndex, currentWordIndex]);
+
+  //handle typing preview
+  useEffect(() => {
+    const activeWord = activeWordRef.current;
+
+    if (activeWord) {
+      const newPreview = {
+        top: activeWord.offsetTop,
+        left: activeWord.offsetLeft,
+        width: activeWord.offsetWidth,
+        height: activeWord.offsetHeight,
+        typedWord: typedWords[currentWordIndex] || null,
+      };
+      setTypingPreview(newPreview);
+    }
+  }, [currentWordIndex, currentTypedWord]);
 
   const handleKeyPress = useCallback(
     (
@@ -264,39 +288,6 @@ export function TypingArea({ text }: Props) {
     return wordIndex === currentWordIndex && charIndex === currentCharIndex;
   }
 
-  function checkIsCorrectChar(wordIndex: number, charIndex: number): boolean {
-    if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
-
-    return typedWords[wordIndex]?.[charIndex] === words[wordIndex][charIndex];
-  }
-
-  function checkIsIncorrectChar(wordIndex: number, charIndex: number): boolean {
-    if (!isStarted || typedWords[wordIndex]?.length <= charIndex) return false;
-
-    const originalChar = words[wordIndex][charIndex];
-    const typedChar = typedWords[wordIndex]?.[charIndex];
-
-    if (isInParentMap(originalChar)) {
-      return !isParent(originalChar, typedChar);
-    }
-
-    return typedChar !== originalChar;
-  }
-
-  function getParentIfExist(
-    wordIndex: number,
-    charIndex: number,
-  ): string | null {
-    const originalChar = words[wordIndex][charIndex];
-    const typedChar = typedWords[wordIndex]?.[charIndex];
-
-    if (isInParentMap(originalChar) && isParent(originalChar, typedChar)) {
-      return typedChar;
-    }
-
-    return null;
-  }
-
   function checkIsActiveSpace(wordIndex: number) {
     return (
       currentWordIndex === wordIndex &&
@@ -306,19 +297,20 @@ export function TypingArea({ text }: Props) {
 
   return (
     <div>
-      <InputField ref={inputRef} handleKeyDown={handleKeyPress} />
+      <InputField ref={inputRef} handleKeyDownCallBack={handleKeyPress} />
+
       <div
-        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-500"
+        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-600"
         ref={typingAreaRef}
         onClick={focusInput}
       >
+        <TypingWordPreview {...typingPreview} />
         <Caret
           top={caret.top}
           left={caret.left}
           width={caret.width}
           height={caret.height}
           visible={true}
-          isLeft={!isStarted}
           isTyping={isTyping}
         />
         {words.map((word, index) => {
@@ -332,27 +324,18 @@ export function TypingArea({ text }: Props) {
                   <CharSpan
                     key={i}
                     char={char}
+                    typedChar={typedWords[index]?.[i] || null}
                     ref={isCharActive(index, i) ? activeCharRef : null}
                     isActive={isCharActive(index, i)}
-                    isCorrect={checkIsCorrectChar(index, i)}
-                    isIncorrect={checkIsIncorrectChar(index, i)}
-                  >
-                    {(() => {
-                      const parentChar = getParentIfExist(index, i);
-                      return parentChar ? (
-                        <ParentCharSpan char={parentChar} />
-                      ) : null;
-                    })()}
-                  </CharSpan>
+                  ></CharSpan>
                 ))}
                 {extraChars[index] &&
                   destructWord(extraChars[index]).map((char, i) => (
                     <CharSpan
                       key={`extra-${i}`}
                       char={char}
+                      typedChar={"extra"}
                       isActive={false}
-                      isCorrect={false}
-                      isIncorrect={true}
                       ref={null}
                     />
                   ))}
@@ -361,10 +344,9 @@ export function TypingArea({ text }: Props) {
                 <div>
                   <CharSpan
                     char=" "
+                    typedChar={null}
                     ref={checkIsActiveSpace(index) ? activeCharRef : null}
                     isActive={checkIsActiveSpace(index)}
-                    isCorrect={false}
-                    isIncorrect={false}
                   />
                 </div>
               )}
