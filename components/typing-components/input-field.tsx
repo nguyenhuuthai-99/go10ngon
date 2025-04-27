@@ -40,6 +40,7 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   }
 
   function handleKeyUp(event: KeyboardEvent<HTMLInputElement>) {
+    console.log(event.key);
     if (inputSet?.has("Backspace") && inputSet?.size > 1) {
       setInputSet(new Set<string>());
       return;
@@ -59,17 +60,6 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
       return new Set<string>(prevState).add(event.key);
     });
   }
-
-  // function handelKeyPress(event: KeyboardEvent<HTMLInputElement>) {
-  //   if (isComposing.current) return;
-  //
-  //   const currentValue = event.currentTarget.value;
-  //   console.log(event.key, ref.current?.value);
-  //   handleKeyDownCallBack(event.key, currentValue, setInputValue);
-  //   if (event.key === " ") {
-  //     onSpaceKeyPress();
-  //   }
-  // }
 
   function onSpaceKeyPress() {
     setInputValue("");
