@@ -297,7 +297,7 @@ export function TypingArea({ text }: Props) {
 
   return (
     <div>
-      <InputField ref={inputRef} handleKeyDown={handleKeyPress} />
+      <InputField ref={inputRef} handleKeyDownCallBack={handleKeyPress} />
 
       <div
         className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-600"
