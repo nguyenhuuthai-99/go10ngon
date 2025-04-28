@@ -9,7 +9,7 @@ interface CharSpanProps {
   ref: Ref<HTMLSpanElement>;
 }
 
-const CharSpan = memo(({ char, typedChar, isActive, ref }: CharSpanProps) => {
+const CharSpan = memo(({ char, typedChar, ref }: CharSpanProps) => {
   const { parent, className } = useMemo(() => {
     let result = { parent: null as string | null, className: "" };
 
@@ -19,8 +19,10 @@ const CharSpan = memo(({ char, typedChar, isActive, ref }: CharSpanProps) => {
       } else if (isInParentMap(char) && isParent(char, typedChar)) {
         result.parent = typedChar;
         result.className = "text-yellow-600";
+      } else if (typedChar === "extra") {
+        result.className = "text-red-400";
       } else {
-        result.className = "text-red-500";
+        result.className = "text-red-600";
       }
     }
 

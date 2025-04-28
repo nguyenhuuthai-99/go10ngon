@@ -25,6 +25,7 @@ type Props = {
 };
 export function TypingArea({ text }: Props) {
   const words = stringToList(text);
+
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
@@ -304,7 +305,7 @@ export function TypingArea({ text }: Props) {
         ref={typingAreaRef}
         onClick={focusInput}
       >
-        <TypingWordPreview {...typingPreview} />
+        <TypingWordPreview {...typingPreview} isTyping={isTyping} />
         <Caret
           top={caret.top}
           left={caret.left}
@@ -317,6 +318,9 @@ export function TypingArea({ text }: Props) {
           return (
             <div key={index} className="flex">
               <WordContainer
+                isIncorrect={
+                  index < currentWordIndex && typedWords[index] !== words[index]
+                }
                 ref={index === currentWordIndex ? activeWordRef : null}
                 isActive={isWordActive(index)}
               >
@@ -344,7 +348,7 @@ export function TypingArea({ text }: Props) {
                 <div>
                   <CharSpan
                     char=" "
-                    typedChar={null}
+                    typedChar={" "}
                     ref={checkIsActiveSpace(index) ? activeCharRef : null}
                     isActive={checkIsActiveSpace(index)}
                   />
