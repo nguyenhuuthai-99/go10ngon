@@ -1,9 +1,4 @@
-import {
-  destructWord,
-  isInParentMap,
-  isParent,
-  stringToList,
-} from "@/lib/utils";
+import { destructWord, hasParent, isParent, stringToList } from "@/lib/utils";
 import {
   useCallback,
   useEffect,
@@ -17,9 +12,9 @@ import { Caret } from "@/components/typing-components/caret";
 import CharSpan from "@/components/typing-components/char-span";
 import InputField from "@/components/typing-components/input-field";
 import { WordContainer } from "@/components/typing-components/word-container";
-import { ParentCharSpan } from "@/components/typing-components/parent-char-span";
 import { TypingWordPreview } from "@/components/typing-components/typing-word-preview";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
+import { debug } from "node:util";
 
 type Props = {
   text: string;
@@ -45,6 +40,7 @@ export function TypingArea({ text }: Props) {
     height: number;
     typedWord: string | null;
   }>({ top: 0, left: 0, width: 0, height: 0, typedWord: null });
+
   const { wpm, accuracy, onPerformanceCalculate } =
     useTypingSessionPerformance();
 
@@ -58,6 +54,8 @@ export function TypingArea({ text }: Props) {
   const activeCharRef = useRef<HTMLSpanElement>(null);
   const activeSpaceRef = useRef<HTMLSpanElement>(null);
   const activeWordRef = useRef<HTMLDivElement>(null);
+  const parentMapRef = useRef<{ [key: string]: string }>({});
+  const correctnessList = useRef<(string | number)[][]>([]);
 
   //trigger endgame
   useEffect(() => {
@@ -66,6 +64,16 @@ export function TypingArea({ text }: Props) {
       return;
     }
   }, [currentCharIndex, currentWordIndex]);
+
+  //reset correctnessList
+  useEffect(() => {
+    //build the map
+    const cL = [];
+    for (let i = 0; i < words[currentWordIndex].length; i++) {
+      cL.push([0, ""]);
+    }
+    correctnessList.current = cL;
+  }, [currentWordIndex]);
 
   //initialize typed words
   useEffect(() => {
@@ -136,6 +144,10 @@ export function TypingArea({ text }: Props) {
 
       if (!isValidKey(key)) return;
 
+      console.log(value, currentTypedWord);
+
+      const currentTime = Date.now();
+
       if (!isTyping) {
         setIsTyping(true);
       }
@@ -163,6 +175,36 @@ export function TypingArea({ text }: Props) {
     },
     [currentTypedWord, words, currentWordIndex, currentCharIndex],
   );
+
+  function buildCorrectnessList(key: string) {
+    // if user press backspace: set the second value to backspace
+    if (key === "Backspace" || key === "Delete") {
+      correctnessList.current[currentCharIndex][1] = "";
+    } else {
+      // if correct: change the second value to that character
+      const currentWord = typedWords[currentWordIndex];
+      const targetWord = words[currentWordIndex];
+    }
+    // if parent: change second to p1 or p2 depending on the trees depth,
+    // else
+    // if that character == second: skip
+    // else: increment the first number, change 2nd value
+    // onSpacePress(){ count missing character,
+    // if p2: 2 error
+    // if p1: 1 error
+    // if second === "":
+    // if has parent:
+    //    check how many parents
+    // add incorrect to the performance
+    //          reset list
+    // [[0,"n"],[0,"g"],[1,"y"],[0,"y"],["p2","e"],[0,"n"]]
+    //  nguyên  original
+    //  ngyyen  typed
+    // [[0,"n"],[0,"g"],[1,"y"],[0,"y"],["p2","e"],[0,"n"]]
+    // user press backspace:
+    // [[0,"n"],[0,"g"],[1,"y"],[0,"y"],["p2","e"],[0,"Backspace"]]
+    //  ngyye
+  }
 
   function isExtraChars(index: number): boolean {
     return index > words[currentWordIndex].length;
@@ -221,12 +263,14 @@ export function TypingArea({ text }: Props) {
   }
 
   function onSpacePress() {
+    if (currentTypedWord === "") return;
     // check the correction of typed word,
 
     // calculate wpm,
 
     setCurrentWordIndex((prev) => prev + 1);
     setCurrentCharIndex(0);
+    setCurrentTypedWord("");
   }
 
   function onBackspace(setInputValue: Dispatch<SetStateAction<string>>) {

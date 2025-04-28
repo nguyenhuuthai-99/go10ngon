@@ -8,6 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { getBindingIdentifiers } from "@babel/types";
+import keys = getBindingIdentifiers.keys;
 
 type Props = {
   ref: RefObject<HTMLInputElement | null>;
@@ -20,6 +22,7 @@ type Props = {
 export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   const [inputValue, setInputValue] = useState("");
   const [inputSet, setInputSet] = useState<Set<string>>();
+  const currentKey = useRef<string>("");
 
   // focus input on mount
   useEffect(() => {
@@ -49,15 +52,18 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
     if (currentValue.length > 1 && currentValue.slice(-1) === " ") {
       currentValue = currentValue.slice(0, -1);
     }
-    handleKeyDownCallBack(event.key, currentValue, setInputValue);
+
+    console.log(event.key);
+
+    handleKeyDownCallBack(currentKey.current, currentValue, setInputValue);
     if (event.key === " ") {
       onSpaceKeyPress();
     }
 
     setInputSet(new Set<string>());
   }
-
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    currentKey.current = event.key;
     setInputSet((prevState) => {
       return new Set<string>(prevState).add(event.key);
     });
@@ -68,15 +74,17 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   }
 
   return (
-    <input
-      ref={ref}
-      type="text"
-      value={inputValue}
-      className="absolute opacity-0"
-      onChange={handeInputChange}
-      onKeyDown={handleKeyDown}
-      onKeyUpCapture={handleKeyUp}
-      autoFocus
-    />
+    <div>
+      <input
+        ref={ref}
+        type="text"
+        value={inputValue}
+        className="absolute opacity-0"
+        onChange={handeInputChange}
+        onKeyDown={handleKeyDown}
+        onKeyUpCapture={handleKeyUp}
+        autoFocus
+      />
+    </div>
   );
 }

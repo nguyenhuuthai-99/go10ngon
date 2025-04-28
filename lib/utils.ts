@@ -14,7 +14,7 @@ export function destructWord(word: string): string[] {
   return word.split("");
 }
 
-export function isInParentMap(originalChar: string) {
+export function hasParent(originalChar: string) {
   return originalChar in vietnameseParentMap;
 }
 export function isParent(originalChar: string, typedChar: string): boolean {
@@ -24,7 +24,7 @@ export function isParent(originalChar: string, typedChar: string): boolean {
 function dfsFindParent(currentChar: string, typedChar: string): boolean {
   if (currentChar === typedChar) return true;
 
-  if (!isInParentMap(currentChar)) return false;
+  if (!hasParent(currentChar)) return false;
 
   let found = false;
 
