@@ -19,6 +19,7 @@ import InputField from "@/components/typing-components/input-field";
 import { WordContainer } from "@/components/typing-components/word-container";
 import { ParentCharSpan } from "@/components/typing-components/parent-char-span";
 import { TypingWordPreview } from "@/components/typing-components/typing-word-preview";
+import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 
 type Props = {
   text: string;
@@ -44,6 +45,8 @@ export function TypingArea({ text }: Props) {
     height: number;
     typedWord: string | null;
   }>({ top: 0, left: 0, width: 0, height: 0, typedWord: null });
+  const { wpm, accuracy, onPerformanceCalculate } =
+    useTypingSessionPerformance();
 
   //Game state
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -157,8 +160,6 @@ export function TypingArea({ text }: Props) {
       //set typed word
       setCurrentTypedWord(value);
       updateTypedWords(value);
-
-      console.log(value);
     },
     [currentTypedWord, words, currentWordIndex, currentCharIndex],
   );

@@ -40,13 +40,15 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   }
 
   function handleKeyUp(event: KeyboardEvent<HTMLInputElement>) {
-    console.log(event.key);
     if (inputSet?.has("Backspace") && inputSet?.size > 1) {
       setInputSet(new Set<string>());
       return;
     }
 
-    const currentValue = event.currentTarget.value;
+    let currentValue = event.currentTarget.value;
+    if (currentValue.length > 1 && currentValue.slice(-1) === " ") {
+      currentValue = currentValue.slice(0, -1);
+    }
     handleKeyDownCallBack(event.key, currentValue, setInputValue);
     if (event.key === " ") {
       onSpaceKeyPress();

@@ -108,7 +108,7 @@ export function useTypingSessionPerformance() {
     localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updatedHistory));
   };
 
-  const onKeyPress = (input: KeyPressInput) => {
+  const onPerformanceCalculate = (input: KeyPressInput) => {
     dispatch({ type: "KEY_PRESS", payload: input });
 
     // Reset inactivity timer
@@ -149,7 +149,7 @@ export function useTypingSessionPerformance() {
     adjustedWpm,
     isRunning: state.isRunning,
     history,
-    onKeyPress,
+    onPerformanceCalculate,
     reset,
     clearHistory,
   };
