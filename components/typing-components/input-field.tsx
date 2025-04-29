@@ -53,8 +53,6 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
       currentValue = currentValue.slice(0, -1);
     }
 
-    console.log(event.key);
-
     handleKeyDownCallBack(currentKey.current, currentValue, setInputValue);
     if (event.key === " ") {
       onSpaceKeyPress();

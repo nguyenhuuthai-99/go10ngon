@@ -144,8 +144,6 @@ export function TypingArea({ text }: Props) {
 
       if (!isValidKey(key)) return;
 
-      console.log(value, currentTypedWord);
-
       const currentTime = Date.now();
 
       if (!isTyping) {
