@@ -4,7 +4,6 @@ import {
   useEffect,
   useRef,
   useState,
-  KeyboardEvent,
   Dispatch,
   SetStateAction,
 } from "react";
@@ -14,10 +13,10 @@ import InputField from "@/components/typing-components/input-field";
 import { WordContainer } from "@/components/typing-components/word-container";
 import { TypingWordPreview } from "@/components/typing-components/typing-word-preview";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
-import { debug } from "node:util";
 
 type Props = {
   text: string;
+  //turn this one to list later
 };
 export function TypingArea({ text }: Props) {
   const words = stringToList(text);
@@ -25,8 +24,6 @@ export function TypingArea({ text }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
-  const [extraChars, setExtraChars] = useState<{ [key: number]: string }>({});
-  const [currentTypedWord, setCurrentTypedWord] = useState("");
   const [caret, setCaret] = useState<{
     top: number;
     left: number;
@@ -54,7 +51,6 @@ export function TypingArea({ text }: Props) {
   const activeCharRef = useRef<HTMLSpanElement>(null);
   const activeSpaceRef = useRef<HTMLSpanElement>(null);
   const activeWordRef = useRef<HTMLDivElement>(null);
-  const parentMapRef = useRef<{ [key: string]: string }>({});
   const correctnessList = useRef<(string | number)[][]>([]);
 
   //trigger endgame
@@ -125,9 +121,10 @@ export function TypingArea({ text }: Props) {
         height: activeWord.offsetHeight,
         typedWord: typedWords[currentWordIndex] || null,
       };
+      console.log(typedWords);
       setTypingPreview(newPreview);
     }
-  }, [currentWordIndex, currentTypedWord]);
+  }, [currentWordIndex, currentCharIndex]);
 
   const handleKeyPress = useCallback(
     (
@@ -137,14 +134,7 @@ export function TypingArea({ text }: Props) {
     ) => {
       if (isEnded) return;
 
-      if (key === "Backspace" || key === "Delete") {
-        onBackspace(setInputValue);
-        return;
-      }
-
-      if (!isValidKey(key)) return;
-
-      const currentTime = Date.now();
+      // if (!isValidKey(key)) return;
 
       if (!isTyping) {
         setIsTyping(true);
@@ -157,21 +147,16 @@ export function TypingArea({ text }: Props) {
       if (key === " ") {
         onSpacePress();
         return;
+      } else if (key === "Backspace" || key === "Delete") {
+        onBackspace(setInputValue);
+      } else {
+        //move to next character
+        setCurrentCharIndex(value.length);
+        //set typed word
       }
-
-      //move to next character
-      let newIndex = value.length;
-      setCurrentCharIndex(newIndex);
-
-      if (isExtraChars(newIndex)) {
-        handleExtraCharsChange(value);
-      }
-
-      //set typed word
-      setCurrentTypedWord(value);
       updateTypedWords(value);
     },
-    [currentTypedWord, words, currentWordIndex, currentCharIndex],
+    [words, currentWordIndex, currentCharIndex],
   );
 
   function buildCorrectnessList(key: string) {
@@ -202,19 +187,6 @@ export function TypingArea({ text }: Props) {
     // user press backspace:
     // [[0,"n"],[0,"g"],[1,"y"],[0,"y"],["p2","e"],[0,"Backspace"]]
     //  ngyye
-  }
-
-  function isExtraChars(index: number): boolean {
-    return index > words[currentWordIndex].length;
-  }
-  function handleExtraCharsChange(typedValue: string) {
-    const extras = typedValue.slice(words[currentWordIndex].length);
-    setExtraChars((prevState) => {
-      return {
-        ...prevState,
-        [currentWordIndex]: extras,
-      };
-    });
   }
 
   const scrollToCaret = useCallback(() => {
@@ -255,61 +227,33 @@ export function TypingArea({ text }: Props) {
     setCurrentWordIndex(0);
     setCurrentCharIndex(0);
     setTypedWords({});
-    setCurrentTypedWord("");
     setIsTyping(false);
     setIsStarted(false);
   }
 
   function onSpacePress() {
-    if (currentTypedWord === "") return;
     // check the correction of typed word,
 
     // calculate wpm,
 
     setCurrentWordIndex((prev) => prev + 1);
     setCurrentCharIndex(0);
-    setCurrentTypedWord("");
   }
 
   function onBackspace(setInputValue: Dispatch<SetStateAction<string>>) {
     if (currentCharIndex > 0) {
-      handleBackSpaceWithinWord();
+      setCurrentCharIndex((prevState) => prevState - 1);
     } else if (currentCharIndex === 0 && currentWordIndex > 0) {
       moveToPreviousWord(setInputValue);
-    }
-  }
-
-  function handleBackSpaceWithinWord() {
-    const updateWord = currentTypedWord.slice(0, -1);
-    setCurrentTypedWord(updateWord);
-    updateTypedWords(updateWord);
-    setCurrentCharIndex((prev) => prev - 1);
-    if (hasExtraChars()) {
-      removeExtraChars();
     }
   }
 
   function moveToPreviousWord(setInputValue: Dispatch<SetStateAction<string>>) {
     const prevWordIndex = currentWordIndex - 1;
     const prevWord = typedWords[prevWordIndex] ?? "";
-    setCurrentTypedWord(prevWord);
     setCurrentCharIndex(prevWord.length);
     setCurrentWordIndex(prevWordIndex);
     setInputValue(prevWord);
-  }
-
-  function hasExtraChars(): boolean {
-    return extraChars[currentWordIndex]?.length > 0;
-  }
-
-  function removeExtraChars(): void {
-    const updateExtraChars = extraChars[currentWordIndex].slice(0, -1);
-    setExtraChars((prevState) => {
-      return {
-        ...prevState,
-        [currentWordIndex]: updateExtraChars,
-      };
-    });
   }
 
   function updateTypedWords(value: string) {
@@ -376,8 +320,10 @@ export function TypingArea({ text }: Props) {
                     isActive={isCharActive(index, i)}
                   ></CharSpan>
                 ))}
-                {extraChars[index] &&
-                  destructWord(extraChars[index]).map((char, i) => (
+                {typedWords[index]?.length > words[index].length &&
+                  destructWord(
+                    typedWords[index]?.slice(words[index].length),
+                  ).map((char, i) => (
                     <CharSpan
                       key={`extra-${i}`}
                       char={char}
