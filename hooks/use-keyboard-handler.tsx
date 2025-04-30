@@ -1,14 +1,19 @@
 import { useRef } from "react";
 import { TypingSessionStateHandler } from "@/hooks/use-typing-session-state";
+import usePerformanceCalculate from "@/hooks/use-char-comparision";
+import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 
 interface Props {
   typingSessionStateHandler: TypingSessionStateHandler;
   typingSession: {
+    currentWordIndex: number;
     moveToNextWord: () => void;
     moveToPreviousChar: (restoreInputValue: (value: string) => void) => void;
     moveCharToIndex: (index: number) => void;
     updateTypedWords: (value: string) => void;
   };
+  previousWord: string;
+  targetValue: string;
 }
 export function useKeyboardHandler({
   typingSessionStateHandler: {
@@ -16,14 +21,23 @@ export function useKeyboardHandler({
     startTyping,
   },
   typingSession: {
+    currentWordIndex,
     moveToNextWord,
     moveToPreviousChar,
     moveCharToIndex,
     updateTypedWords,
   },
+  previousWord,
+  targetValue,
 }: Props) {
-  const keydownTimestamp = useRef(0);
-  const currentValue = useRef("");
+  const { isCorrectAndWithin, onDelete, checkMissingChar } =
+    usePerformanceCalculate({
+      targetValue,
+      currentWordIndex,
+    });
+
+  const { wpm, accuracy, onPerformanceCalculate } =
+    useTypingSessionPerformance();
 
   function onKeyDown(
     key: string,
@@ -36,17 +50,28 @@ export function useKeyboardHandler({
     if (!isTyping) {
       startTyping();
     }
+
     if (key === " ") {
+      const missingKeys = checkMissingChar(previousWord);
+      console.log(missingKeys);
+      onPerformanceCalculate({
+        isCorrect: false,
+        timestamp,
+        numberOfKeys: missingKeys,
+      });
+      onPerformanceCalculate({ isCorrect: true, timestamp, numberOfKeys: 1 });
       onSpacePress();
       return;
     }
-    keydownTimestamp.current = timestamp;
-    currentValue.current = value;
 
     if (key === "Backspace" || key === "Delete") {
+      onDelete(value);
       moveToPreviousChar(restoreInputValue);
     } else {
       moveCharToIndex(value.length);
+
+      let isCorrect: boolean = isCorrectAndWithin(value, previousWord);
+      onPerformanceCalculate({ isCorrect, timestamp, numberOfKeys: 1 });
     }
 
     updateTypedWords(value);
@@ -58,7 +83,7 @@ export function useKeyboardHandler({
 
   return {
     onKeyDown,
-    timestamp: keydownTimestamp.current,
-    currentValue: currentValue.current,
+    wpm,
+    accuracy,
   };
 }

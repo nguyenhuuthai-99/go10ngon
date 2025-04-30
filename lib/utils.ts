@@ -34,11 +34,12 @@ function dfsFindParent(
   if (!hasParent(currentChar)) return [false, count];
 
   let found = false;
+  let newCount = count;
 
   for (const char of vietnameseParentMap[currentChar]) {
-    found = dfsFindParent(char, typedChar, count + 1)[0];
+    [found, newCount] = dfsFindParent(char, typedChar, count + 1);
     if (found) break;
   }
 
-  return [found, count];
+  return [found, newCount];
 }

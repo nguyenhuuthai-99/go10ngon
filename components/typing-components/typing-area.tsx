@@ -23,8 +23,8 @@ export function TypingArea({ text }: Props) {
     currentCharIndex,
     typedWords,
     wpm,
+    accuracy,
     onKeyDown,
-    calculateTypingPerformance,
     typingSessionStateHandler,
   } = useTypingSession(words);
 
@@ -68,11 +68,10 @@ export function TypingArea({ text }: Props) {
     );
   }
 
-  console.log(wpm);
   return (
     <div>
       <InputField ref={inputRef} handleKeyDownCallBack={onKeyDown} />
-      <div>{wpm}</div>
+      <span>{wpm}</span> <span>{accuracy}</span>
       <div
         className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-600"
         ref={typingAreaRef}

@@ -12,24 +12,19 @@ export function useTypingSession(words: string[]) {
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
   const typingSessionStateHandler = useTypingSessionState();
-  const { wpm, accuracy, onPerformanceCalculate } =
-    useTypingSessionPerformance();
 
-  const { onKeyDown, timestamp, currentValue } = useKeyboardHandler({
+  const { onKeyDown, wpm, accuracy } = useKeyboardHandler({
     typingSessionStateHandler,
     typingSession: {
+      currentWordIndex,
       moveToNextWord,
       moveCharToIndex,
       moveToPreviousChar,
       updateTypedWords,
     },
+    previousWord: typedWords[currentWordIndex],
+    targetValue: words[currentWordIndex],
   });
-
-  // const { compareChar, trackBackParent } = usePerformanceCalculate({
-  //   targetValue: words[currentWordIndex],
-  //   currentValue,
-  //   currentWordIndex,
-  // });
 
   //initialize typedWords
   useEffect(() => {
@@ -59,8 +54,6 @@ export function useTypingSession(words: string[]) {
   }
 
   function moveCharToIndex(index: number) {
-    console.log(currentValue, typedWords[currentWordIndex]);
-
     setCurrentCharIndex(index);
   }
 
@@ -86,13 +79,6 @@ export function useTypingSession(words: string[]) {
     setTypedWords((prev) => ({ ...prev, [currentWordIndex]: value }));
   }
 
-  function calculateTypingPerformance(isCorrect: boolean) {
-    onPerformanceCalculate({
-      isCorrect,
-      timestamp: timestamp,
-    });
-  }
-
   function resetTypingSession() {
     setCurrentWordIndex(0);
     setCurrentCharIndex(0);
@@ -113,11 +99,11 @@ export function useTypingSession(words: string[]) {
     typedWords,
     typingSessionStateHandler,
     wpm,
+    accuracy,
     onKeyDown,
     moveCharToIndex,
     moveToPreviousChar,
     moveToNextWord,
-    calculateTypingPerformance,
     updateTypedWords,
   };
 }

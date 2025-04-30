@@ -3,6 +3,7 @@ import { useReducer, useMemo, useEffect, useRef, useState } from "react";
 interface KeyPressInput {
   isCorrect: boolean;
   timestamp: number;
+  numberOfKeys: number;
 }
 
 interface TypingState {
@@ -38,10 +39,9 @@ const HISTORY_STORAGE_KEY = "typingSessionHistory";
 function typingReducer(state: TypingState, action: TypingAction): TypingState {
   switch (action.type) {
     case "KEY_PRESS":
-      const { isCorrect, timestamp } = action.payload;
-      console.log(isCorrect);
+      const { isCorrect, timestamp, numberOfKeys } = action.payload;
       return {
-        totalKeystrokes: state.totalKeystrokes + 1,
+        totalKeystrokes: state.totalKeystrokes + numberOfKeys,
         correctKeystrokes: state.correctKeystrokes + (isCorrect ? 1 : 0),
         startTime: state.startTime ?? timestamp,
         lastTimestamp: timestamp,
@@ -145,8 +145,8 @@ export function useTypingSessionPerformance() {
   }, []);
 
   return {
-    wpm,
-    accuracy,
+    wpm: wpm.toFixed(),
+    accuracy: accuracy.toFixed(),
     adjustedWpm,
     isRunning: state.isRunning,
     history,

@@ -1,65 +1,94 @@
 import { useEffect, useRef } from "react";
 import { hasParent, isParent } from "@/lib/utils";
+import { Parent } from "@/model/parent";
 
 interface Props {
-  currentValue: string;
   targetValue: string;
   currentWordIndex: number;
 }
 export default function usePerformanceCalculate({
-  currentValue,
   targetValue,
   currentWordIndex,
 }: Props) {
-  const parentMap = useRef<Map<number, [number, string]>>(new Map());
+  const parentList = useRef<(Parent | null)[]>([]);
+  const validParent = useRef<Map<number, number>>(new Map());
 
   useEffect(() => {
+    parentList.current = [];
+    validParent.current.clear();
+
     for (let i = 0; i < targetValue.length; i++) {
       if (hasParent(targetValue[i])) {
-        const [isValid, depth] = isParent(targetValue[i], "i");
-        parentMap.current.set(i, [depth, ""]);
+        const [_, depth] = isParent(targetValue[i], "i");
+        const parent: Parent = { index: i, value: "", depth: depth + 1 };
+        validParent.current.set(i, depth);
+        parentList.current.push(parent);
+      } else {
+        parentList.current.push(null);
       }
     }
   }, [currentWordIndex]);
 
-  function compareChar(original: string, typed: string): boolean {
-    return original === typed;
-  }
-  // n g u y  ễ n
-  // 0,0,0,0 -2,0
-  // n h u y  e n
-  // 0 1 0 0 -1 0
-  // n
-  function trackBackParent() {}
-  // function buildCorrectnessList(key: string) {
-  //   // if user press backspace: set the second value to backspace
-  //   if (key === "Backspace" || key === "Delete") {
-  //     correctnessList.current[currentCharIndex][1] = "";
-  //   } else {
-  //     // if correct: change the second value to that character
-  //     const currentWord = typedWords[currentWordIndex];
-  //     const targetWord = words[currentWordIndex];
-  //   }
-  //   // if parent: change second to p1 or p2 depending on the trees depth,
-  //   // else
-  //   // if that character == second: skip
-  //   // else: increment the first number, change 2nd value
-  //   // onSpacePress(){ count missing character,
-  //   // if p2: 2 error
-  //   // if p1: 1 error
-  //   // if second === "":
-  //   // if has parent:
-  //   //    check how many parents
-  //   // add incorrect to the performance
-  //   //          reset list
-  //   // [[0,"n"],[0,"g"],[1,"y"],[0,"y"],["p2","e"],[0,"n"]]
-  //   //  nguyên  original
-  //   //  ngyyen  typed
-  //   // [[0,"n"],[0,"g"],[1,"y"],[0,"y"],["p2","e"],[0,"n"]]
-  //   // user press backspace:
-  //   // [[0,"n"],[0,"g"],[1,"y"],[0,"y"],["p2","e"],[0,"Backspace"]]
-  //   //  ngyye
-  // }
+  function isCorrectAndWithin(value: string, previousWord: string): boolean {
+    if (value.length > targetValue.length) return false;
 
-  return { compareChar, trackBackParent };
+    if (value.length === previousWord.length) {
+      return checkForParent(value);
+    } else {
+      const index = value.length - 1;
+      if (validParent.current.has(index)) {
+        return checkForParent(value);
+      }
+      return value[index] === targetValue[index];
+    }
+  }
+  function checkForParent(value: string): boolean {
+    let found = false;
+    for (let i = 0; i < value.length; i++) {
+      const currentChar = value[i];
+      if (validParent.current.has(i)) {
+        if (parentList.current[i]?.value !== currentChar) {
+          [found] = isParent(targetValue[i], currentChar);
+          if (parentList.current[i]!.depth > 0) {
+            parentList.current[i]!.depth -= 1;
+          }
+          parentList.current[i]!.value = currentChar;
+          if (!validParent.current.has(i + 1)) {
+            break;
+          }
+        }
+      }
+    }
+    return found;
+  }
+
+  function onDelete(value: string) {
+    if (value.length > targetValue.length - 1) return;
+
+    const previousIndex = value.length;
+
+    if (validParent.current.has(previousIndex)) {
+      parentList.current[previousIndex]!.depth =
+        validParent.current.get(previousIndex)! + 1;
+    }
+  }
+
+  function checkMissingChar(value: string): number {
+    if (value.length > targetValue.length) return 0;
+    let count = 0;
+
+    for (let i = 0; i < parentList.current.length; i++) {
+      if (parentList.current[i]) count += parentList.current[i]?.depth!;
+    }
+
+    const length = value.length;
+    for (let i = length; i < targetValue.length; i++) {
+      if (!validParent.current.has(i)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  return { isCorrectAndWithin, onDelete, checkMissingChar };
 }

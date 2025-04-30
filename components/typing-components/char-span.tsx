@@ -16,7 +16,7 @@ const CharSpan = memo(({ char, typedChar, ref }: CharSpanProps) => {
     if (typedChar) {
       if (typedChar === char) {
         result.className = "text-primary";
-      } else if (hasParent(char) && isParent(char, typedChar)) {
+      } else if (hasParent(char) && isParent(char, typedChar)[0]) {
         result.parent = typedChar;
         result.className = "text-yellow-600";
       } else if (typedChar === "extra") {
