@@ -14,7 +14,8 @@ type Props = {
   handleKeyDownCallBack: (
     key: string,
     value: string,
-    setInputValue: Dispatch<SetStateAction<string>>,
+    timestamp: number,
+    restoreInputValue: (value: string) => void,
   ) => void;
 };
 export default function InputField({ ref, handleKeyDownCallBack }: Props) {
@@ -39,7 +40,7 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
     let currentValue;
-    console.log(event.target.value);
+
     if (currentKey.current === " ") {
       setInputValue("");
       currentValue = "";
@@ -47,7 +48,12 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
       setInputValue(event.target.value);
       currentValue = event.target.value;
     }
-    handleKeyDownCallBack(currentKey.current, currentValue, setInputValue);
+    handleKeyDownCallBack(
+      currentKey.current,
+      currentValue,
+      currentTimestamp.current,
+      restoreInputValue,
+    );
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -63,9 +69,14 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
       handleKeyDownCallBack(
         event.key,
         event.currentTarget.value,
-        setInputValue,
+        currentTimestamp.current,
+        restoreInputValue,
       );
     }
+  }
+
+  function restoreInputValue(value: string) {
+    setInputValue(value);
   }
 
   return (

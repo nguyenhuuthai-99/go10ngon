@@ -39,6 +39,7 @@ function typingReducer(state: TypingState, action: TypingAction): TypingState {
   switch (action.type) {
     case "KEY_PRESS":
       const { isCorrect, timestamp } = action.payload;
+      console.log(isCorrect);
       return {
         totalKeystrokes: state.totalKeystrokes + 1,
         correctKeystrokes: state.correctKeystrokes + (isCorrect ? 1 : 0),

@@ -1,4 +1,4 @@
-import { useState, useEffect, RefObject } from "react";
+import { useState, useEffect, RefObject, useLayoutEffect } from "react";
 
 const initialState = {
   top: 7,
@@ -20,7 +20,7 @@ export function useCaretPosition(
 ) {
   const [caret, setCaret] = useState<Caret>(initialState);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let offsetTop = 0,
       offsetLeft = 0,
       width = 0,

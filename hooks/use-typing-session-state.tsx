@@ -1,44 +1,55 @@
 import { useEffect, useState } from "react";
 
-interface State {
-  words: string[];
-  currentCharIndex: number;
-  currentWordIndex: number;
+export interface TypingSessionState {
+  isTyping: boolean;
+  isEnded: boolean;
+  isAFK: boolean;
 }
-export default function useTypingSessionState({
-  words,
-  currentWordIndex,
-  currentCharIndex,
-}: State) {
+
+export interface TypingSessionStateHandler {
+  typingSessionState: TypingSessionState;
+  startTyping: () => void;
+  markAsEnd: () => void;
+  setAFK: () => void;
+  resetTypingSessionState: () => void;
+}
+
+// interface Props {
+//   words: string[];
+//   currentCharIndex: number;
+//   currentWordIndex: number;
+// }
+export default function useTypingSessionState() {
   const [isTyping, setIsTyping] = useState(false);
   const [isAFK, setIsAFK] = useState<boolean>(false);
-  const [isStarted, setIsStarted] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
 
-  //trigger endgame
-  useEffect(() => {
-    if (isSessionEnd()) {
-      resetTypingSessionState();
-    }
-  }, [currentWordIndex, currentCharIndex]);
-
-  function isSessionEnd() {
-    return (
-      currentWordIndex >= words.length ||
-      (currentCharIndex === words[-1]?.length - 1 &&
-        currentWordIndex === words.length - 1)
-    );
-  }
   function resetTypingSessionState() {
     setIsTyping(false);
     setIsEnded(true);
   }
 
+  function setAFK() {
+    setIsAFK(true);
+  }
+
+  function startTyping() {
+    setIsTyping(true);
+  }
+
+  function markAsEnd() {
+    setIsEnded(true);
+  }
+
   return {
-    isTyping,
-    isEnded,
-    setIsEnded,
-    setIsTyping,
+    typingSessionState: {
+      isTyping,
+      isEnded,
+      isAFK,
+    },
+    markAsEnd,
+    startTyping,
+    setAFK,
     resetTypingSessionState,
   };
 }
