@@ -1,6 +1,6 @@
 import { FC, memo, Ref, useMemo } from "react";
 import { ParentCharSpan } from "@/components/typing-components/parent-char-span";
-import { isInParentMap, isParent } from "@/lib/utils";
+import { hasParent, isParent } from "@/lib/utils";
 
 interface CharSpanProps {
   char: string;
@@ -9,18 +9,20 @@ interface CharSpanProps {
   ref: Ref<HTMLSpanElement>;
 }
 
-const CharSpan = memo(({ char, typedChar, isActive, ref }: CharSpanProps) => {
+const CharSpan = memo(({ char, typedChar, ref }: CharSpanProps) => {
   const { parent, className } = useMemo(() => {
     let result = { parent: null as string | null, className: "" };
 
     if (typedChar) {
       if (typedChar === char) {
         result.className = "text-primary";
-      } else if (isInParentMap(char) && isParent(char, typedChar)) {
+      } else if (hasParent(char) && isParent(char, typedChar)[0]) {
         result.parent = typedChar;
         result.className = "text-yellow-600";
+      } else if (typedChar === "extra") {
+        result.className = "text-red-400";
       } else {
-        result.className = "text-red-500";
+        result.className = "text-red-600";
       }
     }
 

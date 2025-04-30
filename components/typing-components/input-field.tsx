@@ -14,12 +14,15 @@ type Props = {
   handleKeyDownCallBack: (
     key: string,
     value: string,
-    setInputValue: Dispatch<SetStateAction<string>>,
+    timestamp: number,
+    restoreInputValue: (value: string) => void,
   ) => void;
 };
 export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   const [inputValue, setInputValue] = useState("");
-  const [inputSet, setInputSet] = useState<Set<string>>();
+
+  const currentKey = useRef("");
+  const currentTimestamp = useRef<number>(0);
 
   // focus input on mount
   useEffect(() => {
@@ -36,45 +39,74 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   }, [ref]);
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
-    setInputValue(event.target.value);
-  }
+    let currentValue;
 
-  function handleKeyUp(event: KeyboardEvent<HTMLInputElement>) {
-    console.log(event.key);
-    if (inputSet?.has("Backspace") && inputSet?.size > 1) {
-      setInputSet(new Set<string>());
-      return;
+    if (currentKey.current === " ") {
+      setInputValue("");
+      currentValue = "";
+    } else {
+      setInputValue(event.target.value);
+      currentValue = event.target.value;
     }
-
-    const currentValue = event.currentTarget.value;
-    handleKeyDownCallBack(event.key, currentValue, setInputValue);
-    if (event.key === " ") {
-      onSpaceKeyPress();
-    }
-
-    setInputSet(new Set<string>());
+    handleKeyDownCallBack(
+      currentKey.current,
+      currentValue,
+      currentTimestamp.current,
+      restoreInputValue,
+    );
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    setInputSet((prevState) => {
-      return new Set<string>(prevState).add(event.key);
-    });
+    currentKey.current = event.key;
+    currentTimestamp.current = event.timeStamp;
+
+    onBackspaceEmptyInput(event);
   }
 
-  function onSpaceKeyPress() {
-    setInputValue("");
+  function onBackspaceEmptyInput(event: KeyboardEvent<HTMLInputElement>) {
+    if (currentKey.current === "Backspace" && inputValue === "") {
+      event.preventDefault();
+      handleKeyDownCallBack(
+        event.key,
+        event.currentTarget.value,
+        currentTimestamp.current,
+        restoreInputValue,
+      );
+    }
+  }
+
+  function restoreInputValue(value: string) {
+    setInputValue(value);
   }
 
   return (
-    <input
-      ref={ref}
-      type="text"
-      value={inputValue}
-      className="absolute opacity-0"
-      onChange={handeInputChange}
-      onKeyDown={handleKeyDown}
-      onKeyUpCapture={handleKeyUp}
-      autoFocus
-    />
+    <div>
+      <input
+        ref={ref}
+        type="text"
+        value={inputValue}
+        className="absolute opacity-0"
+        onChange={handeInputChange}
+        onKeyDown={handleKeyDown}
+        autoFocus
+      />
+    </div>
   );
 }
+
+// function handleKeyUp(event: KeyboardEvent<HTMLInputElement>) {
+//
+//   let currentValue = event.currentTarget.value;
+//   if (currentValue.length > 1 && currentValue.slice(-1) === " ") {
+//     currentValue = currentValue.slice(0, -1);
+//   }
+//
+//   handleKeyDownCallBack(currentKey.current, currentValue);
+//   if (event.key === " ") {
+//     onSpaceKeyPress();
+//   }
+//
+// }
+// function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+//   currentKey.current = event.key;
+// }

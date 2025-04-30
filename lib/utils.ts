@@ -14,24 +14,32 @@ export function destructWord(word: string): string[] {
   return word.split("");
 }
 
-export function isInParentMap(originalChar: string) {
+export function hasParent(originalChar: string) {
   return originalChar in vietnameseParentMap;
 }
-export function isParent(originalChar: string, typedChar: string): boolean {
-  return dfsFindParent(originalChar, typedChar);
+export function isParent(
+  originalChar: string,
+  typedChar: string,
+): [boolean, number] {
+  return dfsFindParent(originalChar, typedChar, 0);
 }
 
-function dfsFindParent(currentChar: string, typedChar: string): boolean {
-  if (currentChar === typedChar) return true;
+function dfsFindParent(
+  currentChar: string,
+  typedChar: string,
+  count: number,
+): [boolean, number] {
+  if (currentChar === typedChar) return [true, count];
 
-  if (!isInParentMap(currentChar)) return false;
+  if (!hasParent(currentChar)) return [false, count];
 
   let found = false;
+  let newCount = count;
 
   for (const char of vietnameseParentMap[currentChar]) {
-    found = dfsFindParent(char, typedChar);
+    [found, newCount] = dfsFindParent(char, typedChar, count + 1);
     if (found) break;
   }
 
-  return found;
+  return [found, newCount];
 }

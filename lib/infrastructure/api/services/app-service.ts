@@ -9,7 +9,7 @@ export async function getQuote(): Promise<Quote> {
 
 export function getTest() {
   return (
-    "Giang Trần không thích phân biệt người\n" +
+    "đường nghiêng điên muôn chiêng chưởng đoẳn Giang Trần không thích phân biệt người\n" +
     "            tốt hay người xấu. Đối với anh\n" +
     "            ta, chỉ có những người đồng hành và kẻ thù. Anh ta lập tức triển khai kế hoạch đàn áp kẻ thù và\n" +
     "            nâng cao tầm vóc của những người đồng hành. Mạch truyện với các tình tiết gay cấn và logic đan\n" +

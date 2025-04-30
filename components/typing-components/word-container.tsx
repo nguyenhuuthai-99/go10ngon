@@ -4,9 +4,22 @@ import { TypingWordPreview } from "@/components/typing-components/typing-word-pr
 type Props = {
   isActive: boolean;
   children?: ReactNode;
+  isIncorrect: boolean;
   ref: Ref<HTMLDivElement>;
 };
 
-export const WordContainer = ({ isActive = false, children, ref }: Props) => {
-  return <div ref={ref}>{children}</div>;
+export const WordContainer = ({
+  isActive = false,
+  isIncorrect,
+  children,
+  ref,
+}: Props) => {
+  return (
+    <div
+      className={`${isIncorrect && "h-11 border-b-2 border-red-500"}`}
+      ref={ref}
+    >
+      {children}
+    </div>
+  );
 };
