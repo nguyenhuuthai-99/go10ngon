@@ -39,6 +39,7 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
     let currentValue;
+    console.log(event.target.value);
     if (currentKey.current === " ") {
       setInputValue("");
       currentValue = "";
@@ -59,7 +60,11 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   function onBackspaceEmptyInput(event: KeyboardEvent<HTMLInputElement>) {
     if (currentKey.current === "Backspace" && inputValue === "") {
       event.preventDefault();
-      handleKeyDownCallBack(event.key, "", setInputValue);
+      handleKeyDownCallBack(
+        event.key,
+        event.currentTarget.value,
+        setInputValue,
+      );
     }
   }
 

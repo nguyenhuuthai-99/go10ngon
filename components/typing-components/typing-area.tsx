@@ -7,12 +7,17 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
+
 import { Caret } from "@/components/typing-components/caret";
 import CharSpan from "@/components/typing-components/char-span";
 import InputField from "@/components/typing-components/input-field";
 import { WordContainer } from "@/components/typing-components/word-container";
 import { TypingWordPreview } from "@/components/typing-components/typing-word-preview";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
+import { useTypingSession } from "@/hooks/use-typing-session";
+import { useCaretPosition } from "@/hooks/use-caret-position";
+import { useAutoScroll } from "@/hooks/use-scroll-to-caret";
+import { useTypingPreview } from "@/hooks/use-typing-preview";
 
 type Props = {
   text: string;
@@ -21,30 +26,21 @@ type Props = {
 export function TypingArea({ text }: Props) {
   const words = stringToList(text);
 
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
-  const [caret, setCaret] = useState<{
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  }>({ top: 7, left: 0, width: 2, height: 7 });
-  const [typingPreview, setTypingPreview] = useState<{
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-    typedWord: string | null;
-  }>({ top: 0, left: 0, width: 0, height: 0, typedWord: null });
+  const {
+    currentWordIndex,
+    currentCharIndex,
+    typedWords,
+    typingSessionState,
+    updateTypedWords,
+    setTypedWords,
+    moveCharToIndex,
+    moveToPreviousChar,
+    moveToNextWord,
+    resetTypingSession,
+  } = useTypingSession(words);
 
   const { wpm, accuracy, onPerformanceCalculate } =
     useTypingSessionPerformance();
-
-  //Game state
-  const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [isStarted, setIsStarted] = useState(false);
-  const [isEnded, setIsEnded] = useState(false);
 
   const typingAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,13 +49,20 @@ export function TypingArea({ text }: Props) {
   const activeWordRef = useRef<HTMLDivElement>(null);
   const correctnessList = useRef<(string | number)[][]>([]);
 
-  //trigger endgame
-  useEffect(() => {
-    if (isTypeSessionEnd(currentCharIndex)) {
-      onTypeSessionEnd();
-      return;
-    }
-  }, [currentCharIndex, currentWordIndex]);
+  const { caret, resetCaretPosition } = useCaretPosition(
+    activeCharRef,
+    activeSpaceRef,
+    [currentCharIndex, currentWordIndex],
+  );
+
+  useAutoScroll({ caret, typingAreaRef });
+
+  const typingPreview = useTypingPreview({
+    activeWordRef,
+    typedWords,
+    currentWordIndex,
+    currentCharIndex,
+  });
 
   //reset correctnessList
   useEffect(() => {
@@ -71,89 +74,27 @@ export function TypingArea({ text }: Props) {
     correctnessList.current = cL;
   }, [currentWordIndex]);
 
-  //initialize typed words
-  useEffect(() => {
-    const initialTypedWords: { [key: number]: string } = {};
-    words.forEach((value, index) => {
-      initialTypedWords[index] = "";
-    });
-    setTypedWords(initialTypedWords);
-  }, []);
-
-  // handle scrolling
-  useEffect(() => {
-    let offsetTop: number = 0;
-    let offsetLeft: number = 0;
-    let width: number = 0;
-    let height: number = 0;
-
-    const element = activeCharRef.current;
-    const space = activeSpaceRef.current;
-    if (space) {
-      offsetTop = space.offsetTop;
-      offsetLeft = space.offsetLeft;
-      height = space.offsetHeight;
-      width = space.offsetWidth;
-    } else if (element) {
-      offsetTop = element.offsetTop;
-      offsetLeft = element.offsetLeft;
-      width = element.offsetWidth;
-      height = element.offsetHeight;
-    }
-
-    setCaret({
-      top: offsetTop,
-      left: offsetLeft,
-      width: width,
-      height: height,
-    });
-  }, [currentCharIndex, currentWordIndex]);
-
-  //handle typing preview
-  useEffect(() => {
-    const activeWord = activeWordRef.current;
-
-    if (activeWord) {
-      const newPreview = {
-        top: activeWord.offsetTop,
-        left: activeWord.offsetLeft,
-        width: activeWord.offsetWidth,
-        height: activeWord.offsetHeight,
-        typedWord: typedWords[currentWordIndex] || null,
-      };
-      console.log(typedWords);
-      setTypingPreview(newPreview);
-    }
-  }, [currentWordIndex, currentCharIndex]);
-
   const handleKeyPress = useCallback(
     (
       key: string,
       value: string,
       setInputValue: Dispatch<SetStateAction<string>>,
     ) => {
-      if (isEnded) return;
+      if (typingSessionState.isEnded) return;
 
-      // if (!isValidKey(key)) return;
-
-      if (!isTyping) {
-        setIsTyping(true);
-      }
-
-      if (!isStarted) {
-        setIsStarted(true);
+      if (!typingSessionState.isTyping) {
+        typingSessionState.setIsTyping(true);
       }
 
       if (key === " ") {
         onSpacePress();
         return;
       } else if (key === "Backspace" || key === "Delete") {
-        onBackspace(setInputValue);
+        moveToPreviousChar(setInputValue);
       } else {
-        //move to next character
-        setCurrentCharIndex(value.length);
-        //set typed word
+        moveCharToIndex(value.length);
       }
+
       updateTypedWords(value);
     },
     [words, currentWordIndex, currentCharIndex],
@@ -189,78 +130,18 @@ export function TypingArea({ text }: Props) {
     //  ngyye
   }
 
-  const scrollToCaret = useCallback(() => {
-    if (!typingAreaRef.current) return;
-
-    const typingArea = typingAreaRef.current;
-    const caretTop = caret.top;
-    const caretHeight = caret.height;
-
-    const visibleHeight = typingArea.clientHeight;
-
-    const caretMid = caretTop + caretHeight / 2;
-
-    const idealScroll = caretMid - visibleHeight / 2;
-
-    typingArea.scrollTo({
-      top: idealScroll,
-      behavior: "smooth",
-    });
-  }, [caret]);
-
-  useEffect(() => {
-    scrollToCaret();
-  }, [caret, scrollToCaret]);
-
-  function isTypeSessionEnd(index: number) {
-    return (
-      currentWordIndex >= words.length ||
-      (index === words[-1]?.length - 1 && currentWordIndex === words.length - 1)
-    );
-  }
-
   function onTypeSessionEnd() {
-    setIsEnded(true);
     //todo request a new words list
-
-    //reset fields
-    setCurrentWordIndex(0);
-    setCurrentCharIndex(0);
-    setTypedWords({});
-    setIsTyping(false);
-    setIsStarted(false);
   }
 
   function onSpacePress() {
+    if (!typedWords[currentWordIndex]) return;
+
     // check the correction of typed word,
 
     // calculate wpm,
 
-    setCurrentWordIndex((prev) => prev + 1);
-    setCurrentCharIndex(0);
-  }
-
-  function onBackspace(setInputValue: Dispatch<SetStateAction<string>>) {
-    if (currentCharIndex > 0) {
-      setCurrentCharIndex((prevState) => prevState - 1);
-    } else if (currentCharIndex === 0 && currentWordIndex > 0) {
-      moveToPreviousWord(setInputValue);
-    }
-  }
-
-  function moveToPreviousWord(setInputValue: Dispatch<SetStateAction<string>>) {
-    const prevWordIndex = currentWordIndex - 1;
-    const prevWord = typedWords[prevWordIndex] ?? "";
-    setCurrentCharIndex(prevWord.length);
-    setCurrentWordIndex(prevWordIndex);
-    setInputValue(prevWord);
-  }
-
-  function updateTypedWords(value: string) {
-    setTypedWords((prevState) => ({
-      ...prevState,
-      [currentWordIndex]: value,
-    }));
+    moveToNextWord();
   }
 
   function focusInput() {
@@ -292,14 +173,17 @@ export function TypingArea({ text }: Props) {
         ref={typingAreaRef}
         onClick={focusInput}
       >
-        <TypingWordPreview {...typingPreview} isTyping={isTyping} />
+        <TypingWordPreview
+          {...typingPreview}
+          isTyping={typingSessionState.isTyping}
+        />
         <Caret
           top={caret.top}
           left={caret.left}
           width={caret.width}
           height={caret.height}
           visible={true}
-          isTyping={isTyping}
+          isTyping={typingSessionState.isTyping}
         />
         {words.map((word, index) => {
           return (
@@ -349,8 +233,4 @@ export function TypingArea({ text }: Props) {
       </div>
     </div>
   );
-}
-
-function isValidKey(key: string): boolean {
-  return !(key.length !== 1 && key !== " ");
 }

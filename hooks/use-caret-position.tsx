@@ -1,16 +1,24 @@
 import { useState, useEffect, RefObject } from "react";
 
+const initialState = {
+  top: 7,
+  left: 0,
+  width: 2,
+  height: 7,
+};
+
+export interface Caret {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
 export function useCaretPosition(
-  activeCharRef: RefObject<HTMLSpanElement>,
-  activeSpaceRef: RefObject<HTMLSpanElement>,
+  activeCharRef: RefObject<HTMLSpanElement | null>,
+  activeSpaceRef: RefObject<HTMLSpanElement | null>,
   deps: any[] = [],
 ) {
-  const [caret, setCaret] = useState({
-    top: 7,
-    left: 0,
-    width: 2,
-    height: 7,
-  });
+  const [caret, setCaret] = useState<Caret>(initialState);
 
   useEffect(() => {
     let offsetTop = 0,
@@ -18,8 +26,8 @@ export function useCaretPosition(
       width = 0,
       height = 0;
 
-    const element = activeCharRef.current;
-    const space = activeSpaceRef.current;
+    const element = activeCharRef?.current;
+    const space = activeSpaceRef?.current;
 
     if (space) {
       offsetTop = space.offsetTop;
@@ -36,5 +44,9 @@ export function useCaretPosition(
     setCaret({ top: offsetTop, left: offsetLeft, width, height });
   }, deps);
 
-  return caret;
+  function resetCaretPosition() {
+    setCaret(initialState);
+  }
+
+  return { caret, resetCaretPosition };
 }
