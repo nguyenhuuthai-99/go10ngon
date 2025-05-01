@@ -1,13 +1,11 @@
+import { useTimer } from "@/hooks/useTimer";
+import { useEffect } from "react";
+
 type Props = {
-  time: number;
-  visible: boolean;
+  remainingTime: number;
 };
-export function Timer({ time, visible }: Props) {
+export function Timer({ remainingTime }: Props) {
   return (
-    <div
-      className={`${!visible && "hidden"} text-center text-2xl text-blue-800`}
-    >
-      {time}
-    </div>
+    <div className={`text-primary text-center text-2xl`}>{remainingTime}</div>
   );
 }

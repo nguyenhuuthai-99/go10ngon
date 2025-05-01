@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import useTypingSessionState, {
   TypingSessionState,
   TypingSessionStateHandler,
@@ -6,12 +12,24 @@ import useTypingSessionState, {
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
+import { useTimer } from "@/hooks/useTimer";
+import { TypingContext } from "@/components/typing-main";
 
-export function useTypingSession(words: string[]) {
+interface Props {
+  words: string[];
+  duration?: number;
+}
+export function useTypingSession({ words, duration }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
-  const typingSessionStateHandler = useTypingSessionState();
+  const typingSessionStateHandler = useContext(TypingContext);
+
+  //timer
+  const { remainingTime, resetTimer, startTimer } = useTimer({
+    duration: duration || 0,
+    onTimerEnd,
+  });
 
   const { onKeyDown, wpm, accuracy } = useKeyboardHandler({
     typingSessionStateHandler,
@@ -57,8 +75,6 @@ export function useTypingSession(words: string[]) {
     setCurrentCharIndex(index);
   }
 
-  function checkIsCharCorrect() {}
-
   function moveToPreviousWord(restoreInputValue: (value: string) => void) {
     const prevIndex: number = currentWordIndex - 1;
     const prevWord: string = typedWords[prevIndex] ?? "";
@@ -78,6 +94,8 @@ export function useTypingSession(words: string[]) {
   function updateTypedWords(value: string) {
     setTypedWords((prev) => ({ ...prev, [currentWordIndex]: value }));
   }
+
+  function onTimerEnd() {}
 
   function resetTypingSession() {
     setCurrentWordIndex(0);
@@ -100,6 +118,7 @@ export function useTypingSession(words: string[]) {
     typingSessionStateHandler,
     wpm,
     accuracy,
+    remainingTime,
     onKeyDown,
     moveCharToIndex,
     moveToPreviousChar,

@@ -20,12 +20,12 @@ export const TypingWordPreview = ({
         top: top + height - 6,
         left: left,
         minWidth: width,
-        height: height - 24,
+        height: height - 20,
         transition: "all 0.1s ease-in-out",
       }}
-      className={`${isTyping ? "visible" : "invisible"} absolute z-10 flex-col justify-center rounded-lg bg-gray-300 text-xl leading-7 tracking-[.1rem] text-nowrap shadow-md`}
+      className={`${isTyping ? "visible" : "invisible"} bg-card border-border dark:shadow-border absolute z-10 flex-col justify-center rounded-sm border-1 text-xl leading-7 tracking-[.1rem] text-nowrap shadow-lg shadow-gray-300 dark:shadow-neutral-700`}
     >
-      <span className={"ml-1"}>{typedWord}</span>
+      <span className={"text-foreground ml-2"}>{typedWord}</span>
     </div>
   );
 };

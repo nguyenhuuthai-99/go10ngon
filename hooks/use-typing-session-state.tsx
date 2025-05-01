@@ -14,13 +14,21 @@ export interface TypingSessionStateHandler {
   resetTypingSessionState: () => void;
 }
 
-// interface Props {
-//   words: string[];
-//   currentCharIndex: number;
-//   currentWordIndex: number;
-// }
+export const defaultTypingSessionState: TypingSessionStateHandler = {
+  typingSessionState: {
+    isTyping: false,
+    isEnded: false,
+    isAFK: false,
+  },
+  startTyping: () => {},
+  markAsEnd: () => {},
+  setAFK: () => {},
+  resetTypingSessionState: () => {},
+};
+
 export default function useTypingSessionState() {
   const [isTyping, setIsTyping] = useState(false);
+  const [isStart, setIsStart] = useState(false);
   const [isAFK, setIsAFK] = useState<boolean>(false);
   const [isEnded, setIsEnded] = useState(false);
 
@@ -35,6 +43,9 @@ export default function useTypingSessionState() {
 
   function startTyping() {
     setIsTyping(true);
+    if (isEnded) {
+      setIsEnded(false);
+    }
   }
 
   function markAsEnd() {

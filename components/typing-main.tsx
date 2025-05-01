@@ -1,16 +1,45 @@
 "use client";
-import { Timer } from "@/components/ui/timer";
-import { WordCounter } from "@/components/ui/word-counter";
-import { TypingPanel } from "@/components/ui/typing-panel";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { getTest } from "@/lib/infrastructure/api/services/app-service";
-import { TypingMode } from "@/model/typing-mode";
+import {
+  TimedModeDuration,
+  TypingMode,
+  WordCountQuantity,
+} from "@/model/typing-mode";
+import { useTimer } from "@/hooks/useTimer";
+import { TypingGame } from "@/components/typing-game";
+import useTypingSessionState, {
+  defaultTypingSessionState,
+  TypingSessionState,
+  TypingSessionStateHandler,
+} from "@/hooks/use-typing-session-state";
+import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 
+export const TypingContext = createContext<TypingSessionStateHandler>(
+  defaultTypingSessionState,
+);
 export function TypingMain() {
   const [currentMode, setCurrentMode] = useState<TypingMode>(TypingMode.timed);
   const [typingTest, setTypingTest] = useState<TypingTest | null>(null);
   const [timedTest, setTimedTest] = useState();
   const [wordsTest, setWordsTest] = useState();
+  const typingSessionStateHandler = useTypingSessionState();
+  const {} = useTypingSessionPerformance();
+
+  const { remainingTime, resetTimer, startTimer } = useTimer({
+    duration: 10,
+    onTimerEnd: () => {
+      console.log("endTimer");
+    },
+  });
+
+  useEffect(() => {
+    if (!typingSessionStateHandler.typingSessionState.isEnded) {
+      if (currentMode === TypingMode.timed) {
+        startTimer();
+      }
+    }
+  }, [typingSessionStateHandler.typingSessionState.isEnded]);
 
   useEffect(() => {
     const fetchedText = getTest();
@@ -19,7 +48,6 @@ export function TypingMain() {
         text: fetchedText,
       };
     });
-    setCurrentMode(TypingMode.words);
   }, []);
   function getTimedModeWords() {}
 
@@ -39,19 +67,19 @@ export function TypingMain() {
   function setTypingTestFromTimed() {}
 
   return (
-    <div className="flex items-center justify-center select-none">
-      {typingTest ? (
-        <div className="flex max-w-[85%] flex-col items-center gap-3">
-          <Timer time={60} visible={currentMode === TypingMode.timed} />
-          <WordCounter count={120} visible={currentMode === TypingMode.words} />
-          <TypingPanel
-            text={typingTest!.text}
-            reference={typingTest.reference}
+    <TypingContext.Provider value={typingSessionStateHandler}>
+      <div className="flex items-center justify-center select-none">
+        {typingTest ? (
+          <TypingGame
+            typingTest={typingTest}
+            currentMode={currentMode}
+            duration={10}
+            count={0}
           />
-        </div>
-      ) : (
-        <span>Loading...</span>
-      )}
-    </div>
+        ) : (
+          <span>Loading...</span>
+        )}
+      </div>
+    </TypingContext.Provider>
   );
 }

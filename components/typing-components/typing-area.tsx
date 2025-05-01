@@ -10,6 +10,13 @@ import { useTypingSession } from "@/hooks/use-typing-session";
 import { useCaretPosition } from "@/hooks/use-caret-position";
 import { useAutoScroll } from "@/hooks/use-scroll-to-caret";
 import { useTypingPreview } from "@/hooks/use-typing-preview";
+import { Timer } from "@/components/ui/timer";
+import {
+  TimedModeDuration,
+  TypingMode,
+  WordCountQuantity,
+} from "@/model/typing-mode";
+import { WordCounter } from "@/components/ui/word-counter";
 
 type Props = {
   text: string;
@@ -26,7 +33,7 @@ export function TypingArea({ text }: Props) {
     accuracy,
     onKeyDown,
     typingSessionStateHandler,
-  } = useTypingSession(words);
+  } = useTypingSession({ words });
 
   const typingAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -73,7 +80,7 @@ export function TypingArea({ text }: Props) {
       <InputField ref={inputRef} handleKeyDownCallBack={onKeyDown} />
       <span>{wpm}</span> <span>{accuracy}</span>
       <div
-        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-600"
+        className="text-inactive relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip"
         ref={typingAreaRef}
         onClick={focusInput}
       >

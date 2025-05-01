@@ -45,7 +45,7 @@ export function useKeyboardHandler({
     timestamp: number,
     restoreInputValue: (value: string) => void,
   ) {
-    if (isEnded) return;
+    // if (isEnded) return;
 
     if (!isTyping) {
       startTyping();
@@ -53,7 +53,6 @@ export function useKeyboardHandler({
 
     if (key === " ") {
       const missingKeys = checkMissingChar(previousWord);
-      console.log(missingKeys);
       onPerformanceCalculate({
         isCorrect: false,
         timestamp,
