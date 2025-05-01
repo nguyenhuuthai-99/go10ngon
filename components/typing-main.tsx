@@ -13,18 +13,29 @@ import useTypingSessionState, {
   TypingSessionState,
   TypingSessionStateHandler,
 } from "@/hooks/use-typing-session-state";
-import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
+import {
+  TypingSessionPerformance,
+  useTypingSessionPerformance,
+} from "@/hooks/use-typing-session-performance";
 
-export const TypingContext = createContext<TypingSessionStateHandler>(
+export const TypingContext = createContext<{
+  typingState: TypingSessionStateHandler;
+  typingPerformance: TypingSessionPerformance;
+} | null>(null);
+export const TypingStateContext = createContext<TypingSessionStateHandler>(
   defaultTypingSessionState,
 );
+
+export const TypingPerformanceContext = createContext({});
+
 export function TypingMain() {
   const [currentMode, setCurrentMode] = useState<TypingMode>(TypingMode.timed);
   const [typingTest, setTypingTest] = useState<TypingTest | null>(null);
   const [timedTest, setTimedTest] = useState();
   const [wordsTest, setWordsTest] = useState();
   const typingSessionStateHandler = useTypingSessionState();
-  const {} = useTypingSessionPerformance();
+  const typingSessionPerformance: TypingSessionPerformance =
+    useTypingSessionPerformance();
 
   const { remainingTime, resetTimer, startTimer } = useTimer({
     duration: 10,
@@ -36,6 +47,7 @@ export function TypingMain() {
   useEffect(() => {
     if (!typingSessionStateHandler.typingSessionState.isEnded) {
       if (currentMode === TypingMode.timed) {
+        console.log("started");
         startTimer();
       }
     }
@@ -67,13 +79,18 @@ export function TypingMain() {
   function setTypingTestFromTimed() {}
 
   return (
-    <TypingContext.Provider value={typingSessionStateHandler}>
+    <TypingContext.Provider
+      value={{
+        typingState: typingSessionStateHandler,
+        typingPerformance: typingSessionPerformance,
+      }}
+    >
       <div className="flex items-center justify-center select-none">
         {typingTest ? (
           <TypingGame
             typingTest={typingTest}
             currentMode={currentMode}
-            duration={10}
+            duration={remainingTime}
             count={0}
           />
         ) : (

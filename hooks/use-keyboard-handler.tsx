@@ -1,7 +1,8 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import { TypingSessionStateHandler } from "@/hooks/use-typing-session-state";
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
+import { TypingContext } from "@/components/typing-main";
 
 interface Props {
   typingSessionStateHandler: TypingSessionStateHandler;
@@ -37,7 +38,7 @@ export function useKeyboardHandler({
     });
 
   const { wpm, accuracy, onPerformanceCalculate } =
-    useTypingSessionPerformance();
+    useContext(TypingContext)?.typingPerformance!;
 
   function onKeyDown(
     key: string,

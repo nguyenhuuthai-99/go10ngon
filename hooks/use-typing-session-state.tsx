@@ -17,7 +17,7 @@ export interface TypingSessionStateHandler {
 export const defaultTypingSessionState: TypingSessionStateHandler = {
   typingSessionState: {
     isTyping: false,
-    isEnded: false,
+    isEnded: true,
     isAFK: false,
   },
   startTyping: () => {},
@@ -30,7 +30,7 @@ export default function useTypingSessionState() {
   const [isTyping, setIsTyping] = useState(false);
   const [isStart, setIsStart] = useState(false);
   const [isAFK, setIsAFK] = useState<boolean>(false);
-  const [isEnded, setIsEnded] = useState(false);
+  const [isEnded, setIsEnded] = useState(true);
 
   function resetTypingSessionState() {
     setIsTyping(false);

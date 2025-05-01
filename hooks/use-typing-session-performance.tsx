@@ -1,5 +1,16 @@
 import { useReducer, useMemo, useEffect, useRef, useState } from "react";
 
+export interface TypingSessionPerformance {
+  wpm: number;
+  accuracy: number;
+  adjustedWpm: number;
+  isRunning: boolean;
+  history: SessionRecord[];
+  onPerformanceCalculate: (input: KeyPressInput) => void;
+  reset: () => void;
+  clearHistory: () => void;
+}
+
 interface KeyPressInput {
   isCorrect: boolean;
   timestamp: number;
@@ -145,8 +156,8 @@ export function useTypingSessionPerformance() {
   }, []);
 
   return {
-    wpm: wpm.toFixed(),
-    accuracy: accuracy.toFixed(),
+    wpm: Math.round(wpm),
+    accuracy: Math.round(accuracy),
     adjustedWpm,
     isRunning: state.isRunning,
     history,

@@ -13,7 +13,7 @@ import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
 import { useTimer } from "@/hooks/useTimer";
-import { TypingContext } from "@/components/typing-main";
+import { TypingContext, TypingStateContext } from "@/components/typing-main";
 
 interface Props {
   words: string[];
@@ -23,7 +23,7 @@ export function useTypingSession({ words, duration }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
-  const typingSessionStateHandler = useContext(TypingContext);
+  const typingSessionStateHandler = useContext(TypingContext)?.typingState!;
 
   //timer
   const { remainingTime, resetTimer, startTimer } = useTimer({
@@ -61,10 +61,10 @@ export function useTypingSession({ words, duration }: Props) {
   }, [currentCharIndex, currentWordIndex]);
 
   //end game
-  useEffect(() => {
-    if (typingSessionStateHandler.typingSessionState.isEnded)
-      resetTypingSession();
-  }, [typingSessionStateHandler.typingSessionState.isEnded]);
+  // useEffect(() => {
+  //   if (typingSessionStateHandler.typingSessionState.isEnded)
+  //     resetTypingSession();
+  // }, [typingSessionStateHandler.typingSessionState.isEnded]);
 
   function moveToNextWord() {
     setCurrentWordIndex((prevIndex) => prevIndex + 1);
