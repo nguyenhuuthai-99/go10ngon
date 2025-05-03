@@ -92,7 +92,7 @@ export function TypingArea({ text }: Props) {
       >
         <TypingWordPreview
           {...typingPreview}
-          isTyping={typingSessionStateHandler.typingSessionState.isTyping}
+          isTyping={typingSessionStateHandler.typingSessionState.isStarted}
         />
         <Caret
           top={caret.top}
@@ -100,7 +100,7 @@ export function TypingArea({ text }: Props) {
           width={caret.width}
           height={caret.height}
           visible={true}
-          isTyping={typingSessionStateHandler.typingSessionState.isTyping}
+          isTyping={typingSessionStateHandler.typingSessionState.isStarted}
         />
         {words.map((word, index) => {
           return (

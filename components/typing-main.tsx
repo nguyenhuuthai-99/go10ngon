@@ -17,6 +17,7 @@ import {
   TypingSessionPerformance,
   useTypingSessionPerformance,
 } from "@/hooks/use-typing-session-performance";
+import { TypingResult } from "@/components/typing-components/typing-result";
 
 export const TypingContext = createContext<{
   typingState: TypingSessionStateHandler;
@@ -40,18 +41,17 @@ export function TypingMain() {
   const { remainingTime, resetTimer, startTimer } = useTimer({
     duration: 10,
     onTimerEnd: () => {
-      console.log("endTimer");
+      typingSessionStateHandler.markAsEnd();
     },
   });
 
   useEffect(() => {
-    if (!typingSessionStateHandler.typingSessionState.isEnded) {
+    if (typingSessionStateHandler.typingSessionState.isStarted) {
       if (currentMode === TypingMode.timed) {
-        console.log("started");
         startTimer();
       }
     }
-  }, [typingSessionStateHandler.typingSessionState.isEnded]);
+  }, [typingSessionStateHandler.typingSessionState.isStarted]);
 
   useEffect(() => {
     const fetchedText = getTest();
@@ -87,12 +87,21 @@ export function TypingMain() {
     >
       <div className="flex items-center justify-center select-none">
         {typingTest ? (
-          <TypingGame
-            typingTest={typingTest}
-            currentMode={currentMode}
-            duration={remainingTime}
-            count={0}
-          />
+          !typingSessionStateHandler.typingSessionState.isEnded ? (
+            <TypingGame
+              typingTest={typingTest}
+              currentMode={currentMode}
+              duration={remainingTime}
+              count={0}
+            />
+          ) : (
+            <TypingResult
+              wpm={typingSessionPerformance.wpm}
+              accuracy={typingSessionPerformance.accuracy}
+              typedWords={["nguyễn", "huu", "thaiii"]}
+              words={["nguyễn", "hữu", "thái"]}
+            />
+          )
         ) : (
           <span>Loading...</span>
         )}

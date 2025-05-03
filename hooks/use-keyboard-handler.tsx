@@ -18,8 +18,8 @@ interface Props {
 }
 export function useKeyboardHandler({
   typingSessionStateHandler: {
-    typingSessionState: { isTyping, isEnded },
-    startTyping,
+    typingSessionState: { isStarted, isEnded },
+    markAsStart,
   },
   typingSession: {
     currentWordIndex,
@@ -48,8 +48,8 @@ export function useKeyboardHandler({
   ) {
     // if (isEnded) return;
 
-    if (!isTyping) {
-      startTyping();
+    if (!isStarted) {
+      markAsStart();
     }
 
     if (key === " ") {

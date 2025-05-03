@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
 export interface TypingSessionState {
-  isTyping: boolean;
+  isStarted: boolean;
   isEnded: boolean;
   isAFK: boolean;
 }
 
 export interface TypingSessionStateHandler {
   typingSessionState: TypingSessionState;
-  startTyping: () => void;
+  markAsStart: () => void;
   markAsEnd: () => void;
   setAFK: () => void;
   resetTypingSessionState: () => void;
@@ -16,33 +16,32 @@ export interface TypingSessionStateHandler {
 
 export const defaultTypingSessionState: TypingSessionStateHandler = {
   typingSessionState: {
-    isTyping: false,
-    isEnded: true,
+    isStarted: false,
+    isEnded: false,
     isAFK: false,
   },
-  startTyping: () => {},
+  markAsStart: () => {},
   markAsEnd: () => {},
   setAFK: () => {},
   resetTypingSessionState: () => {},
 };
 
 export default function useTypingSessionState() {
-  const [isTyping, setIsTyping] = useState(false);
-  const [isStart, setIsStart] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
   const [isAFK, setIsAFK] = useState<boolean>(false);
-  const [isEnded, setIsEnded] = useState(true);
+  const [isEnded, setIsEnded] = useState(false);
 
   function resetTypingSessionState() {
-    setIsTyping(false);
-    setIsEnded(true);
+    setIsStarted(false);
+    setIsEnded(false);
   }
 
   function setAFK() {
     setIsAFK(true);
   }
 
-  function startTyping() {
-    setIsTyping(true);
+  function markAsStart() {
+    setIsStarted(true);
     if (isEnded) {
       setIsEnded(false);
     }
@@ -54,12 +53,13 @@ export default function useTypingSessionState() {
 
   return {
     typingSessionState: {
-      isTyping,
+      isStarted,
       isEnded,
       isAFK,
     },
     markAsEnd,
-    startTyping,
+    markAsStart,
+    startTyping: markAsStart,
     setAFK,
     resetTypingSessionState,
   };
