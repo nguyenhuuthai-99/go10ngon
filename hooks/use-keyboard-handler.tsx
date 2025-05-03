@@ -1,11 +1,11 @@
 import { useContext, useRef } from "react";
-import { TypingSessionStateHandler } from "@/hooks/use-typing-session-state";
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
-import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 import { TypingContext } from "@/components/typing-main";
+import { markAsStart } from "@/slice/typing-session-slice";
+import { useAppSelector } from "@/hooks/redux-hook";
+import { useDispatch } from "react-redux";
 
 interface Props {
-  typingSessionStateHandler: TypingSessionStateHandler;
   typingSession: {
     currentWordIndex: number;
     moveToNextWord: () => void;
@@ -17,10 +17,6 @@ interface Props {
   targetValue: string;
 }
 export function useKeyboardHandler({
-  typingSessionStateHandler: {
-    typingSessionState: { isStarted, isEnded },
-    markAsStart,
-  },
   typingSession: {
     currentWordIndex,
     moveToNextWord,
@@ -40,6 +36,11 @@ export function useKeyboardHandler({
   const { wpm, accuracy, onPerformanceCalculate } =
     useContext(TypingContext)?.typingPerformance!;
 
+  const typingSessionState = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+  const typingSessionDispatch = useDispatch();
+
   function onKeyDown(
     key: string,
     value: string,
@@ -48,8 +49,8 @@ export function useKeyboardHandler({
   ) {
     // if (isEnded) return;
 
-    if (!isStarted) {
-      markAsStart();
+    if (!typingSessionState.isStarted) {
+      typingSessionDispatch(markAsStart());
     }
 
     if (key === " ") {

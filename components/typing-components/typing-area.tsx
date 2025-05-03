@@ -32,7 +32,7 @@ export function TypingArea({ text }: Props) {
     wpm,
     accuracy,
     onKeyDown,
-    typingSessionStateHandler,
+    typingSessionState,
   } = useTypingSession({ words });
 
   const typingAreaRef = useRef<HTMLDivElement>(null);
@@ -78,9 +78,7 @@ export function TypingArea({ text }: Props) {
   return (
     <div>
       <InputField
-        isTypingSessionEnd={
-          typingSessionStateHandler.typingSessionState.isEnded
-        }
+        isTypingSessionEnd={typingSessionState.isEnded}
         ref={inputRef}
         handleKeyDownCallBack={onKeyDown}
       />
@@ -92,7 +90,7 @@ export function TypingArea({ text }: Props) {
       >
         <TypingWordPreview
           {...typingPreview}
-          isTyping={typingSessionStateHandler.typingSessionState.isStarted}
+          isTyping={typingSessionState.isStarted}
         />
         <Caret
           top={caret.top}
@@ -100,7 +98,7 @@ export function TypingArea({ text }: Props) {
           width={caret.width}
           height={caret.height}
           visible={true}
-          isTyping={typingSessionStateHandler.typingSessionState.isStarted}
+          isTyping={typingSessionState.isStarted}
         />
         {words.map((word, index) => {
           return (

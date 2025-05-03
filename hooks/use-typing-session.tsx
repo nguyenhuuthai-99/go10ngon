@@ -14,6 +14,9 @@ import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performa
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
 import { useTimer } from "@/hooks/useTimer";
 import { TypingContext, TypingStateContext } from "@/components/typing-main";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { resetTypingSessionState } from "@/slice/typing-session-slice";
+import { RootState } from "@/app/store";
 
 interface Props {
   words: string[];
@@ -23,8 +26,12 @@ export function useTypingSession({ words, duration }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
-  const typingSessionStateHandler = useContext(TypingContext)?.typingState!;
+  // const typingSessionStateHandler = useContext(TypingContext)?.typingState!;
 
+  const typingSessionState = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+  const typingSessionDispatch = useAppDispatch();
   //timer
   const { remainingTime, resetTimer, startTimer } = useTimer({
     duration: duration || 0,
@@ -32,7 +39,8 @@ export function useTypingSession({ words, duration }: Props) {
   });
 
   const { onKeyDown, wpm, accuracy } = useKeyboardHandler({
-    typingSessionStateHandler,
+    typingSessionState,
+    typingSessionDispatch,
     typingSession: {
       currentWordIndex,
       moveToNextWord,
@@ -56,7 +64,8 @@ export function useTypingSession({ words, duration }: Props) {
   //trigger end game
   useEffect(() => {
     if (isSessionEnd()) {
-      typingSessionStateHandler.resetTypingSessionState();
+      typingSessionDispatch(resetTypingSessionState());
+      // typingSessionStateHandler.resetTypingSessionState();
     }
   }, [currentCharIndex, currentWordIndex]);
 
@@ -115,7 +124,7 @@ export function useTypingSession({ words, duration }: Props) {
     currentWordIndex,
     currentCharIndex,
     typedWords,
-    typingSessionStateHandler,
+    typingSessionState,
     wpm,
     accuracy,
     remainingTime,

@@ -8,25 +8,17 @@ import {
 } from "@/model/typing-mode";
 import { useTimer } from "@/hooks/useTimer";
 import { TypingGame } from "@/components/typing-game";
-import useTypingSessionState, {
-  defaultTypingSessionState,
-  TypingSessionState,
-  TypingSessionStateHandler,
-} from "@/hooks/use-typing-session-state";
 import {
   TypingSessionPerformance,
   useTypingSessionPerformance,
 } from "@/hooks/use-typing-session-performance";
 import { TypingResult } from "@/components/typing-components/typing-result";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { markAsEnd } from "@/slice/typing-session-slice";
 
 export const TypingContext = createContext<{
-  typingState: TypingSessionStateHandler;
   typingPerformance: TypingSessionPerformance;
 } | null>(null);
-export const TypingStateContext = createContext<TypingSessionStateHandler>(
-  defaultTypingSessionState,
-);
-
 export const TypingPerformanceContext = createContext({});
 
 export function TypingMain() {
@@ -34,24 +26,28 @@ export function TypingMain() {
   const [typingTest, setTypingTest] = useState<TypingTest | null>(null);
   const [timedTest, setTimedTest] = useState();
   const [wordsTest, setWordsTest] = useState();
-  const typingSessionStateHandler = useTypingSessionState();
   const typingSessionPerformance: TypingSessionPerformance =
     useTypingSessionPerformance();
+
+  const typingSessionState = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+  const typingSessionDispatch = useAppDispatch();
 
   const { remainingTime, resetTimer, startTimer } = useTimer({
     duration: 10,
     onTimerEnd: () => {
-      typingSessionStateHandler.markAsEnd();
+      typingSessionDispatch(markAsEnd());
     },
   });
 
   useEffect(() => {
-    if (typingSessionStateHandler.typingSessionState.isStarted) {
+    if (typingSessionState.isStarted) {
       if (currentMode === TypingMode.timed) {
         startTimer();
       }
     }
-  }, [typingSessionStateHandler.typingSessionState.isStarted]);
+  }, [typingSessionState.isStarted]);
 
   useEffect(() => {
     const fetchedText = getTest();
@@ -81,13 +77,12 @@ export function TypingMain() {
   return (
     <TypingContext.Provider
       value={{
-        typingState: typingSessionStateHandler,
         typingPerformance: typingSessionPerformance,
       }}
     >
       <div className="flex items-center justify-center select-none">
         {typingTest ? (
-          !typingSessionStateHandler.typingSessionState.isEnded ? (
+          !typingSessionState.isEnded ? (
             <TypingGame
               typingTest={typingTest}
               currentMode={currentMode}
