@@ -21,7 +21,6 @@ export const typingSessionStatsSlice = createSlice({
   initialState: initialTypingState,
   reducers: {
     keyPress: (state, action) => {
-      console.log("keyPress", action.payload);
       const { isCorrect, timestamp, numberOfKeys } = action.payload;
       state.totalKeystrokes += numberOfKeys;
       state.correctKeystrokes += isCorrect ? 1 : 0;

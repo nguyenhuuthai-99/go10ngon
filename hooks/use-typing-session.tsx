@@ -52,12 +52,6 @@ export function useTypingSession({ words, duration }: Props) {
     }
   }, [currentCharIndex, currentWordIndex]);
 
-  //end game
-  // useEffect(() => {
-  //   if (typingSessionStateHandler.typingSessionState.isEnded)
-  //     resetTypingSession();
-  // }, [typingSessionStateHandler.typingSessionState.isEnded]);
-
   function moveToNextWord() {
     setCurrentWordIndex((prevIndex) => prevIndex + 1);
     setCurrentCharIndex(0);
