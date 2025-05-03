@@ -17,6 +17,7 @@ import {
   WordCountQuantity,
 } from "@/model/typing-mode";
 import { WordCounter } from "@/components/ui/word-counter";
+import { useAppSelector } from "@/hooks/redux-hook";
 
 type Props = {
   text: string;
@@ -29,8 +30,6 @@ export function TypingArea({ text }: Props) {
     currentWordIndex,
     currentCharIndex,
     typedWords,
-    wpm,
-    accuracy,
     onKeyDown,
     typingSessionState,
   } = useTypingSession({ words });
@@ -40,6 +39,10 @@ export function TypingArea({ text }: Props) {
   const activeCharRef = useRef<HTMLSpanElement>(null);
   const activeSpaceRef = useRef<HTMLSpanElement>(null);
   const activeWordRef = useRef<HTMLDivElement>(null);
+
+  const { accuracy, wpm } = useAppSelector(
+    (state) => state.typingSessionPerformance,
+  );
 
   const { caret } = useCaretPosition(activeCharRef, activeSpaceRef, [
     currentCharIndex,

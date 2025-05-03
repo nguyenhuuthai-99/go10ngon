@@ -8,26 +8,19 @@ import {
 } from "@/model/typing-mode";
 import { useTimer } from "@/hooks/useTimer";
 import { TypingGame } from "@/components/typing-game";
-import {
-  TypingSessionPerformance,
-  useTypingSessionPerformance,
-} from "@/hooks/use-typing-session-performance";
 import { TypingResult } from "@/components/typing-components/typing-result";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { markAsEnd } from "@/slice/typing-session-slice";
-
-export const TypingContext = createContext<{
-  typingPerformance: TypingSessionPerformance;
-} | null>(null);
-export const TypingPerformanceContext = createContext({});
+import { TypingSessionPerformance } from "@/slice/typing-session-performance-slice";
 
 export function TypingMain() {
   const [currentMode, setCurrentMode] = useState<TypingMode>(TypingMode.timed);
   const [typingTest, setTypingTest] = useState<TypingTest | null>(null);
   const [timedTest, setTimedTest] = useState();
   const [wordsTest, setWordsTest] = useState();
-  const typingSessionPerformance: TypingSessionPerformance =
-    useTypingSessionPerformance();
+  const typingSessionPerformance: TypingSessionPerformance = useAppSelector(
+    (state) => state.typingSessionPerformance,
+  );
 
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
@@ -75,32 +68,26 @@ export function TypingMain() {
   function setTypingTestFromTimed() {}
 
   return (
-    <TypingContext.Provider
-      value={{
-        typingPerformance: typingSessionPerformance,
-      }}
-    >
-      <div className="flex items-center justify-center select-none">
-        {typingTest ? (
-          !typingSessionState.isEnded ? (
-            <TypingGame
-              typingTest={typingTest}
-              currentMode={currentMode}
-              duration={remainingTime}
-              count={0}
-            />
-          ) : (
-            <TypingResult
-              wpm={typingSessionPerformance.wpm}
-              accuracy={typingSessionPerformance.accuracy}
-              typedWords={["nguyễn", "huu", "thaiii"]}
-              words={["nguyễn", "hữu", "thái"]}
-            />
-          )
+    <div className="flex items-center justify-center select-none">
+      {typingTest ? (
+        !typingSessionState.isEnded ? (
+          <TypingGame
+            typingTest={typingTest}
+            currentMode={currentMode}
+            duration={remainingTime}
+            count={0}
+          />
         ) : (
-          <span>Loading...</span>
-        )}
-      </div>
-    </TypingContext.Provider>
+          <TypingResult
+            wpm={typingSessionPerformance.wpm}
+            accuracy={typingSessionPerformance.accuracy}
+            typedWords={["nguyễn", "huu", "thaiii"]}
+            words={["nguyễn", "hữu", "thái"]}
+          />
+        )
+      ) : (
+        <span>Loading...</span>
+      )}
+    </div>
   );
 }

@@ -1,9 +1,8 @@
-import { useContext, useRef } from "react";
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
-import { TypingContext } from "@/components/typing-main";
 import { markAsStart } from "@/slice/typing-session-slice";
-import { useAppSelector } from "@/hooks/redux-hook";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useDispatch } from "react-redux";
+import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 
 interface Props {
   typingSession: {
@@ -33,8 +32,7 @@ export function useKeyboardHandler({
       currentWordIndex,
     });
 
-  const { wpm, accuracy, onPerformanceCalculate } =
-    useContext(TypingContext)?.typingPerformance!;
+  const { onPerformanceCalculate } = useTypingSessionPerformance();
 
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
@@ -57,10 +55,17 @@ export function useKeyboardHandler({
       const missingKeys = checkMissingChar(previousWord);
       onPerformanceCalculate({
         isCorrect: false,
+        key: key,
         timestamp,
         numberOfKeys: missingKeys,
       });
-      onPerformanceCalculate({ isCorrect: true, timestamp, numberOfKeys: 1 });
+
+      onPerformanceCalculate({
+        isCorrect: true,
+        key: key,
+        timestamp,
+        numberOfKeys: 1,
+      });
       onSpacePress();
       return;
     }
@@ -72,7 +77,12 @@ export function useKeyboardHandler({
       moveCharToIndex(value.length);
 
       let isCorrect: boolean = isCorrectAndWithin(value, previousWord);
-      onPerformanceCalculate({ isCorrect, timestamp, numberOfKeys: 1 });
+      onPerformanceCalculate({
+        isCorrect,
+        key: key,
+        timestamp,
+        numberOfKeys: 1,
+      });
     }
 
     updateTypedWords(value);
@@ -84,7 +94,5 @@ export function useKeyboardHandler({
 
   return {
     onKeyDown,
-    wpm,
-    accuracy,
   };
 }

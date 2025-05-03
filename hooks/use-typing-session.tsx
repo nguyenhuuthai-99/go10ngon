@@ -1,22 +1,8 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import useTypingSessionState, {
-  TypingSessionState,
-  TypingSessionStateHandler,
-} from "@/hooks/use-typing-session-state";
+import { useEffect, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
-import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
-import usePerformanceCalculate from "@/hooks/use-char-comparision";
 import { useTimer } from "@/hooks/useTimer";
-import { TypingContext, TypingStateContext } from "@/components/typing-main";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { resetTypingSessionState } from "@/slice/typing-session-slice";
-import { RootState } from "@/app/store";
 
 interface Props {
   words: string[];
@@ -26,7 +12,6 @@ export function useTypingSession({ words, duration }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
-  // const typingSessionStateHandler = useContext(TypingContext)?.typingState!;
 
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
@@ -38,9 +23,7 @@ export function useTypingSession({ words, duration }: Props) {
     onTimerEnd,
   });
 
-  const { onKeyDown, wpm, accuracy } = useKeyboardHandler({
-    typingSessionState,
-    typingSessionDispatch,
+  const { onKeyDown } = useKeyboardHandler({
     typingSession: {
       currentWordIndex,
       moveToNextWord,
@@ -125,8 +108,6 @@ export function useTypingSession({ words, duration }: Props) {
     currentCharIndex,
     typedWords,
     typingSessionState,
-    wpm,
-    accuracy,
     remainingTime,
     onKeyDown,
     moveCharToIndex,
