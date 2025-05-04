@@ -5,13 +5,13 @@ export enum TypingMode {
   relax,
 }
 
-export const TimedModeLevel = {
+export const TimedModeDuration = {
   short: 30,
   medium: 60,
   long: 90,
 };
 
-export const wordsLevel = {
+export const WordCountQuantity = {
   small: 50,
   medium: 80,
   large: 110,

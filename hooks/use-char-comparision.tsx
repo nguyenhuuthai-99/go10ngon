@@ -70,6 +70,7 @@ export default function usePerformanceCalculate({
     if (validParent.current.has(previousIndex)) {
       parentList.current[previousIndex]!.depth =
         validParent.current.get(previousIndex)! + 1;
+      parentList.current[previousIndex]!.value = "";
     }
   }
 

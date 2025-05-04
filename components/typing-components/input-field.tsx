@@ -10,6 +10,7 @@ import {
 } from "react";
 
 type Props = {
+  isTypingSessionEnd: boolean;
   ref: RefObject<HTMLInputElement | null>;
   handleKeyDownCallBack: (
     key: string,
@@ -18,7 +19,11 @@ type Props = {
     restoreInputValue: (value: string) => void,
   ) => void;
 };
-export default function InputField({ ref, handleKeyDownCallBack }: Props) {
+export default function InputField({
+  isTypingSessionEnd,
+  ref,
+  handleKeyDownCallBack,
+}: Props) {
   const [inputValue, setInputValue] = useState("");
 
   const currentKey = useRef("");
@@ -82,6 +87,7 @@ export default function InputField({ ref, handleKeyDownCallBack }: Props) {
   return (
     <div>
       <input
+        // readOnly={isTypingSessionEnd}
         ref={ref}
         type="text"
         value={inputValue}

@@ -10,6 +10,14 @@ import { useTypingSession } from "@/hooks/use-typing-session";
 import { useCaretPosition } from "@/hooks/use-caret-position";
 import { useAutoScroll } from "@/hooks/use-scroll-to-caret";
 import { useTypingPreview } from "@/hooks/use-typing-preview";
+import { Timer } from "@/components/ui/timer";
+import {
+  TimedModeDuration,
+  TypingMode,
+  WordCountQuantity,
+} from "@/model/typing-mode";
+import { WordCounter } from "@/components/ui/word-counter";
+import { useAppSelector } from "@/hooks/redux-hook";
 
 type Props = {
   text: string;
@@ -22,11 +30,9 @@ export function TypingArea({ text }: Props) {
     currentWordIndex,
     currentCharIndex,
     typedWords,
-    wpm,
-    accuracy,
     onKeyDown,
-    typingSessionStateHandler,
-  } = useTypingSession(words);
+    typingSessionState,
+  } = useTypingSession({ words });
 
   const typingAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -70,16 +76,19 @@ export function TypingArea({ text }: Props) {
 
   return (
     <div>
-      <InputField ref={inputRef} handleKeyDownCallBack={onKeyDown} />
-      <span>{wpm}</span> <span>{accuracy}</span>
+      <InputField
+        isTypingSessionEnd={typingSessionState.isEnded}
+        ref={inputRef}
+        handleKeyDownCallBack={onKeyDown}
+      />
       <div
-        className="relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip text-gray-600"
+        className="text-inactive relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip"
         ref={typingAreaRef}
         onClick={focusInput}
       >
         <TypingWordPreview
           {...typingPreview}
-          isTyping={typingSessionStateHandler.typingSessionState.isTyping}
+          isTyping={typingSessionState.isStarted}
         />
         <Caret
           top={caret.top}
@@ -87,7 +96,7 @@ export function TypingArea({ text }: Props) {
           width={caret.width}
           height={caret.height}
           visible={true}
-          isTyping={typingSessionStateHandler.typingSessionState.isTyping}
+          isTyping={typingSessionState.isStarted}
         />
         {words.map((word, index) => {
           return (

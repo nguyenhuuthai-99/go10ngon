@@ -3,5 +3,5 @@ type Props = {
 };
 
 export function ParentCharSpan({ char }: Props) {
-  return <span className={`text-primary absolute`}>{char}</span>;
+  return <span className={`text-foreground absolute`}>{char}</span>;
 }

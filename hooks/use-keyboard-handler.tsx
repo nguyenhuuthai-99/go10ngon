@@ -1,10 +1,10 @@
-import { useRef } from "react";
-import { TypingSessionStateHandler } from "@/hooks/use-typing-session-state";
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
+import { markAsStart } from "@/slice/typing-session-slice";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { useDispatch } from "react-redux";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 
 interface Props {
-  typingSessionStateHandler: TypingSessionStateHandler;
   typingSession: {
     currentWordIndex: number;
     moveToNextWord: () => void;
@@ -16,10 +16,6 @@ interface Props {
   targetValue: string;
 }
 export function useKeyboardHandler({
-  typingSessionStateHandler: {
-    typingSessionState: { isTyping, isEnded },
-    startTyping,
-  },
   typingSession: {
     currentWordIndex,
     moveToNextWord,
@@ -36,8 +32,12 @@ export function useKeyboardHandler({
       currentWordIndex,
     });
 
-  const { wpm, accuracy, onPerformanceCalculate } =
-    useTypingSessionPerformance();
+  const { onPerformanceCalculate } = useTypingSessionPerformance();
+
+  const typingSessionState = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+  const typingSessionDispatch = useDispatch();
 
   function onKeyDown(
     key: string,
@@ -45,21 +45,21 @@ export function useKeyboardHandler({
     timestamp: number,
     restoreInputValue: (value: string) => void,
   ) {
-    if (isEnded) return;
+    // if (isEnded) return;
 
-    if (!isTyping) {
-      startTyping();
+    if (!typingSessionState.isStarted) {
+      typingSessionDispatch(markAsStart());
     }
 
     if (key === " ") {
       const missingKeys = checkMissingChar(previousWord);
-      console.log(missingKeys);
+
       onPerformanceCalculate({
-        isCorrect: false,
+        isCorrect: true,
+        key: key,
         timestamp,
-        numberOfKeys: missingKeys,
+        numberOfKeys: 1 + missingKeys,
       });
-      onPerformanceCalculate({ isCorrect: true, timestamp, numberOfKeys: 1 });
       onSpacePress();
       return;
     }
@@ -71,7 +71,12 @@ export function useKeyboardHandler({
       moveCharToIndex(value.length);
 
       let isCorrect: boolean = isCorrectAndWithin(value, previousWord);
-      onPerformanceCalculate({ isCorrect, timestamp, numberOfKeys: 1 });
+      onPerformanceCalculate({
+        isCorrect,
+        key: key,
+        timestamp,
+        numberOfKeys: 1,
+      });
     }
 
     updateTypedWords(value);
@@ -83,7 +88,5 @@ export function useKeyboardHandler({
 
   return {
     onKeyDown,
-    wpm,
-    accuracy,
   };
 }

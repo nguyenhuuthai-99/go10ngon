@@ -1,5 +1,6 @@
 import { memo, ReactNode, Ref } from "react";
 import { TypingWordPreview } from "@/components/typing-components/typing-word-preview";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 
 type Props = {
   isActive: boolean;
