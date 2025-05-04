@@ -53,14 +53,6 @@ export function useKeyboardHandler({
 
     if (key === " ") {
       const missingKeys = checkMissingChar(previousWord);
-      // onPerformanceCalculate({
-      //   isCorrect: false,
-      //   key: key,
-      //   timestamp,
-      //   numberOfKeys: missingKeys,
-      // });
-
-      console.log(missingKeys);
 
       onPerformanceCalculate({
         isCorrect: true,

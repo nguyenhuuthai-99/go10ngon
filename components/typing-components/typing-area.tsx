@@ -40,10 +40,6 @@ export function TypingArea({ text }: Props) {
   const activeSpaceRef = useRef<HTMLSpanElement>(null);
   const activeWordRef = useRef<HTMLDivElement>(null);
 
-  const { accuracy, wpm } = useAppSelector(
-    (state) => state.typingSessionPerformance,
-  );
-
   const { caret } = useCaretPosition(activeCharRef, activeSpaceRef, [
     currentCharIndex,
     currentWordIndex,
@@ -85,7 +81,6 @@ export function TypingArea({ text }: Props) {
         ref={inputRef}
         handleKeyDownCallBack={onKeyDown}
       />
-      <span>{wpm}</span> <span>{accuracy}</span>
       <div
         className="text-inactive relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip"
         ref={typingAreaRef}

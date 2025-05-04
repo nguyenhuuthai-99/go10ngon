@@ -31,7 +31,7 @@ const typingSessionPerformanceSlice = createSlice({
     updatePerformance: (state, action) => {
       state.wpm = Math.round(action.payload.wpm);
       state.accuracy = Math.round(action.payload.accuracy);
-      state.adjustedWpm = state.wpm * (state.accuracy / 100);
+      state.adjustedWpm = Math.round(action.payload.adjustedWpm);
     },
     addToHistory(state, action: PayloadAction<SessionRecord>) {
       state.history.unshift(action.payload);

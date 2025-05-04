@@ -38,7 +38,6 @@ export default function RootLayout({
     >
       <head>
         <meta charSet="utf-8" />
-        <script src="https://unpkg.com/react-scan/dist/auto.global.js" />
       </head>
       <body>
         <ThemeProvider

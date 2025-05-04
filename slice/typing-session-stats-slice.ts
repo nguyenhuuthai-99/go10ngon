@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface TypingStats {
   totalKeystrokes: number;
+  totalKeyPressed: number;
   correctKeystrokes: number;
   startTime: number | null;
   lastTimestamp: number | null;
@@ -10,6 +11,7 @@ interface TypingStats {
 
 const initialTypingState: TypingStats = {
   totalKeystrokes: 0,
+  totalKeyPressed: 0,
   correctKeystrokes: 0,
   startTime: null,
   lastTimestamp: null,
@@ -23,6 +25,7 @@ export const typingSessionStatsSlice = createSlice({
     keyPress: (state, action) => {
       const { isCorrect, timestamp, numberOfKeys } = action.payload;
       state.totalKeystrokes += numberOfKeys;
+      state.totalKeyPressed += 1;
       state.correctKeystrokes += isCorrect ? 1 : 0;
       state.startTime ??= timestamp;
       state.lastTimestamp = timestamp;

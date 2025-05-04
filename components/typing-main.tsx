@@ -6,7 +6,7 @@ import {
   TypingMode,
   WordCountQuantity,
 } from "@/model/typing-mode";
-import { useTimer } from "@/hooks/useTimer";
+import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { TypingGame } from "@/components/typing-game";
 import { TypingResult } from "@/components/typing-components/typing-result";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
@@ -27,8 +27,8 @@ export function TypingMain() {
   );
   const typingSessionDispatch = useAppDispatch();
 
-  const { remainingTime, resetTimer, startTimer } = useTimer({
-    duration: 10,
+  const { remainingTime, resetTimer, startTimer } = useCountdownTimer({
+    duration: TimedModeDuration.short,
     onTimerEnd: () => {
       typingSessionDispatch(markAsEnd());
     },

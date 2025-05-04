@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
-import { useTimer } from "@/hooks/useTimer";
+import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { resetTypingSessionState } from "@/slice/typing-session-slice";
+import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
 
 interface Props {
   words: string[];
@@ -18,10 +19,12 @@ export function useTypingSession({ words, duration }: Props) {
   );
   const typingSessionDispatch = useAppDispatch();
   //timer
-  const { remainingTime, resetTimer, startTimer } = useTimer({
+  const { remainingTime, resetTimer, startTimer } = useCountdownTimer({
     duration: duration || 0,
     onTimerEnd,
   });
+
+  useTypingSessionTimer();
 
   const { onKeyDown } = useKeyboardHandler({
     typingSession: {

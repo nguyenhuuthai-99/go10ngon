@@ -5,7 +5,7 @@ interface TimerProps {
   onTimerEnd: () => void;
 }
 
-export function useTimer({ duration, onTimerEnd }: TimerProps) {
+export function useCountdownTimer({ duration, onTimerEnd }: TimerProps) {
   const [remainingTime, setRemainingTime] = useState(duration);
   const isTimerEnd = useRef(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
