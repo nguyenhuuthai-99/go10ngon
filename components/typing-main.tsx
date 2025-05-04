@@ -18,7 +18,6 @@ import {
   useTypingSessionPerformance,
 } from "@/hooks/use-typing-session-performance";
 import { TypingResult } from "@/components/typing-components/typing-result";
-
 export const TypingContext = createContext<{
   typingState: TypingSessionStateHandler;
   typingPerformance: TypingSessionPerformance;
