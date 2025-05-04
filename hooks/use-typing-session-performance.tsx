@@ -9,11 +9,11 @@ import {
   resetTypingStatsState,
   setInActive,
 } from "@/slice/typing-session-stats-slice";
-import { useCalculateAndSavePerformance } from "@/hooks/use-performance-thunk";
+import { handleKeyPressAndCalculate } from "@/hooks/use-performance-thunk";
 
-const HISTORY_STORAGE_KEY = "typingSessionHistory";
+export const HISTORY_STORAGE_KEY = "typingSessionHistory";
 
-interface KeyPressInput {
+export interface KeyPressInput {
   isCorrect: boolean;
   key: string;
   timestamp: number;
@@ -34,8 +34,7 @@ export function useTypingSessionPerformance() {
   }, []);
 
   const onPerformanceCalculate = (input: KeyPressInput) => {
-    appDispatch(keyPress(input));
-    appDispatch(useCalculateAndSavePerformance(input.key));
+    appDispatch(handleKeyPressAndCalculate(input));
 
     // Reset inactivity timer
     if (inactivityTimer.current) {
@@ -43,7 +42,7 @@ export function useTypingSessionPerformance() {
     }
     inactivityTimer.current = setTimeout(() => {
       appDispatch(setInActive());
-      appDispatch(useCalculateAndSavePerformance(input.key));
+      appDispatch(handleKeyPressAndCalculate(input));
     }, 5000); // 5 seconds inactivity
   };
 

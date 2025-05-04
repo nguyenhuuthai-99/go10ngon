@@ -53,18 +53,20 @@ export function useKeyboardHandler({
 
     if (key === " ") {
       const missingKeys = checkMissingChar(previousWord);
-      onPerformanceCalculate({
-        isCorrect: false,
-        key: key,
-        timestamp,
-        numberOfKeys: missingKeys,
-      });
+      // onPerformanceCalculate({
+      //   isCorrect: false,
+      //   key: key,
+      //   timestamp,
+      //   numberOfKeys: missingKeys,
+      // });
+
+      console.log(missingKeys);
 
       onPerformanceCalculate({
         isCorrect: true,
         key: key,
         timestamp,
-        numberOfKeys: 1,
+        numberOfKeys: 1 + missingKeys,
       });
       onSpacePress();
       return;
