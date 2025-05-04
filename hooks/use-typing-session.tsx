@@ -1,19 +1,8 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import useTypingSessionState, {
-  TypingSessionState,
-  TypingSessionStateHandler,
-} from "@/hooks/use-typing-session-state";
+import { useEffect, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
-import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
-import usePerformanceCalculate from "@/hooks/use-char-comparision";
 import { useTimer } from "@/hooks/useTimer";
-import { TypingContext, TypingStateContext } from "@/components/typing-main";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { resetTypingSessionState } from "@/slice/typing-session-slice";
 
 interface Props {
   words: string[];
@@ -23,16 +12,18 @@ export function useTypingSession({ words, duration }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
-  const typingSessionStateHandler = useContext(TypingContext)?.typingState!;
 
+  const typingSessionState = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+  const typingSessionDispatch = useAppDispatch();
   //timer
   const { remainingTime, resetTimer, startTimer } = useTimer({
     duration: duration || 0,
     onTimerEnd,
   });
 
-  const { onKeyDown, wpm, accuracy } = useKeyboardHandler({
-    typingSessionStateHandler,
+  const { onKeyDown } = useKeyboardHandler({
     typingSession: {
       currentWordIndex,
       moveToNextWord,
@@ -56,15 +47,10 @@ export function useTypingSession({ words, duration }: Props) {
   //trigger end game
   useEffect(() => {
     if (isSessionEnd()) {
-      typingSessionStateHandler.resetTypingSessionState();
+      typingSessionDispatch(resetTypingSessionState());
+      // typingSessionStateHandler.resetTypingSessionState();
     }
   }, [currentCharIndex, currentWordIndex]);
-
-  //end game
-  // useEffect(() => {
-  //   if (typingSessionStateHandler.typingSessionState.isEnded)
-  //     resetTypingSession();
-  // }, [typingSessionStateHandler.typingSessionState.isEnded]);
 
   function moveToNextWord() {
     setCurrentWordIndex((prevIndex) => prevIndex + 1);
@@ -115,9 +101,7 @@ export function useTypingSession({ words, duration }: Props) {
     currentWordIndex,
     currentCharIndex,
     typedWords,
-    typingSessionStateHandler,
-    wpm,
-    accuracy,
+    typingSessionState,
     remainingTime,
     onKeyDown,
     moveCharToIndex,

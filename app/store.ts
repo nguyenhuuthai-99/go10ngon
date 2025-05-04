@@ -1,8 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import countReducer from "@/slice/count-slice";
+import typingSessionReducer from "@/slice/typing-session-slice";
+import typingSessionPerformanceReducer from "@/slice/typing-session-performance-slice";
+import typingSessionStatsReducer from "@/slice/typing-session-stats-slice";
 export const store = configureStore({
   reducer: {
-    counter: countReducer,
+    typingSessionState: typingSessionReducer,
+    typingSessionPerformance: typingSessionPerformanceReducer,
+    typingSessionStats: typingSessionStatsReducer,
   },
 });
 

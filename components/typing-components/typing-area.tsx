@@ -17,6 +17,7 @@ import {
   WordCountQuantity,
 } from "@/model/typing-mode";
 import { WordCounter } from "@/components/ui/word-counter";
+import { useAppSelector } from "@/hooks/redux-hook";
 
 type Props = {
   text: string;
@@ -29,10 +30,8 @@ export function TypingArea({ text }: Props) {
     currentWordIndex,
     currentCharIndex,
     typedWords,
-    wpm,
-    accuracy,
     onKeyDown,
-    typingSessionStateHandler,
+    typingSessionState,
   } = useTypingSession({ words });
 
   const typingAreaRef = useRef<HTMLDivElement>(null);
@@ -40,6 +39,10 @@ export function TypingArea({ text }: Props) {
   const activeCharRef = useRef<HTMLSpanElement>(null);
   const activeSpaceRef = useRef<HTMLSpanElement>(null);
   const activeWordRef = useRef<HTMLDivElement>(null);
+
+  const { accuracy, wpm } = useAppSelector(
+    (state) => state.typingSessionPerformance,
+  );
 
   const { caret } = useCaretPosition(activeCharRef, activeSpaceRef, [
     currentCharIndex,
@@ -78,9 +81,7 @@ export function TypingArea({ text }: Props) {
   return (
     <div>
       <InputField
-        isTypingSessionEnd={
-          typingSessionStateHandler.typingSessionState.isEnded
-        }
+        isTypingSessionEnd={typingSessionState.isEnded}
         ref={inputRef}
         handleKeyDownCallBack={onKeyDown}
       />
@@ -92,7 +93,7 @@ export function TypingArea({ text }: Props) {
       >
         <TypingWordPreview
           {...typingPreview}
-          isTyping={typingSessionStateHandler.typingSessionState.isStarted}
+          isTyping={typingSessionState.isStarted}
         />
         <Caret
           top={caret.top}
@@ -100,7 +101,7 @@ export function TypingArea({ text }: Props) {
           width={caret.width}
           height={caret.height}
           visible={true}
-          isTyping={typingSessionStateHandler.typingSessionState.isStarted}
+          isTyping={typingSessionState.isStarted}
         />
         {words.map((word, index) => {
           return (
