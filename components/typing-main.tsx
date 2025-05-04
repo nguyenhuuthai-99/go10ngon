@@ -79,8 +79,6 @@ export function TypingMain() {
           />
         ) : (
           <TypingResult
-            wpm={typingSessionPerformance.wpm}
-            accuracy={typingSessionPerformance.accuracy}
             typedWords={["nguyễn", "huu", "thaiii"]}
             words={["nguyễn", "hữu", "thái"]}
           />
