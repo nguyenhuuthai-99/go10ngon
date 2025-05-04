@@ -82,7 +82,7 @@ export function TypingArea({ text }: Props) {
         handleKeyDownCallBack={onKeyDown}
       />
       <div
-        className="text-inactive relative flex h-36 flex-wrap overflow-hidden text-3xl leading-12 wrap-anywhere text-clip"
+        className="text-inactive relative flex h-36 flex-wrap overflow-hidden pl-1 text-3xl leading-12 wrap-anywhere text-clip"
         ref={typingAreaRef}
         onClick={focusInput}
       >
