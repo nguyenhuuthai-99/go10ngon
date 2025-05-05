@@ -15,11 +15,7 @@ import {
 import { destructWord } from "@/lib/utils";
 import CharSpan from "@/components/typing-components/char-span";
 
-interface Props {
-  typedWords: string[];
-  words: string[];
-}
-export function TypingResult({ typedWords, words }: Props) {
+export function TypingResult() {
   const [show, setShow] = useState<boolean>(false);
   const totalKeystrokes = useAppSelector(
     (state) => state.typingSessionStats.totalKeystrokes,

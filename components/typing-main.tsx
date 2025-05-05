@@ -88,18 +88,11 @@ export function TypingMain({ className }: { className?: string }) {
             count={0}
           />
         ) : (
-          <TypingResult
-            typedWords={["nguyễn", "huu", "thaiii"]}
-            words={["nguyễn", "hữu", "thái"]}
-          />
+          <TypingResult />
         )
       ) : (
         <span>Loading...</span>
       )}
-      <TypingResult
-        typedWords={["nguyễn", "huu", "thaiii"]}
-        words={["nguyễn", "hữu", "thái"]}
-      />
     </div>
   );
 }
