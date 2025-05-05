@@ -9,10 +9,10 @@ import { store } from "@/app/store";
 export default function Home() {
   return (
     <Provider store={store}>
-      <div className={"max-w-4xl"}>
+      <div className="flex w-full max-w-[1440px] flex-col items-center">
         <Header />
-        <TypingModeBox visability={false} />
-        <TypingMain />
+        {/*<TypingModeBox visability={true} />*/}
+        <TypingMain className={"mt-8"} />
         {/*<Footer />*/}
       </div>
     </Provider>

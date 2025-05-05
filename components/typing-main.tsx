@@ -12,10 +12,11 @@ import { TypingResult } from "@/components/typing-components/typing-result";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { markAsEnd } from "@/slice/typing-session-slice";
 import { TypingSessionPerformance } from "@/slice/typing-session-performance-slice";
+import { stringToList } from "@/lib/utils";
 
-export function TypingMain() {
+export function TypingMain({ className }: { className?: string }) {
   const [currentMode, setCurrentMode] = useState<TypingMode>(TypingMode.timed);
-  const [typingTest, setTypingTest] = useState<TypingTest | null>(null);
+  const [typingTest, setTypingTest] = useState<TypingText | null>(null);
   const [timedTest, setTimedTest] = useState();
   const [wordsTest, setWordsTest] = useState();
   const typingSessionPerformance: TypingSessionPerformance = useAppSelector(
@@ -44,9 +45,10 @@ export function TypingMain() {
 
   useEffect(() => {
     const fetchedText = getTest();
+
     setTypingTest((prevState) => {
       return {
-        text: fetchedText,
+        text: stringToList(fetchedText),
       };
     });
   }, []);
@@ -68,7 +70,9 @@ export function TypingMain() {
   function setTypingTestFromTimed() {}
 
   return (
-    <div className="flex items-center justify-center select-none">
+    <div
+      className={`flex w-full max-w-[90%] flex-col items-center justify-center select-none md:max-w-[80%] lg:max-w-[70%] ${className}`}
+    >
       {typingTest ? (
         !typingSessionState.isEnded ? (
           <TypingGame
@@ -86,6 +90,10 @@ export function TypingMain() {
       ) : (
         <span>Loading...</span>
       )}
+      <TypingResult
+        typedWords={["nguyễn", "huu", "thaiii"]}
+        words={["nguyễn", "hữu", "thái"]}
+      />
     </div>
   );
 }

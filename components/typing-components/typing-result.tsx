@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/redux-hook";
+import { Button } from "@/components/ui/button";
+import { BsArrowClockwise, BsArrowRight } from "react-icons/bs";
+import SizeBox from "@/components/ui/size-box";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { destructWord } from "@/lib/utils";
+import CharSpan from "@/components/typing-components/char-span";
 
 interface Props {
   typedWords: string[];
@@ -15,13 +29,6 @@ export function TypingResult({ typedWords, words }: Props) {
     (state) => state.typingSessionPerformance,
   );
 
-  const incorrectPairs = words
-    .map((original, index) => ({
-      original,
-      typed: typedWords[index] || "",
-    }))
-    .filter((pair) => pair.original !== pair.typed);
-
   useEffect(() => {
     setShow(!show);
   }, [wpm, accuracy]);
@@ -32,55 +39,98 @@ export function TypingResult({ typedWords, words }: Props) {
         show
           ? "translate-y-0 opacity-100"
           : "pointer-events-none -translate-y-4 opacity-0"
-      }mx-auto mt-10 max-w-3xl space-y-6`}
+      }mt-10 flex w-full flex-col items-center space-y-6`}
     >
-      {totalKeystrokes}
-      <span>{adjustedWpm}</span>
-      {/* Card for WPM and Accuracy */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-md">
-        <div className="text-primary mb-2 text-4xl font-bold">Your Stats</div>
-        <div className="flex justify-around text-3xl font-semibold text-gray-800">
-          <div>
-            <div className="text-sm text-gray-500">WPM</div>
-            <div>{wpm}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">Accuracy</div>
-            <div>{accuracy}%</div>
-          </div>
-        </div>
+      <ResultPerformance adjustedWpm={adjustedWpm} accuracy={accuracy} />
+      <SizeBox height={10} />
+      <div className={"flex flex-wrap items-center justify-center"}>
+        <Button
+          className={"text-foreground bg-card cursor-pointer hover:text-white"}
+        >
+          thử lại <BsArrowClockwise />
+        </Button>
+        <SizeBox width={40} />
+        <Button
+          className={"text-foreground bg-card cursor-pointer hover:text-white"}
+        >
+          tiếp tục <BsArrowRight />
+        </Button>
       </div>
 
-      {/* Separator */}
-      <div className="border-t border-gray-300" />
+      <ResultTable />
+    </div>
+  );
+}
 
-      {/* Incorrect Words */}
+interface ResultProps {
+  adjustedWpm: number;
+  accuracy: number;
+}
+function ResultPerformance({ adjustedWpm, accuracy }: ResultProps) {
+  return (
+    <div className="font-orbitron flex flex-wrap justify-center text-center text-4xl">
+      <div className={"mr-20"}>
+        <div className="font-bold">{adjustedWpm}</div>
+        <div>wpm</div>
+      </div>
       <div>
-        <h3 className="mb-4 text-xl font-semibold text-red-600">
-          Incorrect Words
-        </h3>
-        {incorrectPairs.length === 0 ? (
-          <p className="text-green-600">Perfect! No incorrect words.</p>
-        ) : (
-          <ul className="space-y-2">
-            {incorrectPairs.map((pair, index) => (
-              <li
-                key={index}
-                className="flex items-center justify-between rounded-xl border border-red-200 bg-red-50 p-3"
-              >
-                <span className="text-gray-700">
-                  <strong className="text-red-600">Typed:</strong>{" "}
-                  {pair.typed || "(empty)"}
-                </span>
-                <span className="text-gray-700">
-                  <strong className="text-green-600">Expected:</strong>{" "}
-                  {pair.original}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="font-bold">{accuracy}</div>
+        <div>%</div>
       </div>
     </div>
+  );
+}
+
+function ResultTable() {
+  const incorrectPairs = [];
+
+  const { typedWords, words } = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+
+  for (let i = 0; i < typedWords.length; i++) {
+    if (typedWords[i] !== words[i]) {
+      incorrectPairs.push({
+        typed: typedWords[i],
+        original: words[i],
+      });
+    }
+  }
+
+  return (
+    <Table className={incorrectPairs.length === 0 ? "hidden" : ""}>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-1/2 text-center">từ gốc</TableHead>
+          <TableHead className={"w-1/2 text-center"}>từ sai</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {incorrectPairs.map((pair, wordIndex) => (
+          <TableRow key={wordIndex}>
+            <TableCell className={"w-1/2 text-center"}>
+              {pair.original}
+            </TableCell>
+            <TableCell className={"text-inactive w-1/2 text-center"}>
+              {destructWord(pair.typed).map((value, index) => (
+                <CharSpan
+                  key={`result-${index}`}
+                  char={
+                    pair.original[index]
+                      ? pair.original[index]
+                      : pair.typed[index]
+                  }
+                  typedChar={
+                    index >= pair.original.length ? "extra" : pair.typed[index]
+                  }
+                  isActive={true}
+                  ref={null}
+                />
+              ))}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
