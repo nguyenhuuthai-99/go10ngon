@@ -44,11 +44,11 @@ export function TypingMain({ className }: { className?: string }) {
   }, [typingSessionState.isStarted]);
 
   useEffect(() => {
-    const fetchedText = getTest();
+    const fetchedText = stringToList(getTest());
 
     setTypingTest((prevState) => {
       return {
-        text: stringToList(fetchedText),
+        text: fetchedText,
       };
     });
   }, []);

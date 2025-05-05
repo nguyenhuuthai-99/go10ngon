@@ -10,21 +10,13 @@ import { useTypingSession } from "@/hooks/use-typing-session";
 import { useCaretPosition } from "@/hooks/use-caret-position";
 import { useAutoScroll } from "@/hooks/use-scroll-to-caret";
 import { useTypingPreview } from "@/hooks/use-typing-preview";
-import { Timer } from "@/components/ui/timer";
-import {
-  TimedModeDuration,
-  TypingMode,
-  WordCountQuantity,
-} from "@/model/typing-mode";
-import { WordCounter } from "@/components/ui/word-counter";
-import { useAppSelector } from "@/hooks/redux-hook";
 
 type Props = {
-  text: string;
+  text: string[];
   //turn this one to list later
 };
 export function TypingArea({ text }: Props) {
-  const words = stringToList(text);
+  const words = text;
 
   const {
     currentWordIndex,
