@@ -83,19 +83,17 @@ function ResultPerformance({ adjustedWpm, accuracy }: ResultProps) {
 
 function ResultTable() {
   const incorrectPairs: { typed: string; original: string }[] = [];
-  //
-  // const { typedWords, words } = useAppSelector(
-  //   (state) => state.ty,
-  // );
-  //
-  // for (let i = 0; i < typedWords.length; i++) {
-  //   if (typedWords[i] !== words[i]) {
-  //     incorrectPairs.push({
-  //       typed: typedWords[i],
-  //       original: words[i],
-  //     });
-  //   }
-  // }
+
+  const { typedWords, words } = useAppSelector((state) => state.ty);
+
+  for (let i = 0; i < typedWords.length; i++) {
+    if (typedWords[i] !== words[i]) {
+      incorrectPairs.push({
+        typed: typedWords[i],
+        original: words[i],
+      });
+    }
+  }
 
   return (
     <Table className={incorrectPairs.length === 0 ? "hidden" : ""}>
