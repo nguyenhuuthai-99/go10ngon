@@ -10,21 +10,15 @@ import { useTypingSession } from "@/hooks/use-typing-session";
 import { useCaretPosition } from "@/hooks/use-caret-position";
 import { useAutoScroll } from "@/hooks/use-scroll-to-caret";
 import { useTypingPreview } from "@/hooks/use-typing-preview";
+import { useAppSelector } from "@/hooks/redux-hook";
 
-type Props = {
-  text: string[];
-  //turn this one to list later
-};
-export function TypingArea({ text }: Props) {
-  const words = text;
+export function TypingArea() {
+  const { words, typedWords } = useAppSelector(
+    (state) => state.typingSessionStore,
+  );
 
-  const {
-    currentWordIndex,
-    currentCharIndex,
-    typedWords,
-    onKeyDown,
-    typingSessionState,
-  } = useTypingSession({ words });
+  const { currentWordIndex, currentCharIndex, onKeyDown, typingSessionState } =
+    useTypingSession({ words });
 
   const typingAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,7 +35,6 @@ export function TypingArea({ text }: Props) {
 
   const typingPreview = useTypingPreview({
     activeWordRef,
-    typedWords,
     currentWordIndex,
     currentCharIndex,
   });

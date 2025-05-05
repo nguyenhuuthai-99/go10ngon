@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface TypingSessionStore {
-  typedWords: { [key: string]: number };
+  typedWords: { [key: number]: string };
   words: string[];
 }
 
@@ -14,7 +14,7 @@ const typingStoreSlice = createSlice({
   name: "typingStore",
   initialState,
   reducers: {
-    setTypedWords(state, action) {
+    setTypedWords(state, action: { payload: { [key: number]: string } }) {
       state.typedWords = action.payload;
     },
     setWords(state, action) {

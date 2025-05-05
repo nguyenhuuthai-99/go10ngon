@@ -8,21 +8,14 @@ interface Props {
   duration?: number;
   currentMode: TypingMode;
   count?: number;
-  typingTest: TypingText;
 }
 
-export function TypingGame({
-  className,
-  duration,
-  currentMode,
-  count,
-  typingTest,
-}: Props) {
+export function TypingGame({ className, duration, currentMode, count }: Props) {
   return (
     <div className={`flex w-full flex-col items-center gap-3 ${className}`}>
       {currentMode === TypingMode.timed && <Timer remainingTime={duration!} />}
       <WordCounter count={count!} visible={currentMode === TypingMode.words} />
-      <TypingPanel text={typingTest!.text} reference={typingTest.reference} />
+      <TypingPanel />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { RefObject, useEffect, useState } from "react";
+import { useAppSelector } from "@/hooks/redux-hook";
 
 interface TypingPreview {
   top: number;
@@ -20,16 +21,17 @@ interface TypingPreviewProps {
   activeWordRef: RefObject<HTMLDivElement | null>;
   currentWordIndex: number;
   currentCharIndex: number;
-  typedWords: { [key: string]: string };
 }
 export function useTypingPreview({
   activeWordRef,
   currentWordIndex,
   currentCharIndex,
-  typedWords,
 }: TypingPreviewProps) {
   const [typingPreview, setTypingPreview] =
     useState<TypingPreview>(initialState);
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionStore.typedWords,
+  );
 
   //handle typing preview
   useEffect(() => {

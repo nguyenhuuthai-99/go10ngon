@@ -4,20 +4,27 @@ import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { resetTypingSessionState } from "@/slice/typing-session-slice";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
+import {
+  resetTypedWords,
+  setTypedWords,
+} from "@/slice/typing-session-store-slice";
 
 interface Props {
   words: string[];
   duration?: number;
 }
-export function useTypingSession({ words, duration }: Props) {
+export function useTypingSession({ duration = 0 }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
+  // const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
 
+  const { typedWords, words } = useAppSelector(
+    (state) => state.typingSessionStore,
+  );
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
   );
-  const typingSessionDispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   //timer
   const { remainingTime, resetTimer, startTimer } = useCountdownTimer({
     duration: duration || 0,
@@ -38,19 +45,11 @@ export function useTypingSession({ words, duration }: Props) {
     targetValue: words[currentWordIndex],
   });
 
-  //initialize typedWords
-  useEffect(() => {
-    const initialTypedWords: { [key: number]: string } = {};
-    words.forEach((value, index) => {
-      initialTypedWords[index] = "";
-    });
-    setTypedWords(initialTypedWords);
-  }, []);
-
   //trigger end game
   useEffect(() => {
     if (isSessionEnd()) {
-      typingSessionDispatch(resetTypingSessionState());
+      //todo check here
+      dispatch(resetTypingSessionState());
       // typingSessionStateHandler.resetTypingSessionState();
     }
   }, [currentCharIndex, currentWordIndex]);
@@ -81,7 +80,7 @@ export function useTypingSession({ words, duration }: Props) {
     }
   }
   function updateTypedWords(value: string) {
-    setTypedWords((prev) => ({ ...prev, [currentWordIndex]: value }));
+    dispatch(setTypedWords({ ...typedWords, [currentWordIndex]: value }));
   }
 
   function onTimerEnd() {}
@@ -89,7 +88,7 @@ export function useTypingSession({ words, duration }: Props) {
   function resetTypingSession() {
     setCurrentWordIndex(0);
     setCurrentCharIndex(0);
-    setTypedWords({});
+    dispatch(resetTypedWords());
   }
 
   function isSessionEnd() {
@@ -103,7 +102,6 @@ export function useTypingSession({ words, duration }: Props) {
   return {
     currentWordIndex,
     currentCharIndex,
-    typedWords,
     typingSessionState,
     remainingTime,
     onKeyDown,

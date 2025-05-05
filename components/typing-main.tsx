@@ -10,28 +10,29 @@ import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { TypingGame } from "@/components/typing-game";
 import { TypingResult } from "@/components/typing-components/typing-result";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { markAsEnd } from "@/slice/typing-session-slice";
+import { markAsEnd, setReady } from "@/slice/typing-session-slice";
 import { TypingSessionPerformance } from "@/slice/typing-session-performance-slice";
 import { stringToList } from "@/lib/utils";
+import { setTypedWords, setWords } from "@/slice/typing-session-store-slice";
 
 export function TypingMain({ className }: { className?: string }) {
   const [currentMode, setCurrentMode] = useState<TypingMode>(TypingMode.timed);
-  const [typingTest, setTypingTest] = useState<TypingText | null>(null);
   const [timedTest, setTimedTest] = useState();
   const [wordsTest, setWordsTest] = useState();
   const typingSessionPerformance: TypingSessionPerformance = useAppSelector(
     (state) => state.typingSessionPerformance,
   );
 
+  const words = useAppSelector((state) => state.typingSessionStore.words);
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
   );
-  const typingSessionDispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const { remainingTime, resetTimer, startTimer } = useCountdownTimer({
     duration: TimedModeDuration.short,
     onTimerEnd: () => {
-      typingSessionDispatch(markAsEnd());
+      dispatch(markAsEnd());
     },
   });
 
@@ -43,14 +44,20 @@ export function TypingMain({ className }: { className?: string }) {
     }
   }, [typingSessionState.isStarted]);
 
+  //initialize typedWords
   useEffect(() => {
-    const fetchedText = stringToList(getTest());
-
-    setTypingTest((prevState) => {
-      return {
-        text: fetchedText,
-      };
+    dispatch(setReady(true));
+    const initialTypedWords: { [key: number]: string } = {};
+    words.forEach((value, index) => {
+      initialTypedWords[index] = "";
     });
+    dispatch(setTypedWords(initialTypedWords));
+  }, [words]);
+
+  useEffect(() => {
+    dispatch(setReady(false));
+    const fetchedText = stringToList(getTest());
+    dispatch(setWords(fetchedText));
   }, []);
   function getTimedModeWords() {}
 
@@ -73,10 +80,9 @@ export function TypingMain({ className }: { className?: string }) {
     <div
       className={`flex w-full max-w-[90%] flex-col items-center justify-center select-none md:max-w-[80%] lg:max-w-[70%] ${className}`}
     >
-      {typingTest ? (
+      {typingSessionState.isSessionReady ? (
         !typingSessionState.isEnded ? (
           <TypingGame
-            typingTest={typingTest}
             currentMode={currentMode}
             duration={remainingTime}
             count={0}
