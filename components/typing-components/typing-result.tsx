@@ -52,7 +52,6 @@ export function TypingResult() {
           tiếp tục <BsArrowRight />
         </Button>
       </div>
-
       <ResultTable />
     </div>
   );
@@ -78,18 +77,24 @@ function ResultPerformance({ adjustedWpm, accuracy }: ResultProps) {
 }
 
 function ResultTable() {
-  const incorrectPairs: { typed: string; original: string }[] = [];
+  const [incorrectPairs, setIncorrectPairs] = useState<
+    { typed: string; original: string }[]
+  >([]);
 
   const { typedWords, words } = useAppSelector(
     (state) => state.typingSessionStore,
   );
 
   useEffect(() => {
-    for (const key in typedWords) {
-      if (typedWords[key] !== words[key]) {
-        incorrectPairs.push({ typed: typedWords[key], original: words[key] });
+    const incorrects = [];
+    for (let i = 0; i < words.length; i++) {
+      if (typedWords[i] === "") break;
+      if (typedWords[i] !== words[i]) {
+        incorrects.push({ typed: typedWords[i], original: words[i] });
       }
     }
+
+    setIncorrectPairs(incorrects);
   }, [typedWords, words]);
 
   return (
