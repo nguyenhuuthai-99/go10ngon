@@ -1,7 +1,9 @@
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
-import { markAsStart } from "@/lib/feature/slice/typing-session-slice";
+import {
+  markAsStart,
+  setTypedWords,
+} from "@/lib/feature/slice/typing-session-slice";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { useDispatch } from "react-redux";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 
 interface Props {
@@ -10,7 +12,6 @@ interface Props {
     moveToNextWord: () => void;
     moveToPreviousChar: (restoreInputValue: (value: string) => void) => void;
     moveCharToIndex: (index: number) => void;
-    updateTypedWords: (value: string) => void;
   };
   previousWord: string;
   targetValue: string;
@@ -21,7 +22,6 @@ export function useKeyboardHandler({
     moveToNextWord,
     moveToPreviousChar,
     moveCharToIndex,
-    updateTypedWords,
   },
   previousWord,
   targetValue,
@@ -37,7 +37,7 @@ export function useKeyboardHandler({
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
   );
-  const typingSessionDispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   function onKeyDown(
     key: string,
@@ -48,7 +48,7 @@ export function useKeyboardHandler({
     // if (isEnded) return;
 
     if (!typingSessionState.isStarted) {
-      typingSessionDispatch(markAsStart());
+      dispatch(markAsStart());
     }
 
     if (key === " ") {
@@ -80,6 +80,15 @@ export function useKeyboardHandler({
     }
 
     updateTypedWords(value);
+  }
+
+  function updateTypedWords(value: string) {
+    dispatch(
+      setTypedWords({
+        ...typingSessionState.typedWords,
+        [currentWordIndex]: value,
+      }),
+    );
   }
 
   function onSpacePress() {

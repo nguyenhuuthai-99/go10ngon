@@ -36,18 +36,10 @@ export function useTypingSession({ duration = 0 }: Props) {
       moveToNextWord,
       moveCharToIndex,
       moveToPreviousChar,
-      updateTypedWords,
     },
     previousWord: typedWords[currentWordIndex],
     targetValue: words[currentWordIndex],
   });
-
-  //trigger end game
-  useEffect(() => {
-    if (isSessionEnd()) {
-      dispatch(resetTypingSessionState());
-    }
-  }, [typingSessionState.isEnded]);
 
   function moveToNextWord() {
     setCurrentWordIndex((prevIndex) => prevIndex + 1);
@@ -74,24 +66,11 @@ export function useTypingSession({ duration = 0 }: Props) {
       moveToPreviousWord(restoreInputValue);
     }
   }
-  function updateTypedWords(value: string) {
-    dispatch(setTypedWords({ ...typedWords, [currentWordIndex]: value }));
-  }
-
-  function onTimerEnd() {}
 
   function resetTypingSession() {
     setCurrentWordIndex(0);
     setCurrentCharIndex(0);
     dispatch(resetTypedWords());
-  }
-
-  function isSessionEnd() {
-    return (
-      currentWordIndex >= words.length ||
-      (currentCharIndex === words[words.length - 1]?.length - 1 &&
-        currentWordIndex === words.length - 1)
-    );
   }
 
   return {
@@ -102,6 +81,5 @@ export function useTypingSession({ duration = 0 }: Props) {
     moveCharToIndex,
     moveToPreviousChar,
     moveToNextWord,
-    updateTypedWords,
   };
 }
