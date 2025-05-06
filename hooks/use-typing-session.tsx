@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
 import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { resetTypingSessionState } from "@/lib/feature/slice/typing-session-slice";
-import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
 import {
   resetTypedWords,
+  resetTypingSessionState,
   setTypedWords,
-} from "@/lib/feature/slice/typing-session-store-slice";
+} from "@/lib/feature/slice/typing-session-slice";
+import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
+// import {
+//   resetTypedWords,
+//   setTypedWords,
+// } from "@/lib/feature/slice/typing-session-store-slice";
 
 interface Props {
   words: string[];
@@ -18,8 +22,11 @@ export function useTypingSession({ duration = 0 }: Props) {
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   // const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
 
-  const { typedWords, words } = useAppSelector(
-    (state) => state.typingSessionStore,
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionState.typedWords,
+  );
+  const words = useAppSelector(
+    (state) => state.typingSessionState.typingGameMode.modeContext.text,
   );
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,

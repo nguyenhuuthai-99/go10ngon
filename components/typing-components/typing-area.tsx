@@ -13,8 +13,11 @@ import { useTypingPreview } from "@/hooks/use-typing-preview";
 import { useAppSelector } from "@/hooks/redux-hook";
 
 export function TypingArea() {
-  const { words, typedWords } = useAppSelector(
-    (state) => state.typingSessionStore,
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionState.typedWords,
+  );
+  const words = useAppSelector(
+    (state) => state.typingSessionState.typingGameMode.modeContext.text,
   );
 
   const { currentWordIndex, currentCharIndex, onKeyDown, typingSessionState } =

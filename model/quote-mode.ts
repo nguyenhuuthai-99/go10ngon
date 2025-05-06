@@ -1,0 +1,3 @@
+interface QuoteMode {
+  text: string[];
+}

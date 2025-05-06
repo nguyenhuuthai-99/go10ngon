@@ -1,8 +1,7 @@
 export enum TypingMode {
   timed,
-  words,
+  wordCount,
   quote,
-  relax,
 }
 
 export const TimedModeDuration = {

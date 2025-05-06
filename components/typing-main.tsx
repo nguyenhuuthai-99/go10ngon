@@ -1,83 +1,18 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
-import { getTest } from "@/lib/infrastructure/api/services/app-service";
-import {
-  TimedModeDuration,
-  TypingMode,
-  WordCountQuantity,
-} from "@/model/typing-mode";
-import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { TypingGame } from "@/components/typing-game";
 import { TypingResult } from "@/components/typing-components/typing-result";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { markAsEnd, setReady } from "@/lib/feature/slice/typing-session-slice";
-import { TypingSessionPerformance } from "@/lib/feature/slice/typing-session-performance-slice";
-import { stringToList } from "@/lib/utils";
-import {
-  setTypedWords,
-  setWords,
-} from "@/lib/feature/slice/typing-session-store-slice";
+
+import { useTypingMain } from "@/hooks/use-typing-main";
 
 export function TypingMain({ className }: { className?: string }) {
-  const [currentMode, setCurrentMode] = useState<TypingMode>(TypingMode.timed);
-  const [timedTest, setTimedTest] = useState();
-  const [wordsTest, setWordsTest] = useState();
-  const typingSessionPerformance: TypingSessionPerformance = useAppSelector(
-    (state) => state.typingSessionPerformance,
-  );
+  const { words, typingSessionState } = useTypingMain({});
 
-  const words = useAppSelector((state) => state.typingSessionStore.words);
-  const typingSessionState = useAppSelector(
-    (state) => state.typingSessionState,
-  );
-  const dispatch = useAppDispatch();
-
-  const { remainingTime, resetTimer, startTimer } = useCountdownTimer({
-    duration: TimedModeDuration.short,
-    onTimerEnd: () => {
-      dispatch(markAsEnd());
-    },
-  });
-
-  useEffect(() => {
-    if (typingSessionState.isStarted) {
-      if (currentMode === TypingMode.timed) {
-        startTimer();
-      }
-    }
-  }, [typingSessionState.isStarted]);
-
-  //initialize typedWords
-  useEffect(() => {
-    dispatch(setReady(true));
-    const initialTypedWords: { [key: number]: string } = {};
-    words.forEach((value, index) => {
-      initialTypedWords[index] = "";
-    });
-    dispatch(setTypedWords(initialTypedWords));
-  }, [words]);
-
-  useEffect(() => {
-    dispatch(setReady(false));
-    const fetchedText = stringToList(getTest());
-    dispatch(setWords(fetchedText));
-  }, []);
+  //todo get user mode and dispatch it
   function getTimedModeWords() {}
 
   function getWordsModeWords() {}
 
   function getQuotesModeWords() {}
-
-  function pickTypingTest() {
-    if (currentMode === TypingMode.timed) {
-    } else if (currentMode === TypingMode.words) {
-    } else if (currentMode === TypingMode.quote) {
-    }
-  }
-
-  function setTypingTestFromQuote() {}
-
-  function setTypingTestFromTimed() {}
 
   return (
     <div
@@ -85,11 +20,7 @@ export function TypingMain({ className }: { className?: string }) {
     >
       {typingSessionState.isSessionReady ? (
         !typingSessionState.isEnded ? (
-          <TypingGame
-            currentMode={currentMode}
-            duration={remainingTime}
-            count={0}
-          />
+          <TypingGame typingGameMode={typingSessionState.typingGameMode} />
         ) : (
           <TypingResult />
         )
