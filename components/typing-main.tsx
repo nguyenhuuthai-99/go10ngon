@@ -10,10 +10,13 @@ import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { TypingGame } from "@/components/typing-game";
 import { TypingResult } from "@/components/typing-components/typing-result";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { markAsEnd, setReady } from "@/slice/typing-session-slice";
-import { TypingSessionPerformance } from "@/slice/typing-session-performance-slice";
+import { markAsEnd, setReady } from "@/lib/feature/slice/typing-session-slice";
+import { TypingSessionPerformance } from "@/lib/feature/slice/typing-session-performance-slice";
 import { stringToList } from "@/lib/utils";
-import { setTypedWords, setWords } from "@/slice/typing-session-store-slice";
+import {
+  setTypedWords,
+  setWords,
+} from "@/lib/feature/slice/typing-session-store-slice";
 
 export function TypingMain({ className }: { className?: string }) {
   const [currentMode, setCurrentMode] = useState<TypingMode>(TypingMode.timed);

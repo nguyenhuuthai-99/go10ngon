@@ -5,16 +5,16 @@ import TypingModeBox from "@/components/ui/typing-mode-box";
 import { TypingMain } from "@/components/typing-main";
 import { Footer } from "@/components/footer";
 import { Provider } from "react-redux";
-import { store } from "@/app/store";
+import StoreProvider from "@/app/store-provider";
 export default function Home() {
   return (
-    <Provider store={store}>
+    <StoreProvider>
       <div className="flex w-full max-w-[1440px] flex-col items-center">
         <Header />
         {/*<TypingModeBox visability={true} />*/}
         <TypingMain className={"mt-8"} />
         {/*<Footer />*/}
       </div>
-    </Provider>
+    </StoreProvider>
   );
 }

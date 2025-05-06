@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
 import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { resetTypingSessionState } from "@/slice/typing-session-slice";
+import { resetTypingSessionState } from "@/lib/feature/slice/typing-session-slice";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
 import {
   resetTypedWords,
   setTypedWords,
-} from "@/slice/typing-session-store-slice";
+} from "@/lib/feature/slice/typing-session-store-slice";
 
 interface Props {
   words: string[];

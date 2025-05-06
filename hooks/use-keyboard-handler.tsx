@@ -1,5 +1,5 @@
 import usePerformanceCalculate from "@/hooks/use-char-comparision";
-import { markAsStart } from "@/slice/typing-session-slice";
+import { markAsStart } from "@/lib/feature/slice/typing-session-slice";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useDispatch } from "react-redux";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
