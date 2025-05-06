@@ -81,8 +81,11 @@ function ResultTable() {
     { typed: string; original: string }[]
   >([]);
 
-  const { typedWords, words } = useAppSelector(
-    (state) => state.typingSessionStore,
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionState.typedWords,
+  );
+  const words = useAppSelector(
+    (state) => state.typingSessionState.typingGameMode.modeContext.text,
   );
 
   useEffect(() => {
@@ -102,7 +105,7 @@ function ResultTable() {
       <TableHeader>
         <TableRow>
           <TableHead className="w-1/2 text-center">từ gốc</TableHead>
-          <TableHead className={"w-1/2 text-center"}>từ sai</TableHead>
+          <TableHead className={"w-1/2 text-center"}>từ nhập sai</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -116,14 +119,13 @@ function ResultTable() {
                 <CharSpan
                   key={`result-${index}`}
                   char={
-                    pair.original[index]
-                      ? pair.original[index]
-                      : pair.typed[index]
+                    index >= pair.original.length
+                      ? "extra"
+                      : pair.original[index]
                   }
-                  typedChar={
-                    index >= pair.original.length ? "extra" : pair.typed[index]
-                  }
-                  isActive={true}
+                  typedChar={pair.typed[index]}
+                  isResult={true}
+                  isActive={false}
                   ref={null}
                 />
               ))}

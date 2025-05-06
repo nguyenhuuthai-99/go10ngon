@@ -28,7 +28,7 @@ interface Props {
   count?: number;
 }
 export function useTypingMain({
-  duration = TimedModeDuration.medium,
+  duration = TimedModeDuration.short,
   count = WordCountQuantity.medium,
 }: Props) {
   const words = useAppSelector(
@@ -42,16 +42,26 @@ export function useTypingMain({
     (state) => state.typingSessionState.typingGameMode.currentTypingMode,
   );
 
-  const dispatch = useAppDispatch();
-
-  const { remainingTime, resetTimer, startTimer } = useCountdownTimer({
-    duration: TimedModeDuration.short,
-    onTimerEnd: () => {
+  //timer
+  const { remainingTime, startTimer } = useCountdownTimer({
+    duration: duration || 0,
+    onTimeUp: () => {
       dispatch(markAsEnd());
-
-      //todo check timer
     },
   });
+
+  const dispatch = useAppDispatch();
+
+  //trigger start game
+  useEffect(() => {
+    if (typingSessionState.isStarted) {
+      if (
+        typingSessionState.typingGameMode.currentTypingMode === TypingMode.timed
+      ) {
+        startTimer();
+      }
+    }
+  }, [typingSessionState.isStarted]);
 
   //initialize typedWords
   useEffect(() => {
@@ -84,5 +94,5 @@ export function useTypingMain({
     // dispatch(setWords(fetchedText));
   }, [currentTypingMode]);
 
-  return { words, typingSessionState };
+  return { words, typingSessionState, remainingTime };
 }

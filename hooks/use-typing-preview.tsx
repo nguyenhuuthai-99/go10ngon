@@ -30,7 +30,7 @@ export function useTypingPreview({
   const [typingPreview, setTypingPreview] =
     useState<TypingPreview>(initialState);
   const typedWords = useAppSelector(
-    (state) => state.typingSessionStore.typedWords,
+    (state) => state.typingSessionState.typedWords,
   );
 
   //handle typing preview

@@ -32,6 +32,8 @@ interface UserSettingsState {
     showPerformanceHUD: boolean;
     showKeyBoard: boolean;
     showTypingPreview: boolean;
+    showInputField: boolean;
+    markParent: boolean;
   };
   caret: {
     speed: CaretSpeed;
@@ -46,6 +48,8 @@ const initialState: UserSettingsState = {
     showPerformanceHUD: true,
     showKeyBoard: false,
     showTypingPreview: true,
+    showInputField: false,
+    markParent: true,
   },
   caret: {
     speed: CaretSpeed.medium,

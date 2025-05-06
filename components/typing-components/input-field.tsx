@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useAppSelector } from "@/hooks/redux-hook";
 
 type Props = {
   isTypingSessionEnd: boolean;
@@ -28,6 +29,10 @@ export default function InputField({
 
   const currentKey = useRef("");
   const currentTimestamp = useRef<number>(0);
+
+  const showInputField = useAppSelector(
+    (state) => state.userSettings.appearance.showInputField,
+  );
 
   // focus input on mount
   useEffect(() => {
@@ -87,11 +92,11 @@ export default function InputField({
   return (
     <div>
       <input
-        // readOnly={isTypingSessionEnd}
+        readOnly={isTypingSessionEnd}
         ref={ref}
         type="text"
         value={inputValue}
-        className="absolute opacity-0"
+        className={`absolute ${!showInputField && "opacity-0"}`}
         onChange={handeInputChange}
         onKeyDown={handleKeyDown}
         autoFocus
@@ -99,20 +104,3 @@ export default function InputField({
     </div>
   );
 }
-
-// function handleKeyUp(event: KeyboardEvent<HTMLInputElement>) {
-//
-//   let currentValue = event.currentTarget.value;
-//   if (currentValue.length > 1 && currentValue.slice(-1) === " ") {
-//     currentValue = currentValue.slice(0, -1);
-//   }
-//
-//   handleKeyDownCallBack(currentKey.current, currentValue);
-//   if (event.key === " ") {
-//     onSpaceKeyPress();
-//   }
-//
-// }
-// function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-//   currentKey.current = event.key;
-// }

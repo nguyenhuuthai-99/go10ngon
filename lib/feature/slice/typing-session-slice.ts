@@ -23,7 +23,10 @@ const initialState: TypingSessionState = {
   isSessionReady: false,
   typingGameMode: {
     currentTypingMode: TypingMode.timed,
-    modeContext: { duration: TimedModeDuration.short, text: [] } as TimedMode,
+    modeContext: {
+      duration: TimedModeDuration.short,
+      text: [],
+    } as TimedMode,
   },
   typedWords: {},
 };

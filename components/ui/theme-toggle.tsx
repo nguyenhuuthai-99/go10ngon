@@ -1,3 +1,5 @@
+"use client";
+
 import { useTheme } from "next-themes";
 import { BsSunFill, BsMoonStarsFill } from "react-icons/bs";
 import { useEffect, useState } from "react";

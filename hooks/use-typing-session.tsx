@@ -8,10 +8,6 @@ import {
   setTypedWords,
 } from "@/lib/feature/slice/typing-session-slice";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
-// import {
-//   resetTypedWords,
-//   setTypedWords,
-// } from "@/lib/feature/slice/typing-session-store-slice";
 
 interface Props {
   words: string[];
@@ -20,7 +16,6 @@ interface Props {
 export function useTypingSession({ duration = 0 }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  // const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
 
   const typedWords = useAppSelector(
     (state) => state.typingSessionState.typedWords,
@@ -32,11 +27,6 @@ export function useTypingSession({ duration = 0 }: Props) {
     (state) => state.typingSessionState,
   );
   const dispatch = useAppDispatch();
-  //timer
-  const { remainingTime, resetTimer, startTimer } = useCountdownTimer({
-    duration: duration || 0,
-    onTimerEnd,
-  });
 
   useTypingSessionTimer();
 
@@ -55,11 +45,9 @@ export function useTypingSession({ duration = 0 }: Props) {
   //trigger end game
   useEffect(() => {
     if (isSessionEnd()) {
-      //todo check here
       dispatch(resetTypingSessionState());
-      // typingSessionStateHandler.resetTypingSessionState();
     }
-  }, [currentCharIndex, currentWordIndex]);
+  }, [typingSessionState.isEnded]);
 
   function moveToNextWord() {
     setCurrentWordIndex((prevIndex) => prevIndex + 1);
@@ -110,7 +98,6 @@ export function useTypingSession({ duration = 0 }: Props) {
     currentWordIndex,
     currentCharIndex,
     typingSessionState,
-    remainingTime,
     onKeyDown,
     moveCharToIndex,
     moveToPreviousChar,

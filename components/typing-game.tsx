@@ -8,14 +8,13 @@ import { WordCountMode } from "@/model/word-count-mode";
 
 interface TypingGameProps {
   typingGameMode: TypingGameMode;
+  remainingTime?: number;
 }
-export function TypingGame({ typingGameMode }: TypingGameProps) {
+export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
   return (
     <div className={`flex w-full flex-col items-center gap-3`}>
       {typingGameMode.currentTypingMode === TypingMode.timed && (
-        <Timer
-          remainingTime={(typingGameMode.modeContext as TimedMode).duration}
-        />
+        <Timer remainingTime={remainingTime!} />
       )}
       {typingGameMode.currentTypingMode === TypingMode.wordCount && (
         <WordCounter

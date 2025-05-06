@@ -5,7 +5,7 @@ import { TypingResult } from "@/components/typing-components/typing-result";
 import { useTypingMain } from "@/hooks/use-typing-main";
 
 export function TypingMain({ className }: { className?: string }) {
-  const { words, typingSessionState } = useTypingMain({});
+  const { words, typingSessionState, remainingTime } = useTypingMain({});
 
   //todo get user mode and dispatch it
   function getTimedModeWords() {}
@@ -20,7 +20,10 @@ export function TypingMain({ className }: { className?: string }) {
     >
       {typingSessionState.isSessionReady ? (
         !typingSessionState.isEnded ? (
-          <TypingGame typingGameMode={typingSessionState.typingGameMode} />
+          <TypingGame
+            typingGameMode={typingSessionState.typingGameMode}
+            remainingTime={remainingTime}
+          />
         ) : (
           <TypingResult />
         )
