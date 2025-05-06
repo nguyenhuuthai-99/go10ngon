@@ -18,17 +18,17 @@ export function TypingMain({ className }: { className?: string }) {
     <div
       className={`flex w-full max-w-[90%] flex-col items-center justify-center select-none md:max-w-[80%] lg:max-w-[70%] ${className}`}
     >
-      {typingSessionState.isSessionReady ? (
-        !typingSessionState.isEnded ? (
+      {!typingSessionState.isEnded ? (
+        typingSessionState.isSessionReady ? (
           <TypingGame
             typingGameMode={typingSessionState.typingGameMode}
             remainingTime={remainingTime}
           />
         ) : (
-          <TypingResult />
+          <span>Loading...</span>
         )
       ) : (
-        <span>Loading...</span>
+        <TypingResult />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppSelector } from "@/hooks/redux-hook";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { Button } from "@/components/ui/button";
 import { BsArrowClockwise, BsArrowRight } from "react-icons/bs";
 import SizeBox from "@/components/ui/size-box";
@@ -14,20 +14,32 @@ import {
 } from "@/components/ui/table";
 import { destructWord } from "@/lib/utils";
 import CharSpan from "@/components/typing-components/char-span";
+import { setReady } from "@/lib/redux/slice/typing-session-slice";
 
 export function TypingResult() {
   const [show, setShow] = useState<boolean>(false);
   const totalKeystrokes = useAppSelector(
     (state) => state.typingSessionStats.totalKeystrokes,
   );
+  const isEnd = useAppSelector((state) => state.typingSessionState.isEnded);
 
   const { wpm, accuracy, adjustedWpm } = useAppSelector(
     (state) => state.typingSessionPerformance,
   );
 
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     setShow(!show);
   }, [wpm, accuracy]);
+
+  function onRestartClick() {
+    console.log("restarting");
+    console.log("is end", isEnd);
+    dispatch(setReady(true));
+  }
+
+  function onContinueClick() {}
 
   return (
     <div
@@ -42,6 +54,7 @@ export function TypingResult() {
       <div className={"flex flex-wrap items-center justify-center"}>
         <Button
           className={"text-foreground bg-card cursor-pointer hover:text-white"}
+          onClick={onRestartClick}
         >
           thử lại <BsArrowClockwise />
         </Button>

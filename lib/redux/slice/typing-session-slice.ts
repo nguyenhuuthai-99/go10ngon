@@ -65,7 +65,14 @@ const typingSessionSlice = createSlice({
     setTimedModeText: (state, action) => {
       (state.typingGameMode.modeContext as TimedMode).text = action.payload;
     },
-    resetTypingSessionState: (state) => initialState,
+    initialTypingSessionState: (state) => initialState,
+    resetTypingSessionState: (state) => {
+      state.isAFK = false;
+      state.isSessionReady = false;
+      state.isStarted = false;
+      state.isEnded = false;
+      state.typedWords = {};
+    },
   },
 });
 
@@ -78,6 +85,7 @@ export const {
   setReady,
   markAsEnd,
   markAsStart,
+  initialTypingSessionState,
   resetTypingSessionState,
   changeTypingGameMode,
   setAFK,

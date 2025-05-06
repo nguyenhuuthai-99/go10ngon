@@ -2,7 +2,7 @@ import { TypingMode, WordCountQuantity } from "@/model/typing-mode";
 import { Timer } from "@/components/ui/timer";
 import { WordCounter } from "@/components/ui/word-counter";
 import { TypingPanel } from "@/components/ui/typing-panel";
-import { TypingGameMode } from "@/lib/feature/slice/typing-session-slice";
+import { TypingGameMode } from "@/lib/redux/slice/typing-session-slice";
 import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
 

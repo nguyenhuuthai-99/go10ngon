@@ -9,7 +9,7 @@ import {
   setReady,
   setTimedModeText,
   setTypedWords,
-} from "@/lib/feature/slice/typing-session-slice";
+} from "@/lib/redux/slice/typing-session-slice";
 import { stringToList } from "@/lib/utils";
 import {
   getQuoteTest,

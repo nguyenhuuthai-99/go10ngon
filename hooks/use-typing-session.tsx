@@ -1,13 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
-import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import {
-  resetTypedWords,
-  resetTypingSessionState,
-  setTypedWords,
-} from "@/lib/feature/slice/typing-session-slice";
+import { resetTypedWords } from "@/lib/redux/slice/typing-session-slice";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
+import { useTypingSessionState } from "@/hooks/use-typing-session-state";
 
 interface Props {
   words: string[];
@@ -20,25 +16,18 @@ export function useTypingSession({ duration = 0 }: Props) {
   const typedWords = useAppSelector(
     (state) => state.typingSessionState.typedWords,
   );
-  const words = useAppSelector(
-    (state) => state.typingSessionState.typingGameMode.modeContext.text,
-  );
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
   );
-  const dispatch = useAppDispatch();
 
   useTypingSessionTimer();
+  useTypingSessionState(resetTypingSession);
 
   const { onKeyDown } = useKeyboardHandler({
-    typingSession: {
-      currentWordIndex,
-      moveToNextWord,
-      moveCharToIndex,
-      moveToPreviousChar,
-    },
-    previousWord: typedWords[currentWordIndex],
-    targetValue: words[currentWordIndex],
+    currentWordIndex,
+    moveToNextWord,
+    moveCharToIndex,
+    moveToPreviousChar,
   });
 
   function moveToNextWord() {
@@ -70,7 +59,6 @@ export function useTypingSession({ duration = 0 }: Props) {
   function resetTypingSession() {
     setCurrentWordIndex(0);
     setCurrentCharIndex(0);
-    dispatch(resetTypedWords());
   }
 
   return {

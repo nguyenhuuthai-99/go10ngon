@@ -34,13 +34,7 @@ export const typingSessionStatsSlice = createSlice({
     setInActive: (state) => {
       state.isRunning = false;
     },
-    resetTypingStatsState: (state) => {
-      state.totalKeystrokes = 0;
-      state.correctKeystrokes = 0;
-      state.startTime = null;
-      state.lastTimestamp = null;
-      state.isRunning = false;
-    },
+    resetTypingStatsState: (state) => initialTypingState,
   },
 });
 

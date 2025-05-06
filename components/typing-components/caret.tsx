@@ -1,6 +1,6 @@
 import { use, useEffect, useRef, useState } from "react";
 import { useAppSelector } from "@/hooks/redux-hook";
-import { CaretShape } from "@/lib/feature/slice/user-settings-slice";
+import { CaretShape } from "@/lib/redux/slice/user-settings-slice";
 
 type Props = {
   visible: boolean;

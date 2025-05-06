@@ -3,12 +3,12 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import {
   resetPerformance,
   setHistory,
-} from "@/lib/feature/slice/typing-session-performance-slice";
+} from "@/lib/redux/slice/typing-session-performance-slice";
 import {
   keyPress,
   resetTypingStatsState,
   setInActive,
-} from "@/lib/feature/slice/typing-session-stats-slice";
+} from "@/lib/redux/slice/typing-session-stats-slice";
 // import { handleKeyPress } from "@/hooks/use-performance-thunk";
 
 export const HISTORY_STORAGE_KEY = "typingSessionHistory";

@@ -5,7 +5,7 @@ export enum TypingMode {
 }
 
 export const TimedModeDuration = {
-  short: 30,
+  short: 10,
   medium: 60,
   long: 90,
 };

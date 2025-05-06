@@ -2,30 +2,30 @@ import usePerformanceCalculate from "@/hooks/use-char-comparision";
 import {
   markAsStart,
   setTypedWords,
-} from "@/lib/feature/slice/typing-session-slice";
+} from "@/lib/redux/slice/typing-session-slice";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 
 interface Props {
-  typingSession: {
-    currentWordIndex: number;
-    moveToNextWord: () => void;
-    moveToPreviousChar: (restoreInputValue: (value: string) => void) => void;
-    moveCharToIndex: (index: number) => void;
-  };
-  previousWord: string;
-  targetValue: string;
+  currentWordIndex: number;
+  moveToNextWord: () => void;
+  moveToPreviousChar: (restoreInputValue: (value: string) => void) => void;
+  moveCharToIndex: (index: number) => void;
 }
 export function useKeyboardHandler({
-  typingSession: {
-    currentWordIndex,
-    moveToNextWord,
-    moveToPreviousChar,
-    moveCharToIndex,
-  },
-  previousWord,
-  targetValue,
+  currentWordIndex,
+  moveToNextWord,
+  moveToPreviousChar,
+  moveCharToIndex,
 }: Props) {
+  const typingSessionState = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+
+  const targetValue =
+    typingSessionState.typingGameMode.modeContext.text[currentWordIndex];
+  const previousWord = typingSessionState.typedWords[currentWordIndex];
+
   const { isCorrectAndWithin, onDelete, checkMissingChar } =
     usePerformanceCalculate({
       targetValue,
@@ -34,9 +34,6 @@ export function useKeyboardHandler({
 
   const { onPerformanceCalculate } = useTypingSessionPerformance();
 
-  const typingSessionState = useAppSelector(
-    (state) => state.typingSessionState,
-  );
   const dispatch = useAppDispatch();
 
   function onKeyDown(
@@ -45,7 +42,8 @@ export function useKeyboardHandler({
     timestamp: number,
     restoreInputValue: (value: string) => void,
   ) {
-    // if (isEnded) return;
+    //todo prevent keyboard from taking input
+    if (!typingSessionState.isSessionReady) return;
 
     if (!typingSessionState.isStarted) {
       dispatch(markAsStart());
