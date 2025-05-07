@@ -42,7 +42,6 @@ export function useKeyboardHandler({
     timestamp: number,
     restoreInputValue: (value: string) => void,
   ) {
-    //todo prevent keyboard from taking input
     if (!typingSessionState.isSessionReady) return;
 
     if (!typingSessionState.isStarted) {

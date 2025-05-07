@@ -5,6 +5,7 @@ import { useEffect } from "react";
 //   setWords,
 // } from "@/lib/feature/slice/typing-session-store-slice";
 import {
+  fetchTypingGame,
   markAsEnd,
   setReady,
   setTimedModeText,
@@ -77,22 +78,7 @@ export function useTypingMain({
   useEffect(() => {
     dispatch(setReady(false));
 
-    let fetchedText: string[];
-    switch (currentTypingMode) {
-      case TypingMode.timed:
-        fetchedText = getTimedTest(duration);
-        dispatch(setTimedModeText(fetchedText));
-        break;
-      case TypingMode.wordCount:
-        fetchedText = getWordsCountTest(count);
-        break;
-      case TypingMode.quote:
-      default:
-        fetchedText = getQuoteTest();
-        break;
-    }
-
-    // dispatch(setWords(fetchedText));
+    dispatch(fetchTypingGame());
   }, [currentTypingMode]);
 
   return { words, typingSessionState, remainingTime };

@@ -2,6 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import { TimedModeDuration, TypingMode } from "@/model/typing-mode";
 import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
+import {
+  getQuoteTest,
+  getTimedTest,
+  getWordsCountTest,
+} from "@/lib/infrastructure/api/services/app-service";
+import { toast } from "sonner";
 
 export interface TypingGameMode {
   currentTypingMode: TypingMode;
@@ -73,6 +79,32 @@ const typingSessionSlice = createSlice({
       state.isEnded = false;
       state.typedWords = {};
     },
+    fetchTypingGame: (state) => {
+      let fetchedText: string[];
+      switch (state.typingGameMode.currentTypingMode) {
+        case TypingMode.timed:
+          fetchedText = getTimedTest(
+            (state.typingGameMode.modeContext as TimedMode).duration,
+          );
+
+          break;
+        case TypingMode.wordCount:
+          fetchedText = getWordsCountTest(
+            (state.typingGameMode.modeContext as WordCountMode).count,
+          );
+          break;
+        case TypingMode.quote:
+          fetchedText = getQuoteTest();
+          break;
+        default:
+          fetchedText = [];
+          console.log(
+            "there is an error fetching typing game!! please refresh your page",
+          );
+          break;
+      }
+      state.typingGameMode.modeContext.text = fetchedText;
+    },
   },
 });
 
@@ -82,6 +114,7 @@ export const {
   setTimedModeText,
   setTimedContext,
   setTimedModeDuration,
+  fetchTypingGame,
   setReady,
   markAsEnd,
   markAsStart,

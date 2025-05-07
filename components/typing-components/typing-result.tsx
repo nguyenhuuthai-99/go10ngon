@@ -14,6 +14,7 @@ import {
 import { destructWord } from "@/lib/utils";
 import CharSpan from "@/components/typing-components/char-span";
 import {
+  fetchTypingGame,
   resetTypingSessionState,
   setReady,
 } from "@/lib/redux/slice/typing-session-slice";
@@ -38,13 +39,20 @@ export function TypingResult() {
   }, [wpm, accuracy]);
 
   async function onRestartClick() {
+    resetSession();
+  }
+
+  function onContinueClick() {
+    dispatch(fetchTypingGame());
+    resetSession();
+  }
+
+  function resetSession() {
     dispatch(resetTypingStatsState());
     dispatch(resetTypingSessionState());
     dispatch(resetPerformance());
     dispatch(setReady(true));
   }
-
-  function onContinueClick() {}
 
   return (
     <div
@@ -65,6 +73,7 @@ export function TypingResult() {
         </Button>
         <SizeBox width={40} />
         <Button
+          onClick={onContinueClick}
           className={"text-foreground bg-card cursor-pointer hover:text-white"}
         >
           tiếp tục <BsArrowRight />
