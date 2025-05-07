@@ -19,7 +19,6 @@ export function useTypingSession({ duration = 0 }: Props) {
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
   );
-
   useTypingSessionTimer();
   useTypingSessionState(resetTypingSession);
 

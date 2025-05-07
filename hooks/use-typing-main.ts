@@ -5,7 +5,7 @@ import { useEffect } from "react";
 //   setWords,
 // } from "@/lib/feature/slice/typing-session-store-slice";
 import {
-  fetchTypingGame,
+  fetchTypingGameThunk,
   markAsEnd,
   setReady,
   setTimedModeText,
@@ -66,7 +66,12 @@ export function useTypingMain({
 
   //initialize typedWords
   useEffect(() => {
-    if (Object.keys(typingSessionState.typedWords).length > 0) return;
+    if (
+      Object.keys(typingSessionState.typedWords).length > 0 ||
+      Object.keys(words).length === 0
+    )
+      return;
+
     const initialTypedWords: { [key: number]: string } = {};
     words.forEach((value, index) => {
       initialTypedWords[index] = "";
@@ -78,7 +83,7 @@ export function useTypingMain({
   useEffect(() => {
     dispatch(setReady(false));
 
-    dispatch(fetchTypingGame());
+    dispatch(fetchTypingGameThunk());
   }, [currentTypingMode]);
 
   return { words, typingSessionState, remainingTime };

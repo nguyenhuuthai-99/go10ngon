@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { TimedModeDuration, TypingMode } from "@/model/typing-mode";
 import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
@@ -7,7 +7,7 @@ import {
   getTimedTest,
   getWordsCountTest,
 } from "@/lib/infrastructure/api/services/app-service";
-import { toast } from "sonner";
+import { RootState } from "@/lib/store";
 
 export interface TypingGameMode {
   currentTypingMode: TypingMode;
@@ -79,34 +79,44 @@ const typingSessionSlice = createSlice({
       state.isEnded = false;
       state.typedWords = {};
     },
-    fetchTypingGame: (state) => {
-      let fetchedText: string[];
-      switch (state.typingGameMode.currentTypingMode) {
-        case TypingMode.timed:
-          fetchedText = getTimedTest(
-            (state.typingGameMode.modeContext as TimedMode).duration,
-          );
-
-          break;
-        case TypingMode.wordCount:
-          fetchedText = getWordsCountTest(
-            (state.typingGameMode.modeContext as WordCountMode).count,
-          );
-          break;
-        case TypingMode.quote:
-          fetchedText = getQuoteTest();
-          break;
-        default:
-          fetchedText = [];
-          console.log(
-            "there is an error fetching typing game!! please refresh your page",
-          );
-          break;
-      }
-      state.typingGameMode.modeContext.text = fetchedText;
+    resetTypingSessionStateAndWords: (state) => {
+      state.isAFK = false;
+      state.isSessionReady = false;
+      state.isStarted = false;
+      state.isEnded = false;
+      state.typedWords = {};
+      state.typingGameMode.modeContext.text = [];
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(fetchTypingGameThunk.fulfilled, (state, action) => {
+      state.typingGameMode.modeContext.text = action.payload;
+    });
+  },
 });
+
+export const fetchTypingGameThunk = createAsyncThunk(
+  "fetchTypingGame",
+  async (_, { getState }) => {
+    const state = getState() as RootState;
+
+    const mode = state.typingSessionState.typingGameMode.currentTypingMode;
+
+    const context = state.typingSessionState.typingGameMode.modeContext;
+
+    switch (mode) {
+      case TypingMode.timed:
+        return getTimedTest((context as TimedMode).duration);
+      case TypingMode.wordCount:
+        return getWordsCountTest((context as WordCountMode).count);
+      case TypingMode.quote:
+        return getQuoteTest();
+      default:
+        console.warn("Invalid mode");
+        return [];
+    }
+  },
+);
 
 export const {
   setTypedWords,
@@ -114,12 +124,12 @@ export const {
   setTimedModeText,
   setTimedContext,
   setTimedModeDuration,
-  fetchTypingGame,
   setReady,
   markAsEnd,
   markAsStart,
   initialTypingSessionState,
   resetTypingSessionState,
+  resetTypingSessionStateAndWords,
   changeTypingGameMode,
   setAFK,
 } = typingSessionSlice.actions;

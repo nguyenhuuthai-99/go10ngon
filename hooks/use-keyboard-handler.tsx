@@ -1,4 +1,4 @@
-import usePerformanceCalculate from "@/hooks/use-char-comparision";
+import usePerformanceCalculate from "@/hooks/use-performance-calculate";
 import {
   markAsStart,
   setTypedWords,

@@ -14,8 +14,9 @@ import {
 import { destructWord } from "@/lib/utils";
 import CharSpan from "@/components/typing-components/char-span";
 import {
-  fetchTypingGame,
+  fetchTypingGameThunk,
   resetTypingSessionState,
+  resetTypingSessionStateAndWords,
   setReady,
 } from "@/lib/redux/slice/typing-session-slice";
 import { resetTypingStatsState } from "@/lib/redux/slice/typing-session-stats-slice";
@@ -40,16 +41,18 @@ export function TypingResult() {
 
   async function onRestartClick() {
     resetSession();
+    dispatch(resetTypingSessionState());
   }
 
   function onContinueClick() {
-    dispatch(fetchTypingGame());
+    dispatch(setReady(false));
     resetSession();
+    dispatch(resetTypingSessionStateAndWords());
+    dispatch(fetchTypingGameThunk());
   }
 
   function resetSession() {
     dispatch(resetTypingStatsState());
-    dispatch(resetTypingSessionState());
     dispatch(resetPerformance());
     dispatch(setReady(true));
   }
