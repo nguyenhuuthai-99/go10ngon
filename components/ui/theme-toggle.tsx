@@ -1,9 +1,9 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { BsSunFill, BsMoonStarsFill } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { IconButton } from "@/components/ui/icon-button";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 export const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
@@ -14,8 +14,8 @@ export const ThemeToggle = () => {
   if (!mounted) return null; // prevent hydration mismatch
 
   return theme === "light" ? (
-    <IconButton Icon={BsMoonStarsFill} onClick={() => setTheme("dark")} />
+    <IconButton Icon={FaMoon} onClick={() => setTheme("dark")} />
   ) : (
-    <IconButton Icon={BsSunFill} onClick={() => setTheme("light")} />
+    <IconButton Icon={FaSun} onClick={() => setTheme("light")} />
   );
 };

@@ -8,10 +8,10 @@ export function RealTimePerformance() {
   );
 
   return (
-    <div
-      className={`${showPerformance ? "visible" : "invisible"} text-primary flex justify-end text-2xl`}
-    >
-      <div>{adjustedWpm}</div> <div>&nbsp;{accuracy}%</div>
-    </div>
+    showPerformance && (
+      <div className={`text-primary flex justify-end text-2xl`}>
+        <div>{adjustedWpm}</div> <div>&nbsp;{accuracy}%</div>
+      </div>
+    )
   );
 }

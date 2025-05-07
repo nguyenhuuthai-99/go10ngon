@@ -1,32 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-enum Theme {
-  light,
-  dark,
-  auto,
+export enum Theme {
+  light = "light",
+  dark = "dark",
+  auto = "auto",
 }
 
-enum CaretSpeed {
-  off = 0,
-  slow = 0.18,
-  medium = 0.14,
-  fast = 0.1,
-  supperFast = 0.05,
+export enum CaretSpeed {
+  off = "0",
+  slow = "0.18",
+  medium = "0.14",
+  fast = "0.1",
+  supperFast = "0.05",
 }
 
 export enum CaretShape {
-  line,
-  box,
-  underline,
+  line = "line",
+  box = "box",
+  underline = "underline",
 }
 
-enum CaretSize {
+export enum CaretSize {
   small = "0.15rem",
   medium = "0.18rem",
   large = "0.2rem",
 }
 
-interface UserSettingsState {
+export interface UserSettingsState {
   appearance: {
     theme: Theme;
     showPerformanceHUD: boolean;
@@ -42,7 +42,7 @@ interface UserSettingsState {
   };
 }
 
-const initialState: UserSettingsState = {
+export const initialUserSettingState: UserSettingsState = {
   appearance: {
     theme: Theme.light,
     showPerformanceHUD: true,
@@ -60,7 +60,7 @@ const initialState: UserSettingsState = {
 
 const userSettingsSlice = createSlice({
   name: "userSettings",
-  initialState,
+  initialState: initialUserSettingState,
   reducers: {
     setTheme: (state, action) => {
       state.appearance.theme = action.payload.theme;
@@ -75,6 +75,7 @@ const userSettingsSlice = createSlice({
     toggleTypingPreview: (state) => {
       state.appearance.showTypingPreview = !state.appearance.showTypingPreview;
     },
+    applySettings: (state, action) => action.payload,
   },
 });
 
@@ -83,5 +84,6 @@ export const {
   toggleTypingPreview,
   togglePerformanceHUD,
   toggleKeyBoard,
+  applySettings,
 } = userSettingsSlice.actions;
 export default userSettingsSlice.reducer;

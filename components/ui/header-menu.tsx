@@ -1,19 +1,28 @@
 "use client";
-import {
-  BsArrowsAngleContract,
-  BsArrowsAngleExpand,
-  BsGearFill,
-  BsMoonFill,
-  BsMoonStarsFill,
-  BsPaletteFill,
-  BsSunFill,
-  BsTrophyFill,
-} from "react-icons/bs";
 import { IconButton } from "@/components/ui/icon-button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { toast } from "sonner";
 import { ToggleIcon } from "@/components/ui/toggle-icon";
-import { useEffect } from "react";
+import {
+  FaCompressAlt,
+  FaExpandArrowsAlt,
+  FaPalette,
+  FaTrophy,
+} from "react-icons/fa";
+import { FaGear } from "react-icons/fa6";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { DialogTitle, Title } from "@radix-ui/react-dialog";
+import UserSettingsSheet from "@/components/ui/user-settings-sheet";
+import { Button } from "@/components/ui/button";
 
 const expandScreen = () => {
   const elem = document.documentElement;
@@ -56,28 +65,48 @@ const exitFullscreen = () => {
 export const HeaderMenu = () => {
   return (
     <ul className="flex items-baseline gap-3">
-      <li className="cursor-pointer font-mono">
-        nguyenhuuthai
-        <span className="font-chivo m-0.5 rounded-xs bg-gray-500 px-1 text-white">
-          25
-        </span>
-      </li>
-      <li>
-        <IconButton Icon={BsTrophyFill} />
-      </li>
+      {/*<li className="cursor-pointer font-mono">*/}
+      {/*  nguyenhuuthai*/}
+      {/*  <span className="font-chivo m-0.5 rounded-xs bg-gray-500 px-1 text-white">*/}
+      {/*    25*/}
+      {/*  </span>*/}
+      {/*</li>*/}
+      {/*<li>*/}
+      {/*  <IconButton Icon={FaTrophy} />*/}
+      {/*</li>*/}
       <li>
         <ThemeToggle />
       </li>
       <li>
-        <IconButton Icon={BsGearFill} />
+        <Sheet onOpenChange={(isOpen) => {}}>
+          <SheetTrigger>
+            <IconButton Icon={FaGear} />
+          </SheetTrigger>
+          <SheetContent className="overflow-scroll">
+            <SheetHeader>
+              <SheetTitle className={"text-2xl font-bold"}>Cài đặt</SheetTitle>
+              <SheetDescription>Tùy chỉnh theo ý của bạn</SheetDescription>
+            </SheetHeader>
+            <UserSettingsSheet />
+            <SheetFooter className={"flex items-center justify-center"}>
+              <SheetClose
+                className={
+                  "hover:bg-primary h-8 w-24 cursor-pointer rounded-xs bg-gray-500 text-white"
+                }
+              >
+                Lưu
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </li>
-      <li>
-        <IconButton Icon={BsPaletteFill} />
-      </li>
+      {/*<li>*/}
+      {/*  <IconButton Icon={FaPalette} />*/}
+      {/*</li>*/}
       <li>
         <ToggleIcon
-          firstIcon={BsArrowsAngleExpand}
-          secondIcon={BsArrowsAngleContract}
+          firstIcon={FaExpandArrowsAlt}
+          secondIcon={FaCompressAlt}
           onClickFirst={expandScreen}
           onClickSecond={exitFullscreen}
         />

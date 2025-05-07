@@ -35,18 +35,18 @@ export default function InputField({
   );
 
   // focus input on mount
-  useEffect(() => {
-    ref.current?.focus();
-
-    //refocus if it loses focus
-    const interval = setInterval(() => {
-      if (document.activeElement !== ref.current) {
-        ref.current?.focus();
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [ref]);
+  // useEffect(() => {
+  //   ref.current?.focus();
+  //
+  //   //refocus if it loses focus
+  //   const interval = setInterval(() => {
+  //     if (document.activeElement !== ref.current) {
+  //       ref.current?.focus();
+  //     }
+  //   }, 100);
+  //
+  //   return () => clearInterval(interval);
+  // }, [ref]);
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
     let currentValue;
