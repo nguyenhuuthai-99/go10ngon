@@ -6,7 +6,6 @@ import SizeBox from "@/components/ui/size-box";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -14,7 +13,12 @@ import {
 } from "@/components/ui/table";
 import { destructWord } from "@/lib/utils";
 import CharSpan from "@/components/typing-components/char-span";
-import { setReady } from "@/lib/redux/slice/typing-session-slice";
+import {
+  resetTypingSessionState,
+  setReady,
+} from "@/lib/redux/slice/typing-session-slice";
+import { resetTypingStatsState } from "@/lib/redux/slice/typing-session-stats-slice";
+import { resetPerformance } from "@/lib/redux/slice/typing-session-performance-slice";
 
 export function TypingResult() {
   const [show, setShow] = useState<boolean>(false);
@@ -33,9 +37,10 @@ export function TypingResult() {
     setShow(!show);
   }, [wpm, accuracy]);
 
-  function onRestartClick() {
-    console.log("restarting");
-    console.log("is end", isEnd);
+  async function onRestartClick() {
+    dispatch(resetTypingStatsState());
+    dispatch(resetTypingSessionState());
+    dispatch(resetPerformance());
     dispatch(setReady(true));
   }
 

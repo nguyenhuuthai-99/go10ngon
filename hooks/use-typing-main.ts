@@ -65,13 +65,14 @@ export function useTypingMain({
 
   //initialize typedWords
   useEffect(() => {
+    if (Object.keys(typingSessionState.typedWords).length > 0) return;
     const initialTypedWords: { [key: number]: string } = {};
     words.forEach((value, index) => {
       initialTypedWords[index] = "";
     });
     dispatch(setTypedWords(initialTypedWords));
     dispatch(setReady(true));
-  }, [words]);
+  }, [words, typingSessionState.typedWords]);
 
   useEffect(() => {
     dispatch(setReady(false));
