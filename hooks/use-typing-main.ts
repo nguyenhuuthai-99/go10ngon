@@ -1,9 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useEffect } from "react";
-// import {
-//   setTypedWords,
-//   setWords,
-// } from "@/lib/feature/slice/typing-session-store-slice";
 import {
   fetchTypingGameThunk,
   markAsEnd,
@@ -11,12 +7,6 @@ import {
   setTimedModeText,
   setTypedWords,
 } from "@/lib/redux/slice/typing-session-slice";
-import { stringToList } from "@/lib/utils";
-import {
-  getQuoteTest,
-  getTimedTest,
-  getWordsCountTest,
-} from "@/lib/infrastructure/api/services/app-service";
 import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import {
   TimedModeDuration,

@@ -1,6 +1,6 @@
+"use client";
 import { destructWord } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import { IconType } from "react-icons";
 
 import { Caret } from "@/components/typing-components/caret";
 import CharSpan from "@/components/typing-components/char-span";
@@ -12,7 +12,6 @@ import { useCaretPosition } from "@/hooks/use-caret-position";
 import { useAutoScroll } from "@/hooks/use-scroll-to-caret";
 import { useTypingPreview } from "@/hooks/use-typing-preview";
 import { useAppSelector } from "@/hooks/redux-hook";
-import { IconButton } from "@/components/ui/icon-button";
 import { FaMousePointer } from "react-icons/fa";
 
 export function TypingArea() {
@@ -38,12 +37,17 @@ export function TypingArea() {
   ]);
   const [isFocus, setIsFocus] = useState(true);
 
+  const [hasMounted, setHasMounted] = useState(false);
+
   useEffect(() => {
+    setHasMounted(true);
     const input = inputRef.current;
     if (!input) return;
 
     const handleFocus = () => setIsFocus(true);
-    const handleBlur = () => setIsFocus(false);
+    const handleBlur = () => {
+      setIsFocus(false);
+    };
 
     input.addEventListener("focus", handleFocus);
     input.addEventListener("blur", handleBlur);
@@ -65,11 +69,11 @@ export function TypingArea() {
     currentCharIndex,
   });
 
-  function focusInput() {
+  function focusInput(e: MouseEvent) {
+    if (!hasMounted) return;
+    e.preventDefault();
     inputRef.current?.focus();
   }
-
-  //todo handle timer
 
   function isWordActive(wordIndex: number) {
     return wordIndex === currentWordIndex;
@@ -86,11 +90,11 @@ export function TypingArea() {
   }
 
   return (
-    <div className={"relative"} onClick={focusInput}>
+    <div className={"relative"} onMouseDown={(event) => focusInput(event)}>
       {!isFocus && (
         <div
           className={"absolute flex h-full w-full items-center justify-center"}
-          onClick={focusInput}
+          onMouseDown={(event) => focusInput(event)}
         >
           <FaMousePointer />
           <div>&nbsp;nhấp để trở lại vùng nhập liệu</div>
