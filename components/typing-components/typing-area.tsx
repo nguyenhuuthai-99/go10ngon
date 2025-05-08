@@ -1,6 +1,6 @@
 "use client";
 import { destructWord } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, MouseEvent } from "react";
 
 import { Caret } from "@/components/typing-components/caret";
 import CharSpan from "@/components/typing-components/char-span";
