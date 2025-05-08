@@ -7,11 +7,11 @@ export function RealTimePerformance() {
     (state) => state.userSettings.appearance.showPerformanceHUD,
   );
 
-  return (
-    showPerformance && (
-      <div className={`text-primary flex justify-end text-2xl`}>
-        <div>{adjustedWpm}</div> <div>&nbsp;{accuracy}%</div>
-      </div>
-    )
+  return showPerformance ? (
+    <div className={`text-primary flex justify-end text-2xl`}>
+      <div>{adjustedWpm}</div> <div>&nbsp;{accuracy}%</div>
+    </div>
+  ) : (
+    <div className="text-2xl">asdf</div>
   );
 }

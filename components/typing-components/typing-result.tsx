@@ -21,6 +21,14 @@ import {
 } from "@/lib/redux/slice/typing-session-slice";
 import { resetTypingStatsState } from "@/lib/redux/slice/typing-session-stats-slice";
 import { resetPerformance } from "@/lib/redux/slice/typing-session-performance-slice";
+import { WordContainer } from "@/components/typing-components/word-container";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { TooltipArrow } from "@radix-ui/react-tooltip";
 
 export function TypingResult() {
   const [show, setShow] = useState<boolean>(false);
@@ -59,11 +67,7 @@ export function TypingResult() {
 
   return (
     <div
-      className={`transform transition-all duration-500 ease-out ${
-        show
-          ? "translate-y-0 opacity-100"
-          : "pointer-events-none -translate-y-4 opacity-0"
-      }mt-10 flex w-full flex-col items-center space-y-6`}
+      className={`flex h-full max-h-screen w-full flex-col gap-6 overflow-y-auto`}
     >
       <ResultPerformance adjustedWpm={adjustedWpm} accuracy={accuracy} />
       <SizeBox height={10} />
@@ -82,6 +86,7 @@ export function TypingResult() {
           tiếp tục <BsArrowRight />
         </Button>
       </div>
+      <ResultHistory />
       <ResultTable />
     </div>
   );
@@ -101,6 +106,76 @@ function ResultPerformance({ adjustedWpm, accuracy }: ResultProps) {
       <div>
         <div className="font-bold">{accuracy}</div>
         <div>%</div>
+      </div>
+    </div>
+  );
+}
+
+function ResultHistory() {
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionState.typedWords,
+  );
+  const words = useAppSelector(
+    (state) => state.typingSessionState.typingGameMode.modeContext.text,
+  );
+
+  return (
+    <div>
+      <div className={"mb-2 text-3xl font-bold"}>lịch sử</div>
+      <div className="flex flex-wrap leading-5">
+        {Object.values(typedWords).map((typedWord, index) => {
+          return typedWord.length > 0 ? (
+            <TooltipProvider key={index} skipDelayDuration={true}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex">
+                    <WordContainer
+                      isResult={true}
+                      isIncorrect={typedWords[index] !== words[index]}
+                      ref={null}
+                      isActive={false}
+                    >
+                      {destructWord(words[index]).map((char, i) => (
+                        <CharSpan
+                          key={i}
+                          char={char}
+                          typedChar={typedWords[index]?.[i] || null}
+                          ref={null}
+                          isActive={false}
+                        ></CharSpan>
+                      ))}
+                      {typedWords[index]?.length > words[index].length &&
+                        destructWord(
+                          typedWords[index]?.slice(words[index].length),
+                        ).map((char, i) => (
+                          <CharSpan
+                            key={`extra-${i}`}
+                            char={char}
+                            typedChar={"extra"}
+                            isActive={false}
+                            ref={null}
+                          />
+                        ))}
+                    </WordContainer>
+                    {index < words.length - 1 && (
+                      <div>
+                        <CharSpan
+                          char=" "
+                          typedChar={" "}
+                          ref={null}
+                          isActive={false}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className={"bg-card text-foreground"}>
+                  <p>{typedWord}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : null;
+        })}
       </div>
     </div>
   );
@@ -131,38 +206,40 @@ function ResultTable() {
   }, [typedWords, words]);
 
   return (
-    <Table className={incorrectPairs.length === 0 ? "hidden" : ""}>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-1/2 text-center">từ gốc</TableHead>
-          <TableHead className={"w-1/2 text-center"}>từ nhập sai</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {incorrectPairs.map((pair, wordIndex) => (
-          <TableRow key={wordIndex}>
-            <TableCell className={"w-1/2 text-center"}>
-              {pair.original}
-            </TableCell>
-            <TableCell className={"text-inactive w-1/2 text-center"}>
-              {destructWord(pair.typed).map((value, index) => (
-                <CharSpan
-                  key={`result-${index}`}
-                  char={
-                    index >= pair.original.length
-                      ? "extra"
-                      : pair.original[index]
-                  }
-                  typedChar={pair.typed[index]}
-                  isResult={true}
-                  isActive={false}
-                  ref={null}
-                />
-              ))}
-            </TableCell>
+    <div>
+      <Table className={`${incorrectPairs.length === 0 ? "hidden" : ""}`}>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/2 text-center">từ gốc</TableHead>
+            <TableHead className={"w-1/2 text-center"}>từ nhập sai</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {incorrectPairs.map((pair, wordIndex) => (
+            <TableRow key={wordIndex}>
+              <TableCell className={"w-1/2 text-center"}>
+                {pair.original}
+              </TableCell>
+              <TableCell className={"text-inactive w-1/2 text-center"}>
+                {destructWord(pair.typed).map((value, index) => (
+                  <CharSpan
+                    key={`result-${index}`}
+                    char={
+                      index >= pair.original.length
+                        ? "extra"
+                        : pair.original[index]
+                    }
+                    typedChar={pair.typed[index]}
+                    isResult={true}
+                    isActive={false}
+                    ref={null}
+                  />
+                ))}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

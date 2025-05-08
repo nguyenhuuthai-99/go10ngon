@@ -17,7 +17,11 @@ export function TypingPanel() {
   return (
     <div className="relative">
       <TypingArea />
-      {isStarted ? <RealTimePerformance /> : null}
+      {isStarted ? (
+        <RealTimePerformance />
+      ) : (
+        <div className={"text-2xl"}>&nbsp; </div>
+      )}
     </div>
   );
 }

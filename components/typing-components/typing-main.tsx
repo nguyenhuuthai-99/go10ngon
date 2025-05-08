@@ -7,11 +7,13 @@ import { useEffect } from "react";
 import { useAppSelector } from "@/hooks/redux-hook";
 import { Theme } from "@/lib/redux/slice/user-settings-slice";
 import { useTheme } from "next-themes";
+import { useUserSettings } from "@/hooks/use-user-settings";
 
 export function TypingMain({ className }: { className?: string }) {
-  const { words, typingSessionState, remainingTime } = useTypingMain({});
+  const { typingSessionState, remainingTime } = useTypingMain({});
   const theme = useAppSelector((state) => state.userSettings.appearance.theme);
   const { setTheme } = useTheme();
+  useUserSettings();
 
   useEffect(() => {
     if (theme === Theme.auto) {
@@ -35,7 +37,7 @@ export function TypingMain({ className }: { className?: string }) {
 
   return (
     <div
-      className={`flex w-full max-w-[90%] flex-col items-center justify-center select-none md:max-w-[80%] lg:max-w-[70%] ${className}`}
+      className={`flex h-full max-h-screen w-full max-w-[90%] flex-col items-center justify-between overflow-y-auto select-none md:max-w-[80%] lg:max-w-[70%] ${className} `}
     >
       {!typingSessionState.isEnded ? (
         typingSessionState.isSessionReady ? (
@@ -44,7 +46,7 @@ export function TypingMain({ className }: { className?: string }) {
             remainingTime={remainingTime}
           />
         ) : (
-          <span>Loading...</span>
+          <div className="grid h-full items-center">Loading...</div>
         )
       ) : (
         <TypingResult />

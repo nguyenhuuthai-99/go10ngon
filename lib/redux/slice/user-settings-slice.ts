@@ -40,6 +40,9 @@ export interface UserSettingsState {
     shape: CaretShape;
     size: CaretSize;
   };
+  notification: {
+    isChecked: boolean;
+  };
 }
 
 export const initialUserSettingState: UserSettingsState = {
@@ -55,6 +58,9 @@ export const initialUserSettingState: UserSettingsState = {
     speed: CaretSpeed.medium,
     shape: CaretShape.line,
     size: CaretSize.medium,
+  },
+  notification: {
+    isChecked: false,
   },
 };
 
@@ -76,6 +82,9 @@ const userSettingsSlice = createSlice({
       state.appearance.showTypingPreview = !state.appearance.showTypingPreview;
     },
     applySettings: (state, action) => action.payload,
+    markNotificationAsChecked: (state) => {
+      state.notification.isChecked = true;
+    },
   },
 });
 
@@ -85,5 +94,6 @@ export const {
   togglePerformanceHUD,
   toggleKeyBoard,
   applySettings,
+  markNotificationAsChecked,
 } = userSettingsSlice.actions;
 export default userSettingsSlice.reducer;
