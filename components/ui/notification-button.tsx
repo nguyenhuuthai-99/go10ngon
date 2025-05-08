@@ -5,8 +5,6 @@ import {
 } from "@/components/ui/popover";
 import { IconButton } from "@/components/ui/icon-button";
 import { FaBell } from "react-icons/fa";
-import { ConfettiButton } from "@/components/magicui/confetti";
-import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { markNotificationAsChecked } from "@/lib/redux/slice/user-settings-slice";
 
