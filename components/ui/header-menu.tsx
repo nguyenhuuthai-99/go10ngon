@@ -80,7 +80,7 @@ export const HeaderMenu = () => {
         <ThemeToggle />
       </li>
       <li>
-        <Sheet onOpenChange={(isOpen) => {}}>
+        <Sheet>
           <SheetTrigger>
             <IconButton Icon={FaGear} />
           </SheetTrigger>
@@ -93,7 +93,7 @@ export const HeaderMenu = () => {
             <SheetFooter className={"flex items-center justify-center"}>
               <SheetClose
                 className={
-                  "hover:bg-primary h-8 w-24 cursor-pointer rounded-xs bg-gray-500 text-white"
+                  "hover:bg-primary h-8 w-24 cursor-pointer rounded-sm bg-gray-600 text-white"
                 }
               >
                 Lưu

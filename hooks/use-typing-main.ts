@@ -45,7 +45,6 @@ export function useTypingMain({
 
   //timer
   const { remainingTime, startTimer } = useCountdownTimer({
-    duration: duration || 0,
     onTimeUp: () => {
       dispatch(markAsEnd());
     },

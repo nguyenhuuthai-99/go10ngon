@@ -30,7 +30,7 @@ const initialState: TypingSessionState = {
   typingGameMode: {
     currentTypingMode: TypingMode.timed,
     modeContext: {
-      duration: TimedModeDuration.short,
+      duration: TimedModeDuration.medium,
       text: [],
     } as TimedMode,
   },

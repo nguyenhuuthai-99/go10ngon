@@ -6,6 +6,7 @@ import {
   FaFacebookSquare,
   FaInstagram,
   FaInstagramSquare,
+  FaTiktok,
 } from "react-icons/fa";
 import {
   Dialog,
@@ -17,6 +18,8 @@ import { FaSquareThreads, FaThreads } from "react-icons/fa6";
 import Link from "next/link";
 
 function BugButton() {
+  // @ts-ignore
+  // @ts-ignore
   return (
     <Dialog>
       <DialogTrigger>
@@ -30,8 +33,8 @@ function BugButton() {
             width="600"
             height="500"
             frameBorder="0"
-            marginHeight="0"
-            marginWidth="0"
+            marginHeight={0}
+            marginWidth={0}
           >
             Loading...
           </iframe>{" "}
@@ -67,6 +70,13 @@ export function Footer({ className }: { className?: string }) {
           href={"https://www.threads.com/@go10ngon"}
         >
           <IconButton Icon={FaSquareThreads} />
+        </Link>{" "}
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href={"https://www.tiktok.com/@go10ngon.net"}
+        >
+          <IconButton Icon={FaTiktok} />
         </Link>
         <Link
           target="_blank"

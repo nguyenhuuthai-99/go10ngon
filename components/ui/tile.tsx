@@ -1,17 +1,22 @@
 // import {ReactElement} from "react";
 
 import { ReactElement } from "react";
+import { IconType } from "react-icons";
 
 export default function Tile({
-  icon,
+  className,
+  Icon,
   title,
+  onClick,
 }: {
-  icon: ReactElement;
+  Icon: IconType;
   title: string;
+  onClick?: () => void;
+  className?: string;
 }) {
   return (
-    <div className="mx-4 my-2 flex">
-      {icon}
+    <div className={`${className} mx-4 my-2 flex items-center justify-center`}>
+      <Icon onClick={onClick} />
       <span className={"ml-2"}>{title}</span>
     </div>
   );

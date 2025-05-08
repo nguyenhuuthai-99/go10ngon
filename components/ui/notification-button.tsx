@@ -30,21 +30,21 @@ export function NotificationButton() {
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex flex-col">
-          <div className="border-b border-gray-100 p-4">
+          <div className="border-border border-b p-4">
             <h3 className="text-lg font-medium">Thông báo</h3>
           </div>
 
           <div className="flex flex-col">
             {/* Welcome message */}
-            <div className="border-b border-gray-100 p-4 hover:bg-gray-50">
-              <p className="text-sm text-gray-700">
+            <div className="border-border border-b p-4 hover:bg-gray-50">
+              <p className="text-sm text-gray-500">
                 Chào mừng bạn đến với gõ10ngón
               </p>
             </div>
 
             {/* Discord invitation */}
-            <div className="border-b border-gray-100 p-4 hover:bg-gray-50">
-              <p className="mb-2 text-sm text-gray-700">
+            <div className="border-border border-b p-4 hover:bg-gray-50">
+              <p className="mb-2 text-sm text-gray-500">
                 Tham gia discord để thảo luận, chia sẻ, góp ý và đăng ký ngay
                 vào cuộc thử nghiệm kín.
               </p>
@@ -54,13 +54,13 @@ export function NotificationButton() {
                 rel="noopener noreferrer"
                 className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-800"
               >
-                Tham gia Discord
+                --{">"} Tham gia Discord
               </a>
             </div>
 
             {/* Error reporting */}
             <div className="p-4 hover:bg-gray-50">
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-500">
                 Nếu gặp lỗi báo cáo cho mình ngay để mình fix nhé.
               </p>
             </div>
