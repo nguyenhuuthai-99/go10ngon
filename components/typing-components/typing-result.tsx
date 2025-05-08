@@ -125,7 +125,7 @@ function ResultHistory() {
       <div className="flex flex-wrap leading-5">
         {Object.values(typedWords).map((typedWord, index) => {
           return typedWord.length > 0 ? (
-            <TooltipProvider key={index} skipDelayDuration={true}>
+            <TooltipProvider key={index}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="flex">
@@ -169,7 +169,9 @@ function ResultHistory() {
                     )}
                   </div>
                 </TooltipTrigger>
-                <TooltipContent className={"bg-card text-foreground"}>
+                <TooltipContent
+                  className={"bg-card text-foreground border-border border-2"}
+                >
                   <p>{typedWord}</p>
                 </TooltipContent>
               </Tooltip>
