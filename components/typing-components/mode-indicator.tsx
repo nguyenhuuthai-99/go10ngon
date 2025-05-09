@@ -201,7 +201,6 @@ function ModeSelection({
 
 function LevelSelections({ mode }: { mode: TypingMode }) {
   const [selectedLevel, setSelectedLevel] = useState(0);
-  const { updateLevel } = useTypingSessionActions();
   const typingMode = useTypingModeContext();
 
   useEffect(() => {

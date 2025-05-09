@@ -1,13 +1,7 @@
 import Tile from "@/components/ui/tile";
 import VerticalDivider from "@/components/ui/vertical-divider";
 import { useAppSelector } from "@/hooks/redux-hook";
-import { FaClock, FaListOl, FaQuoteLeft, FaTimesCircle } from "react-icons/fa";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { FaClock, FaListOl, FaQuoteLeft } from "react-icons/fa";
 import {
   TimedModeDuration,
   TypingMode,
@@ -17,6 +11,7 @@ import { useEffect, useState } from "react";
 import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
 import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
+import { IconType } from "react-icons";
 
 export default function TypingModeBox() {
   const isStarted = useAppSelector(
@@ -34,7 +29,9 @@ export default function TypingModeBox() {
         <ModeLevels levels={Object.values(TimedModeDuration)}></ModeLevels>
       );
     } else if (currentMode === TypingMode.wordCount) {
-      return null;
+      return (
+        <ModeLevels levels={Object.values(WordCountQuantity)}></ModeLevels>
+      );
     } else {
       return null;
     }
@@ -43,32 +40,7 @@ export default function TypingModeBox() {
     <div
       className={`block flex flex-wrap justify-center md:hidden ${isStarted && isTyping ? "invisible" : "visible"} `}
     >
-      <Tile title="thời gian" Icon={FaClock} />
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Tile title="đếm từ" Icon={FaListOl} className={"text-inactive"} />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Coming soon</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Tile
-              title="trích dẫn"
-              Icon={FaQuoteLeft}
-              className={"text-inactive"}
-            />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Coming soon</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-
+      <ModeSelections />
       <VerticalDivider
         height={40}
         width={3}
@@ -80,18 +52,85 @@ export default function TypingModeBox() {
   );
 }
 
+function ModeSelections() {
+  const currentMode = useAppSelector(
+    (state) => state.typingSessionState.typingGameMode.currentTypingMode,
+  );
+  const [selectedMode, setSelectedMode] = useState<TypingMode>(currentMode);
+  const { updateMode } = useTypingSessionActions();
+
+  function handleModeChange(mode: TypingMode) {
+    setSelectedMode(mode);
+    updateMode(mode);
+  }
+
+  return (
+    <div className={"flex flex-wrap items-center justify-center"}>
+      <ModeSelection
+        title={"thời gian"}
+        icon={FaClock}
+        isSelected={selectedMode === TypingMode.timed}
+        onClick={() => handleModeChange(TypingMode.timed)}
+      />
+      <ModeSelection
+        title={"đếm từ"}
+        icon={FaListOl}
+        isSelected={selectedMode === TypingMode.wordCount}
+        onClick={() => handleModeChange(TypingMode.wordCount)}
+      />
+      <ModeSelection
+        title={"trích dẫn"}
+        icon={FaQuoteLeft}
+        isSelected={selectedMode === TypingMode.quote}
+        onClick={() => handleModeChange(TypingMode.quote)}
+      />
+    </div>
+  );
+}
+
+function ModeSelection({
+  title,
+  icon,
+  isSelected,
+  onClick,
+}: {
+  isSelected: boolean;
+  onClick: () => void;
+  title: string;
+  icon: IconType;
+}) {
+  return (
+    <div onClick={onClick} className={`hover:bg-card rounded-sm`}>
+      <Tile
+        title={title}
+        Icon={icon}
+        className={`${isSelected ? "text-foreground" : "text-inactive"}`}
+      />
+    </div>
+  );
+}
 function ModeLevels({ levels }: { levels: number[] }) {
   const [selectedLevel, setSelectedLevel] = useState(levels[1]);
   const { updateLevel } = useTypingSessionActions();
   const mode = useAppSelector(
     (state) => state.typingSessionState.typingGameMode,
   );
+  const duration = useAppSelector(
+    (state) =>
+      (state.typingSessionState.typingGameMode.modeContext as TimedMode)
+        .duration,
+  );
+  const count = useAppSelector(
+    (state) =>
+      (state.typingSessionState.typingGameMode.modeContext as WordCountMode)
+        .count,
+  );
 
   useEffect(() => {
     if (mode.currentTypingMode === TypingMode.timed) {
-      setSelectedLevel((mode.modeContext as TimedMode).duration);
+      setSelectedLevel(duration);
     } else if (mode.currentTypingMode === TypingMode.wordCount) {
-      setSelectedLevel((mode.modeContext as WordCountMode).count);
+      setSelectedLevel(count);
     }
   }, [mode]);
 
