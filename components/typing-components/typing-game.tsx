@@ -10,6 +10,9 @@ import { useAppSelector } from "@/hooks/redux-hook";
 import TypingModeBox from "@/components/typing-components/typing-mode-box";
 import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
 import { ModeIndicator } from "@/components/typing-components/mode-indicator";
+import { Button } from "@/components/ui/button";
+import { BsArrowClockwise, BsArrowRight } from "react-icons/bs";
+import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 interface TypingGameProps {
   typingGameMode: TypingGameMode;
@@ -21,6 +24,7 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
   );
 
   const isTyping = useAppSelector((state) => state.typingSessionState.isTyping);
+  const { restartSession, refreshSession } = useTypingSessionActions();
 
   function renderModeComponent() {
     if (typingGameMode.currentTypingMode === TypingMode.timed) {
@@ -48,7 +52,29 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
         {isStarted && renderModeComponent()}
         <TypingPanel />
       </div>
-      <div className={"flex-1"}>{!isTyping && <TypingSessionButtons />}</div>
+      <div className={"flex-1"}>
+        {!isTyping && isStarted && (
+          <div className={"flex w-full flex-wrap items-center justify-center"}>
+            <Button
+              className={
+                "text-foreground bg-card cursor-pointer hover:text-white"
+              }
+              onClick={refreshSession}
+            >
+              làm mới <BsArrowRight />
+            </Button>
+            <SizeBox width={80} />
+            <Button
+              onClick={restartSession}
+              className={
+                "text-foreground bg-card cursor-pointer hover:text-white"
+              }
+            >
+              thử lại <BsArrowClockwise />
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

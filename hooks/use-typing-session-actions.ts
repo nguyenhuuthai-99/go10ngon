@@ -1,14 +1,19 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import {
+  changeTypingGameMode,
   fetchTypingGameThunk,
   resetTypingSessionState,
   resetTypingSessionStateAndWords,
   setTimedContext,
+  setTimedModeDuration,
+  setWordCount,
+  setWordCountContext,
 } from "@/lib/redux/slice/typing-session-slice";
 import { resetTypingStatsState } from "@/lib/redux/slice/typing-session-stats-slice";
 import { resetPerformance } from "@/lib/redux/slice/typing-session-performance-slice";
 import { TypingMode } from "@/model/typing-mode";
 import { TimedMode } from "@/model/timed-mode";
+import { WordCountMode } from "@/model/word-count-mode";
 
 export function useTypingSessionActions() {
   const dispatch = useAppDispatch();
@@ -42,10 +47,49 @@ export function useTypingSessionActions() {
           text: mode.modeContext.text,
         } as TimedMode),
       );
-      dispatch(fetchTypingGameThunk());
     } else {
+      dispatch(
+        setWordCountContext({
+          count: level,
+          text: mode.modeContext.text,
+        } as WordCountMode),
+      );
     }
+    dispatch(fetchTypingGameThunk());
   }
 
-  return { restartSession, refreshSession, updateLevel };
+  function updateMode(mode: TypingMode): void {
+    resetSession();
+    dispatch(resetTypingSessionStateAndWords());
+    dispatch(changeTypingGameMode(mode));
+    dispatch(fetchTypingGameThunk());
+  }
+
+  function updateModeAndLevel({
+    mode,
+    duration,
+    count,
+  }: {
+    mode: TypingMode;
+    duration: number;
+    count: number;
+  }): void {
+    resetSession();
+    dispatch(resetTypingSessionStateAndWords());
+    dispatch(changeTypingGameMode(mode));
+    if (mode === TypingMode.timed) {
+      dispatch(setTimedModeDuration(duration));
+    } else if (mode === TypingMode.wordCount) {
+      dispatch(setWordCount(count));
+    }
+    dispatch(fetchTypingGameThunk());
+  }
+
+  return {
+    restartSession,
+    refreshSession,
+    updateLevel,
+    updateMode,
+    updateModeAndLevel,
+  };
 }

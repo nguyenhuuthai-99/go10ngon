@@ -11,7 +11,7 @@ export const TimedModeDuration = {
 };
 
 export const WordCountQuantity = {
-  small: 50,
-  medium: 80,
-  large: 110,
+  small: 15,
+  medium: 30,
+  large: 60,
 };

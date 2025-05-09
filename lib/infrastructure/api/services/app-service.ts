@@ -1,5 +1,5 @@
 import { TimedMode } from "@/model/timed-mode";
-import { TimedModeDuration } from "@/model/typing-mode";
+import { TimedModeDuration, WordCountQuantity } from "@/model/typing-mode";
 import { stringToList } from "@/lib/utils";
 import { commonVietnameseWords } from "@/utils/common-words";
 export function getTimedTest(duration: number): string[] {
@@ -13,11 +13,17 @@ export function getTimedTest(duration: number): string[] {
 }
 
 export function getWordsCountTest(count: number): string[] {
-  return [];
+  if (count === WordCountQuantity.small) {
+    return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.small);
+  } else if (count === WordCountQuantity.medium) {
+    return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.medium);
+  } else {
+    return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.large);
+  }
 }
 
 export function getQuoteTest(): string[] {
-  return [];
+  return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.medium);
 }
 
 function shuffleAndWithdraw(list: string[], count: number) {

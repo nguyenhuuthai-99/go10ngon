@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { TimedModeDuration, TypingMode } from "@/model/typing-mode";
+import {
+  TimedModeDuration,
+  TypingMode,
+  WordCountQuantity,
+} from "@/model/typing-mode";
 import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
 import {
@@ -33,8 +37,9 @@ const initialState: TypingSessionState = {
     currentTypingMode: TypingMode.timed,
     modeContext: {
       duration: TimedModeDuration.medium,
+      count: WordCountQuantity.medium,
       text: [],
-    } as TimedMode,
+    },
   },
   typedWords: {},
 };
@@ -74,8 +79,12 @@ const typingSessionSlice = createSlice({
     setTimedModeDuration: (state, action) => {
       (state.typingGameMode.modeContext as TimedMode).duration = action.payload;
     },
-    setTimedModeText: (state, action) => {
-      (state.typingGameMode.modeContext as TimedMode).text = action.payload;
+    setWordCount: (state, action) => {
+      (state.typingGameMode.modeContext as WordCountMode).count =
+        action.payload;
+    },
+    setWordCountContext: (state, action) => {
+      (state.typingGameMode.modeContext as WordCountMode) = action.payload;
     },
     initialTypingSessionState: (state) => initialState,
     resetTypingSessionState: (state) => {
@@ -129,10 +138,11 @@ export const fetchTypingGameThunk = createAsyncThunk(
 export const {
   setTypedWords,
   resetTypedWords,
-  setTimedModeText,
   setTimedContext,
   markInactive,
   setTimedModeDuration,
+  setWordCountContext,
+  setWordCount,
   setReady,
   markAsEnd,
   markAsStart,
