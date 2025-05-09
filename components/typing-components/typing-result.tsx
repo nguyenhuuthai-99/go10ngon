@@ -13,14 +13,6 @@ import {
 } from "@/components/ui/table";
 import { destructWord } from "@/lib/utils";
 import CharSpan from "@/components/typing-components/char-span";
-import {
-  fetchTypingGameThunk,
-  resetTypingSessionState,
-  resetTypingSessionStateAndWords,
-  setReady,
-} from "@/lib/redux/slice/typing-session-slice";
-import { resetTypingStatsState } from "@/lib/redux/slice/typing-session-stats-slice";
-import { resetPerformance } from "@/lib/redux/slice/typing-session-performance-slice";
 import { WordContainer } from "@/components/typing-components/word-container";
 import {
   Tooltip,
@@ -28,42 +20,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TooltipArrow } from "@radix-ui/react-tooltip";
+import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
 
 export function TypingResult() {
   const [show, setShow] = useState<boolean>(false);
-  const totalKeystrokes = useAppSelector(
-    (state) => state.typingSessionStats.totalKeystrokes,
-  );
-  const isEnd = useAppSelector((state) => state.typingSessionState.isEnded);
 
   const { wpm, accuracy, adjustedWpm } = useAppSelector(
     (state) => state.typingSessionPerformance,
   );
 
-  const dispatch = useAppDispatch();
-
   useEffect(() => {
     setShow(!show);
   }, [wpm, accuracy]);
-
-  async function onRestartClick() {
-    resetSession();
-    dispatch(resetTypingSessionState());
-  }
-
-  function onContinueClick() {
-    dispatch(setReady(false));
-    resetSession();
-    dispatch(resetTypingSessionStateAndWords());
-    dispatch(fetchTypingGameThunk());
-  }
-
-  function resetSession() {
-    dispatch(resetTypingStatsState());
-    dispatch(resetPerformance());
-    dispatch(setReady(true));
-  }
 
   return (
     <div
@@ -71,21 +39,7 @@ export function TypingResult() {
     >
       <ResultPerformance adjustedWpm={adjustedWpm} accuracy={accuracy} />
       <SizeBox height={10} />
-      <div className={"flex flex-wrap items-center justify-center"}>
-        <Button
-          className={"text-foreground bg-card cursor-pointer hover:text-white"}
-          onClick={onRestartClick}
-        >
-          thử lại <BsArrowClockwise />
-        </Button>
-        <SizeBox width={40} />
-        <Button
-          onClick={onContinueClick}
-          className={"text-foreground bg-card cursor-pointer hover:text-white"}
-        >
-          tiếp tục <BsArrowRight />
-        </Button>
-      </div>
+      <TypingSessionButtons />
       <ResultHistory />
       <ResultTable />
     </div>
@@ -118,6 +72,7 @@ function ResultHistory() {
   const words = useAppSelector(
     (state) => state.typingSessionState.typingGameMode.modeContext.text,
   );
+  const typingStats = useAppSelector((state) => state.typingSessionStats);
 
   return (
     <div>

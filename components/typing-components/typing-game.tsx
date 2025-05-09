@@ -8,6 +8,7 @@ import { WordCountMode } from "@/model/word-count-mode";
 import SizeBox from "@/components/ui/size-box";
 import { useAppSelector } from "@/hooks/redux-hook";
 import TypingModeBox from "@/components/ui/typing-mode-box";
+import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
 
 interface TypingGameProps {
   typingGameMode: TypingGameMode;
@@ -17,6 +18,8 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
   const isStarted = useAppSelector(
     (state) => state.typingSessionState.isStarted,
   );
+
+  const isTyping = useAppSelector((state) => state.typingSessionState.isTyping);
 
   function renderModeComponent() {
     if (typingGameMode.currentTypingMode === TypingMode.timed) {
@@ -43,7 +46,7 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
         {isStarted && renderModeComponent()}
         <TypingPanel />
       </div>
-      <div className={"flex-1"}></div>
+      <div className={"flex-1"}>{!isTyping && <TypingSessionButtons />}</div>
     </div>
   );
 }

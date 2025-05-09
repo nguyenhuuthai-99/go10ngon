@@ -6,7 +6,6 @@ interface TypingStats {
   correctKeystrokes: number;
   startTime: number | null;
   lastTimestamp: number | null;
-  isRunning: boolean;
 }
 
 const initialTypingState: TypingStats = {
@@ -15,7 +14,6 @@ const initialTypingState: TypingStats = {
   correctKeystrokes: 0,
   startTime: null,
   lastTimestamp: null,
-  isRunning: false,
 };
 
 export const typingSessionStatsSlice = createSlice({
@@ -29,15 +27,11 @@ export const typingSessionStatsSlice = createSlice({
       state.correctKeystrokes += isCorrect ? 1 : 0;
       state.startTime ??= timestamp;
       state.lastTimestamp = timestamp;
-      state.isRunning = true;
-    },
-    setInActive: (state) => {
-      state.isRunning = false;
     },
     resetTypingStatsState: (state) => initialTypingState,
   },
 });
 
-export const { keyPress, setInActive, resetTypingStatsState } =
+export const { keyPress, resetTypingStatsState } =
   typingSessionStatsSlice.actions;
 export default typingSessionStatsSlice.reducer;

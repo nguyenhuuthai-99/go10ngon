@@ -15,6 +15,7 @@ export interface TypingGameMode {
 }
 export interface TypingSessionState {
   isStarted: boolean;
+  isTyping: boolean;
   isEnded: boolean;
   isAFK: boolean;
   isSessionReady: boolean;
@@ -24,6 +25,7 @@ export interface TypingSessionState {
 
 const initialState: TypingSessionState = {
   isStarted: false,
+  isTyping: false,
   isEnded: false,
   isAFK: false,
   isSessionReady: false,
@@ -52,6 +54,10 @@ const typingSessionSlice = createSlice({
     },
     markAsStart: (state) => {
       state.isStarted = true;
+      state.isTyping = true;
+    },
+    markInactive: (state) => {
+      state.isTyping = false;
     },
     markAsEnd: (state) => {
       state.isEnded = true;
@@ -77,6 +83,7 @@ const typingSessionSlice = createSlice({
       state.isSessionReady = false;
       state.isStarted = false;
       state.isEnded = false;
+      state.isTyping = false;
       state.typedWords = {};
     },
     resetTypingSessionStateAndWords: (state) => {
@@ -84,6 +91,7 @@ const typingSessionSlice = createSlice({
       state.isSessionReady = false;
       state.isStarted = false;
       state.isEnded = false;
+      state.isTyping = false;
       state.typedWords = {};
       state.typingGameMode.modeContext.text = [];
     },
@@ -123,6 +131,7 @@ export const {
   resetTypedWords,
   setTimedModeText,
   setTimedContext,
+  markInactive,
   setTimedModeDuration,
   setReady,
   markAsEnd,

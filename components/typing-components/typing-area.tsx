@@ -101,11 +101,6 @@ export function TypingArea() {
         </div>
       )}
       <div className={`${!isFocus && "blur-xs"}`}>
-        <InputField
-          isTypingSessionEnd={typingSessionState.isEnded}
-          ref={inputRef}
-          handleKeyDownCallBack={onKeyDown}
-        />
         <div
           className="text-inactive relative flex h-36 flex-wrap overflow-hidden pl-1 text-3xl leading-12 wrap-anywhere text-clip"
           ref={typingAreaRef}
@@ -171,6 +166,11 @@ export function TypingArea() {
           })}
         </div>
       </div>
+      <InputField
+        isTypingSessionEnd={typingSessionState.isEnded}
+        ref={inputRef}
+        handleKeyDownCallBack={onKeyDown}
+      />
     </div>
   );
 }

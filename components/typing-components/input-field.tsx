@@ -34,19 +34,14 @@ export default function InputField({
     (state) => state.userSettings.appearance.showInputField,
   );
 
-  // focus input on mount
-  // useEffect(() => {
-  //   ref.current?.focus();
-  //
-  //   //refocus if it loses focus
-  //   const interval = setInterval(() => {
-  //     if (document.activeElement !== ref.current) {
-  //       ref.current?.focus();
-  //     }
-  //   }, 100);
-  //
-  //   return () => clearInterval(interval);
-  // }, [ref]);
+  const isStarted = useAppSelector(
+    (state) => state.typingSessionState.isStarted,
+  );
+
+  useEffect(() => {
+    if (isStarted) return;
+    setInputValue("");
+  }, [isStarted]);
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
     let currentValue;
@@ -90,7 +85,7 @@ export default function InputField({
   }
 
   return (
-    <div>
+    <div className={"flex w-full items-center justify-center"}>
       <input
         readOnly={isTypingSessionEnd}
         ref={ref}

@@ -7,8 +7,8 @@ import {
 import {
   keyPress,
   resetTypingStatsState,
-  setInActive,
 } from "@/lib/redux/slice/typing-session-stats-slice";
+import { markInactive } from "@/lib/redux/slice/typing-session-slice";
 // import { handleKeyPress } from "@/hooks/use-performance-thunk";
 
 export const HISTORY_STORAGE_KEY = "typingSessionHistory";
@@ -42,8 +42,8 @@ export function useTypingSessionPerformance() {
       clearTimeout(inactivityTimer.current);
     }
     inactivityTimer.current = setTimeout(() => {
-      appDispatch(setInActive());
-    }, 5000); // 5 seconds inactivity
+      appDispatch(markInactive());
+    }, 3000); // 5 seconds inactivity
   };
 
   const reset = () => {

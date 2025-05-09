@@ -5,7 +5,7 @@ import { QuoteIcon } from "@/public/assets/icons/quote";
 import { RelaxIcon } from "@/public/assets/icons/relax";
 import VerticalDivider from "@/components/ui/vertical-divider";
 import { LessonIcon } from "@/public/assets/icons/lesson";
-import { useAppSelector } from "@/hooks/redux-hook";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { FaClock, FaListOl, FaQuoteLeft, FaTimesCircle } from "react-icons/fa";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import {
@@ -23,11 +23,17 @@ import { useEffect, useState } from "react";
 import { useTypingMode } from "@/hooks/use-typing-mode";
 import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
+import { resetTypingStatsState } from "@/lib/redux/slice/typing-session-stats-slice";
+import { resetPerformance } from "@/lib/redux/slice/typing-session-performance-slice";
+import { setReady } from "@/lib/redux/slice/typing-session-slice";
+import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
 
 export default function TypingModeBox() {
   const isStarted = useAppSelector(
     (state) => state.typingSessionState.isStarted,
   );
+  const isTyping = useAppSelector((state) => state.typingSessionState.isTyping);
+
   const currentMode = useAppSelector(
     (state) => state.typingSessionState.typingGameMode.currentTypingMode,
   );
@@ -45,7 +51,7 @@ export default function TypingModeBox() {
   }
   return (
     <div
-      className={`flex flex-wrap justify-center ${isStarted ? "invisible" : "visible"} `}
+      className={`flex flex-wrap justify-center ${isStarted && isTyping ? "invisible" : "visible"} `}
     >
       <Tile title="thời gian" Icon={FaClock} />
       <TooltipProvider>
@@ -100,9 +106,10 @@ function ModeLevels({ levels }: { levels: number[] }) {
   }, [mode]);
 
   function onModeLevelChange(level: number) {
-    setSelectedLevel(level);
+    // setSelectedLevel(level);
     updateLevel(level);
   }
+
   return (
     <div className={"flex gap-x-12"}>
       {levels.map((level, index) => (

@@ -44,7 +44,7 @@ export function useKeyboardHandler({
   ) {
     if (!typingSessionState.isSessionReady) return;
 
-    if (!typingSessionState.isStarted) {
+    if (!typingSessionState.isStarted || !typingSessionState.isTyping) {
       dispatch(markAsStart());
     }
 

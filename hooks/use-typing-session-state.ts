@@ -11,7 +11,10 @@ export function useTypingSessionState(resetTypingSession: () => void) {
   const dispatch = useAppDispatch();
 
   //start Game
-  useEffect(() => {}, [typingSessionState.isStarted]);
+  useEffect(() => {
+    if (typingSessionState.isStarted) return;
+    resetTypingSession();
+  }, [typingSessionState.isStarted]);
 
   //end Game
   useEffect(() => {

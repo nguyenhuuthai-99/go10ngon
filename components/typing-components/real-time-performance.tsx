@@ -12,6 +12,6 @@ export function RealTimePerformance() {
       <div>{adjustedWpm}</div> <div>&nbsp;{accuracy}%</div>
     </div>
   ) : (
-    <div className="text-2xl">asdf</div>
+    <div className="text-2xl"></div>
   );
 }

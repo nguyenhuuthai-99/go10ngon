@@ -4,16 +4,23 @@ import { TypingResult } from "@/components/typing-components/typing-result";
 
 import { useTypingMain } from "@/hooks/use-typing-main";
 import { useEffect } from "react";
-import { useAppSelector } from "@/hooks/redux-hook";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { Theme } from "@/lib/redux/slice/user-settings-slice";
 import { useTheme } from "next-themes";
 import { useUserSettings } from "@/hooks/use-user-settings";
+import { useMouseMove } from "@/hooks/use-mouse-move";
+import { markInactive } from "@/lib/redux/slice/typing-session-slice";
 
 export function TypingMain({ className }: { className?: string }) {
   const { typingSessionState, remainingTime } = useTypingMain({});
   const theme = useAppSelector((state) => state.userSettings.appearance.theme);
   const { setTheme } = useTheme();
+  const dispatch = useAppDispatch();
+
   useUserSettings();
+  useMouseMove((e) => {
+    if (typingSessionState.isTyping) dispatch(markInactive());
+  });
 
   useEffect(() => {
     if (theme === Theme.auto) {
@@ -27,13 +34,6 @@ export function TypingMain({ className }: { className?: string }) {
       setTheme(theme);
     }
   }, [theme]);
-
-  //todo get user mode and dispatch it
-  function getTimedModeWords() {}
-
-  function getWordsModeWords() {}
-
-  function getQuotesModeWords() {}
 
   return (
     <div

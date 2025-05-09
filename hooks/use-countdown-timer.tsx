@@ -15,6 +15,9 @@ export function useCountdownTimer({ onTimeUp }: TimerProps) {
   const [remainingTime, setRemainingTime] = useState(duration);
   const isTimerEnd = useRef(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isStarted = useAppSelector(
+    (state) => state.typingSessionState.isStarted,
+  );
 
   useEffect(() => {
     return () => clearTimer();
@@ -23,6 +26,12 @@ export function useCountdownTimer({ onTimeUp }: TimerProps) {
   useEffect(() => {
     setRemainingTime(duration);
   }, [duration]);
+
+  useEffect(() => {
+    if (isStarted) return;
+    resetTimer();
+    return () => clearTimer();
+  }, [isStarted]);
 
   function startTimer() {
     const endTime = Date.now() + duration * 1000;
