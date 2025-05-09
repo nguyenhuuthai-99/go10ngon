@@ -4,7 +4,6 @@ import {
   fetchTypingGameThunk,
   markAsEnd,
   setReady,
-  setTimedModeText,
   setTypedWords,
 } from "@/lib/redux/slice/typing-session-slice";
 import { useCountdownTimer } from "@/hooks/use-countdown-timer";

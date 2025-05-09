@@ -1,6 +1,4 @@
-import { TimedMode } from "@/model/timed-mode";
 import { TimedModeDuration, WordCountQuantity } from "@/model/typing-mode";
-import { stringToList } from "@/lib/utils";
 import { commonVietnameseWords } from "@/utils/common-words";
 export function getTimedTest(duration: number): string[] {
   if (duration === TimedModeDuration.short) {
