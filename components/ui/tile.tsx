@@ -15,7 +15,7 @@ export default function Tile({
   className?: string;
 }) {
   return (
-    <div className={`${className} mx-4 my-2 flex items-center justify-center`}>
+    <div className={`${className} mx-4 my-2 flex items-center text-nowrap`}>
       <Icon onClick={onClick} />
       <span className={"ml-2"}>{title}</span>
     </div>

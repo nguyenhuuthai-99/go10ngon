@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Chivo_Mono, Roboto_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toast } from "next/dist/client/components/react-dev-overlay/ui/components/toast";
 import { Toaster } from "sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,8 @@ export default function RootLayout({
         <meta charSet="utf-8" name={"viewport"} />
       </head>
       <body>
+        <SpeedInsights />
+        <Analytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

@@ -7,8 +7,9 @@ import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
 import SizeBox from "@/components/ui/size-box";
 import { useAppSelector } from "@/hooks/redux-hook";
-import TypingModeBox from "@/components/ui/typing-mode-box";
+import TypingModeBox from "@/components/typing-components/typing-mode-box";
 import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
+import { ModeIndicator } from "@/components/typing-components/mode-indicator";
 
 interface TypingGameProps {
   typingGameMode: TypingGameMode;
@@ -40,6 +41,7 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
   return (
     <div className="flex h-full flex-col">
       <TypingModeBox />
+      <ModeIndicator />
       <div
         className={`relative bottom-0 flex w-full flex-1 flex-col items-center justify-end gap-3`}
       >

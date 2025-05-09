@@ -10,37 +10,22 @@ import { useAppDispatch } from "@/hooks/redux-hook";
 import { Button } from "@/components/ui/button";
 import { BsArrowClockwise, BsArrowRight } from "react-icons/bs";
 import SizeBox from "@/components/ui/size-box";
+import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 export function TypingSessionButtons() {
-  const dispatch = useAppDispatch();
-
-  function onRestartClick() {
-    resetSession();
-    dispatch(resetTypingSessionState());
-  }
-
-  function onContinueClick() {
-    resetSession();
-    dispatch(resetTypingSessionStateAndWords());
-    dispatch(fetchTypingGameThunk());
-  }
-
-  function resetSession() {
-    dispatch(resetTypingStatsState());
-    dispatch(resetPerformance());
-  }
+  const { refreshSession, restartSession } = useTypingSessionActions();
 
   return (
     <div className={"flex flex-wrap items-center justify-center"}>
       <Button
         className={"text-foreground bg-card cursor-pointer hover:text-white"}
-        onClick={onRestartClick}
+        onClick={restartSession}
       >
         thử lại <BsArrowClockwise />
       </Button>
       <SizeBox width={40} />
       <Button
-        onClick={onContinueClick}
+        onClick={refreshSession}
         className={"text-foreground bg-card cursor-pointer hover:text-white"}
       >
         tiếp tục <BsArrowRight />

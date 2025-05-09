@@ -1,13 +1,7 @@
 import Tile from "@/components/ui/tile";
-import { TimeIcon } from "@/public/assets/icons/time";
-import { PopularIcon } from "@/public/assets/icons/popular";
-import { QuoteIcon } from "@/public/assets/icons/quote";
-import { RelaxIcon } from "@/public/assets/icons/relax";
 import VerticalDivider from "@/components/ui/vertical-divider";
-import { LessonIcon } from "@/public/assets/icons/lesson";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { useAppSelector } from "@/hooks/redux-hook";
 import { FaClock, FaListOl, FaQuoteLeft, FaTimesCircle } from "react-icons/fa";
-import { BsAlphabetUppercase } from "react-icons/bs";
 import {
   Tooltip,
   TooltipContent,
@@ -20,13 +14,9 @@ import {
   WordCountQuantity,
 } from "@/model/typing-mode";
 import { useEffect, useState } from "react";
-import { useTypingMode } from "@/hooks/use-typing-mode";
 import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
-import { resetTypingStatsState } from "@/lib/redux/slice/typing-session-stats-slice";
-import { resetPerformance } from "@/lib/redux/slice/typing-session-performance-slice";
-import { setReady } from "@/lib/redux/slice/typing-session-slice";
-import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
+import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 export default function TypingModeBox() {
   const isStarted = useAppSelector(
@@ -51,7 +41,7 @@ export default function TypingModeBox() {
   }
   return (
     <div
-      className={`flex flex-wrap justify-center ${isStarted && isTyping ? "invisible" : "visible"} `}
+      className={`block flex flex-wrap justify-center md:hidden ${isStarted && isTyping ? "invisible" : "visible"} `}
     >
       <Tile title="thời gian" Icon={FaClock} />
       <TooltipProvider>
@@ -92,7 +82,7 @@ export default function TypingModeBox() {
 
 function ModeLevels({ levels }: { levels: number[] }) {
   const [selectedLevel, setSelectedLevel] = useState(levels[1]);
-  const { updateLevel } = useTypingMode();
+  const { updateLevel } = useTypingSessionActions();
   const mode = useAppSelector(
     (state) => state.typingSessionState.typingGameMode,
   );
@@ -106,7 +96,6 @@ function ModeLevels({ levels }: { levels: number[] }) {
   }, [mode]);
 
   function onModeLevelChange(level: number) {
-    // setSelectedLevel(level);
     updateLevel(level);
   }
 

@@ -1,5 +1,5 @@
 import Header from "@/components/header";
-import TypingModeBox from "@/components/ui/typing-mode-box";
+import TypingModeBox from "@/components/typing-components/typing-mode-box";
 import { TypingMain } from "@/components/typing-components/typing-main";
 import { Footer } from "@/components/footer";
 import { Provider } from "react-redux";
