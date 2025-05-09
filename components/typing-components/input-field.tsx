@@ -64,10 +64,14 @@ export default function InputField({
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     currentKey.current = event.key;
     currentTimestamp.current = event.timeStamp;
-
+    onRestart(event);
     onBackspaceEmptyInput(event);
   }
 
+  function onRestart(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.ctrlKey && event.key === " ") {
+    }
+  }
   function onBackspaceEmptyInput(event: KeyboardEvent<HTMLInputElement>) {
     if (currentKey.current === "Backspace" && inputValue === "") {
       event.preventDefault();
