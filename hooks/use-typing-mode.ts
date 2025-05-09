@@ -4,15 +4,9 @@ import {
   WordCountQuantity,
 } from "@/model/typing-mode";
 import { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { useAppSelector } from "@/hooks/redux-hook";
 import { TimedMode } from "@/model/timed-mode";
 import { WordCountMode } from "@/model/word-count-mode";
-import {
-  changeTypingGameMode,
-  fetchTypingGameThunk,
-  setTimedModeDuration,
-  setWordCount,
-} from "@/lib/redux/slice/typing-session-slice";
 import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 export function useTypingMode() {
@@ -37,7 +31,6 @@ export function useTypingMode() {
       (state.typingSessionState.typingGameMode.modeContext as WordCountMode)
         .count,
   );
-  const dispatch = useAppDispatch();
   const hasChange = useRef<boolean>(false);
 
   useEffect(() => {

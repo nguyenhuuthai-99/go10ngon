@@ -41,19 +41,9 @@ export function useTypingSessionActions() {
     resetSession();
     dispatch(resetTypingSessionStateAndWords());
     if (mode.currentTypingMode === TypingMode.timed) {
-      dispatch(
-        setTimedContext({
-          duration: level,
-          text: mode.modeContext.text,
-        } as TimedMode),
-      );
+      dispatch(setTimedModeDuration(level));
     } else {
-      dispatch(
-        setWordCountContext({
-          count: level,
-          text: mode.modeContext.text,
-        } as WordCountMode),
-      );
+      dispatch(setWordCount(level));
     }
     dispatch(fetchTypingGameThunk());
   }
