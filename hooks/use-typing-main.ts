@@ -7,20 +7,9 @@ import {
   setTypedWords,
 } from "@/lib/redux/slice/typing-session-slice";
 import { useCountdownTimer } from "@/hooks/use-countdown-timer";
-import {
-  TimedModeDuration,
-  TypingMode,
-  WordCountQuantity,
-} from "@/model/typing-mode";
+import { TypingMode } from "@/model/typing-mode";
 
-interface Props {
-  duration?: number;
-  count?: number;
-}
-export function useTypingMain({
-  duration = TimedModeDuration.short,
-  count = WordCountQuantity.medium,
-}: Props) {
+export function useTypingMain() {
   const words = useAppSelector(
     (state) => state.typingSessionState.typingGameMode.modeContext.text,
   );

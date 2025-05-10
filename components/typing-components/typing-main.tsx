@@ -12,7 +12,7 @@ import { useMouseMove } from "@/hooks/use-mouse-move";
 import { markInactive } from "@/lib/redux/slice/typing-session-slice";
 
 export function TypingMain({ className }: { className?: string }) {
-  const { typingSessionState, remainingTime } = useTypingMain({});
+  const { typingSessionState, remainingTime } = useTypingMain();
   const theme = useAppSelector((state) => state.userSettings.appearance.theme);
   const { setTheme } = useTheme();
   const dispatch = useAppDispatch();

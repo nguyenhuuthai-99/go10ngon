@@ -3,7 +3,10 @@ import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
 import { useTypingSessionState } from "@/hooks/use-typing-session-state";
-import { updateWordIndex } from "@/lib/redux/slice/typing-session-slice";
+import {
+  markAsEnd,
+  updateWordIndex,
+} from "@/lib/redux/slice/typing-session-slice";
 
 export function useTypingSession() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -20,11 +23,15 @@ export function useTypingSession() {
   useTypingSessionState(resetTypingSession);
 
   useEffect(() => {
-    // if (typingSessionState.isStarted === false) {
-    // console.log(typingSessionState.typedWords, "typedWords");
-    // console.log(typingSessionState.typedWords, "typedWords");
-    // }
-  }, [typingSessionState.typedWords]);
+    const word = typingSessionState.typingGameMode.modeContext.text;
+    const currentTypedWord = typedWords[currentWordIndex];
+    if (
+      currentWordIndex === word.length - 1 &&
+      currentTypedWord === word[currentWordIndex]
+    ) {
+      dispatch(markAsEnd());
+    }
+  }, [currentWordIndex, typedWords]);
 
   const { onKeyDown } = useKeyboardHandler({
     currentWordIndex,
@@ -34,6 +41,13 @@ export function useTypingSession() {
   });
 
   function moveToNextWord() {
+    if (
+      currentWordIndex ===
+      typingSessionState.typingGameMode.modeContext.text.length - 1
+    ) {
+      dispatch(markAsEnd());
+      return;
+    }
     setCurrentWordIndex((prevIndex) => prevIndex + 1);
     setCurrentCharIndex(0);
     dispatch(updateWordIndex(currentWordIndex + 1));
@@ -70,6 +84,7 @@ export function useTypingSession() {
     currentWordIndex,
     currentCharIndex,
     typingSessionState,
+    typedWords,
     onKeyDown,
     moveCharToIndex,
     moveToPreviousChar,

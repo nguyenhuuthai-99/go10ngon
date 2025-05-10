@@ -15,15 +15,17 @@ import { useAppSelector } from "@/hooks/redux-hook";
 import { FaMousePointer } from "react-icons/fa";
 
 export function TypingArea() {
-  const typedWords = useAppSelector(
-    (state) => state.typingSessionState.typedWords,
-  );
   const words = useAppSelector(
     (state) => state.typingSessionState.typingGameMode.modeContext.text,
   );
 
-  const { currentWordIndex, currentCharIndex, onKeyDown, typingSessionState } =
-    useTypingSession({ words });
+  const {
+    typedWords,
+    currentWordIndex,
+    currentCharIndex,
+    onKeyDown,
+    typingSessionState,
+  } = useTypingSession();
 
   const typingAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -153,7 +155,7 @@ export function TypingArea() {
                       />
                     ))}
                 </WordContainer>
-                {index < words.length - 1 && (
+                {index < words.length && (
                   <div>
                     <CharSpan
                       char=" "

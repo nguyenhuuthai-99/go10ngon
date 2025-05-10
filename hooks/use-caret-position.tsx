@@ -1,4 +1,4 @@
-import { useState, useEffect, RefObject, useLayoutEffect } from "react";
+import { useState, RefObject, useLayoutEffect } from "react";
 
 const initialState = {
   top: 7,
