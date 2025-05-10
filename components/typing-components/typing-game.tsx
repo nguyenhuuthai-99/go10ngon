@@ -1,6 +1,6 @@
 import { TypingMode, WordCountQuantity } from "@/model/typing-mode";
 import { Timer } from "@/components/ui/timer";
-import { WordCounter } from "@/components/ui/word-counter";
+import { WordCounter } from "@/components/typing-components/word-counter";
 import { TypingPanel } from "@/components/ui/typing-panel";
 import { TypingGameMode } from "@/lib/redux/slice/typing-session-slice";
 import { TimedMode } from "@/model/timed-mode";
@@ -32,11 +32,7 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
     }
 
     if (typingGameMode.currentTypingMode === TypingMode.wordCount) {
-      return (
-        <WordCounter
-          count={(typingGameMode.modeContext as WordCountMode).count}
-        />
-      );
+      return <WordCounter />;
     }
 
     return null;

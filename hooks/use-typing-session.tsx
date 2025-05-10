@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
-import { useAppSelector } from "@/hooks/redux-hook";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
 import { useTypingSessionState } from "@/hooks/use-typing-session-state";
+import { updateWordIndex } from "@/lib/redux/slice/typing-session-slice";
 
 export function useTypingSession() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -14,6 +15,7 @@ export function useTypingSession() {
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
   );
+  const dispatch = useAppDispatch();
   useTypingSessionTimer();
   useTypingSessionState(resetTypingSession);
 
@@ -34,6 +36,7 @@ export function useTypingSession() {
   function moveToNextWord() {
     setCurrentWordIndex((prevIndex) => prevIndex + 1);
     setCurrentCharIndex(0);
+    dispatch(updateWordIndex(currentWordIndex + 1));
   }
 
   function moveCharToIndex(index: number) {
@@ -46,6 +49,7 @@ export function useTypingSession() {
     setCurrentWordIndex(prevIndex);
     setCurrentCharIndex(prevWord.length);
     restoreInputValue(prevWord);
+    dispatch(updateWordIndex(currentWordIndex - 1));
   }
 
   function moveToPreviousChar(restoreInputValue: (value: string) => void) {
