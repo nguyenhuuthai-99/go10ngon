@@ -1,5 +1,4 @@
 import { useAppSelector } from "@/hooks/redux-hook";
-import { WordCountMode } from "@/model/word-count-mode";
 
 export function WordCounter() {
   const words = useAppSelector(

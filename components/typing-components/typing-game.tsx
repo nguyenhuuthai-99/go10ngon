@@ -29,13 +29,9 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
   function renderModeComponent() {
     if (typingGameMode.currentTypingMode === TypingMode.timed) {
       return <Timer remainingTime={remainingTime!} />;
-    }
-
-    if (typingGameMode.currentTypingMode === TypingMode.wordCount) {
+    } else {
       return <WordCounter />;
     }
-
-    return null;
   }
 
   return (
