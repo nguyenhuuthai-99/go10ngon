@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useAppSelector } from "@/hooks/redux-hook";
 
 type Props = {
   isTypingSessionEnd: boolean;
@@ -29,19 +30,18 @@ export default function InputField({
   const currentKey = useRef("");
   const currentTimestamp = useRef<number>(0);
 
-  // focus input on mount
+  const showInputField = useAppSelector(
+    (state) => state.userSettings.appearance.showInputField,
+  );
+
+  const isStarted = useAppSelector(
+    (state) => state.typingSessionState.isStarted,
+  );
+
   useEffect(() => {
-    ref.current?.focus();
-
-    //refocus if it loses focus
-    const interval = setInterval(() => {
-      if (document.activeElement !== ref.current) {
-        ref.current?.focus();
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [ref]);
+    if (isStarted) return;
+    setInputValue("");
+  }, [isStarted]);
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
     let currentValue;
@@ -64,10 +64,14 @@ export default function InputField({
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     currentKey.current = event.key;
     currentTimestamp.current = event.timeStamp;
-
+    onRestart(event);
     onBackspaceEmptyInput(event);
   }
 
+  function onRestart(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.ctrlKey && event.key === " ") {
+    }
+  }
   function onBackspaceEmptyInput(event: KeyboardEvent<HTMLInputElement>) {
     if (currentKey.current === "Backspace" && inputValue === "") {
       event.preventDefault();
@@ -85,13 +89,13 @@ export default function InputField({
   }
 
   return (
-    <div>
+    <div className={"flex w-full items-center justify-center"}>
       <input
-        // readOnly={isTypingSessionEnd}
+        readOnly={isTypingSessionEnd}
         ref={ref}
         type="text"
         value={inputValue}
-        className="absolute opacity-0"
+        className={`absolute ${!showInputField && "opacity-0"}`}
         onChange={handeInputChange}
         onKeyDown={handleKeyDown}
         autoFocus
@@ -99,20 +103,3 @@ export default function InputField({
     </div>
   );
 }
-
-// function handleKeyUp(event: KeyboardEvent<HTMLInputElement>) {
-//
-//   let currentValue = event.currentTarget.value;
-//   if (currentValue.length > 1 && currentValue.slice(-1) === " ") {
-//     currentValue = currentValue.slice(0, -1);
-//   }
-//
-//   handleKeyDownCallBack(currentKey.current, currentValue);
-//   if (event.key === " ") {
-//     onSpaceKeyPress();
-//   }
-//
-// }
-// function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-//   currentKey.current = event.key;
-// }

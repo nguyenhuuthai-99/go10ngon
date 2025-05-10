@@ -1,26 +1,33 @@
 import { useEffect, useState } from "react";
-import { useAppSelector } from "@/hooks/redux-hook";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { Button } from "@/components/ui/button";
+import { BsArrowClockwise, BsArrowRight } from "react-icons/bs";
+import SizeBox from "@/components/ui/size-box";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { destructWord } from "@/lib/utils";
+import CharSpan from "@/components/typing-components/char-span";
+import { WordContainer } from "@/components/typing-components/word-container";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
 
-interface Props {
-  typedWords: string[];
-  words: string[];
-}
-export function TypingResult({ typedWords, words }: Props) {
+export function TypingResult() {
   const [show, setShow] = useState<boolean>(false);
-  const totalKeystrokes = useAppSelector(
-    (state) => state.typingSessionStats.totalKeystrokes,
-  );
 
   const { wpm, accuracy, adjustedWpm } = useAppSelector(
     (state) => state.typingSessionPerformance,
   );
-
-  const incorrectPairs = words
-    .map((original, index) => ({
-      original,
-      typed: typedWords[index] || "",
-    }))
-    .filter((pair) => pair.original !== pair.typed);
 
   useEffect(() => {
     setShow(!show);
@@ -28,59 +35,168 @@ export function TypingResult({ typedWords, words }: Props) {
 
   return (
     <div
-      className={`transform transition-all duration-500 ease-out ${
-        show
-          ? "translate-y-0 opacity-100"
-          : "pointer-events-none -translate-y-4 opacity-0"
-      }mx-auto mt-10 max-w-3xl space-y-6`}
+      className={`flex h-full max-h-screen w-full flex-col gap-6 overflow-y-auto`}
     >
-      {totalKeystrokes}
-      <span>{adjustedWpm}</span>
-      {/* Card for WPM and Accuracy */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-md">
-        <div className="text-primary mb-2 text-4xl font-bold">Your Stats</div>
-        <div className="flex justify-around text-3xl font-semibold text-gray-800">
-          <div>
-            <div className="text-sm text-gray-500">WPM</div>
-            <div>{wpm}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">Accuracy</div>
-            <div>{accuracy}%</div>
-          </div>
-        </div>
+      <ResultPerformance adjustedWpm={adjustedWpm} accuracy={accuracy} />
+      <SizeBox height={10} />
+      <TypingSessionButtons />
+      <ResultHistory />
+      <ResultTable />
+    </div>
+  );
+}
+
+interface ResultProps {
+  adjustedWpm: number;
+  accuracy: number;
+}
+function ResultPerformance({ adjustedWpm, accuracy }: ResultProps) {
+  return (
+    <div className="font-orbitron flex flex-wrap justify-center text-center text-4xl">
+      <div className={"mr-20"}>
+        <div className="font-bold">{adjustedWpm}</div>
+        <div>wpm</div>
       </div>
-
-      {/* Separator */}
-      <div className="border-t border-gray-300" />
-
-      {/* Incorrect Words */}
       <div>
-        <h3 className="mb-4 text-xl font-semibold text-red-600">
-          Incorrect Words
-        </h3>
-        {incorrectPairs.length === 0 ? (
-          <p className="text-green-600">Perfect! No incorrect words.</p>
-        ) : (
-          <ul className="space-y-2">
-            {incorrectPairs.map((pair, index) => (
-              <li
-                key={index}
-                className="flex items-center justify-between rounded-xl border border-red-200 bg-red-50 p-3"
-              >
-                <span className="text-gray-700">
-                  <strong className="text-red-600">Typed:</strong>{" "}
-                  {pair.typed || "(empty)"}
-                </span>
-                <span className="text-gray-700">
-                  <strong className="text-green-600">Expected:</strong>{" "}
-                  {pair.original}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="font-bold">{accuracy}</div>
+        <div>%</div>
       </div>
+    </div>
+  );
+}
+
+function ResultHistory() {
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionState.typedWords,
+  );
+  const words = useAppSelector(
+    (state) => state.typingSessionState.typingGameMode.modeContext.text,
+  );
+  const typingStats = useAppSelector((state) => state.typingSessionStats);
+
+  return (
+    <div>
+      <div className={"mb-2 text-3xl font-bold"}>lịch sử</div>
+      <div className="flex flex-wrap leading-5">
+        {Object.values(typedWords).map((typedWord, index) => {
+          return typedWord.length > 0 ? (
+            <TooltipProvider key={index}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex">
+                    <WordContainer
+                      isResult={true}
+                      isIncorrect={typedWords[index] !== words[index]}
+                      ref={null}
+                      isActive={false}
+                    >
+                      {destructWord(words[index]).map((char, i) => (
+                        <CharSpan
+                          key={i}
+                          char={char}
+                          typedChar={typedWords[index]?.[i] || null}
+                          ref={null}
+                          isActive={false}
+                        ></CharSpan>
+                      ))}
+                      {typedWords[index]?.length > words[index].length &&
+                        destructWord(
+                          typedWords[index]?.slice(words[index].length),
+                        ).map((char, i) => (
+                          <CharSpan
+                            key={`extra-${i}`}
+                            char={char}
+                            typedChar={"extra"}
+                            isActive={false}
+                            ref={null}
+                          />
+                        ))}
+                    </WordContainer>
+                    {index < words.length - 1 && (
+                      <div>
+                        <CharSpan
+                          char=" "
+                          typedChar={" "}
+                          ref={null}
+                          isActive={false}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent
+                  className={"bg-card text-foreground border-border border-2"}
+                >
+                  <p>{typedWord}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : null;
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ResultTable() {
+  const [incorrectPairs, setIncorrectPairs] = useState<
+    { typed: string; original: string }[]
+  >([]);
+
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionState.typedWords,
+  );
+  const words = useAppSelector(
+    (state) => state.typingSessionState.typingGameMode.modeContext.text,
+  );
+
+  useEffect(() => {
+    const incorrects = [];
+    for (let i = 0; i < words.length; i++) {
+      if (typedWords[i] === "") break;
+      if (typedWords[i] !== words[i]) {
+        incorrects.push({ typed: typedWords[i], original: words[i] });
+      }
+    }
+
+    setIncorrectPairs(incorrects);
+  }, [typedWords, words]);
+
+  return (
+    <div>
+      <Table className={`${incorrectPairs.length === 0 ? "hidden" : ""}`}>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/2 text-center">từ gốc</TableHead>
+            <TableHead className={"w-1/2 text-center"}>từ nhập sai</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {incorrectPairs.map((pair, wordIndex) => (
+            <TableRow key={wordIndex}>
+              <TableCell className={"w-1/2 text-center"}>
+                {pair.original}
+              </TableCell>
+              <TableCell className={"text-inactive w-1/2 text-center"}>
+                {destructWord(pair.typed).map((value, index) => (
+                  <CharSpan
+                    key={`result-${index}`}
+                    char={
+                      index >= pair.original.length
+                        ? "extra"
+                        : pair.original[index]
+                    }
+                    typedChar={pair.typed[index]}
+                    isResult={true}
+                    isActive={false}
+                    ref={null}
+                  />
+                ))}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

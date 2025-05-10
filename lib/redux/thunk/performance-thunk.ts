@@ -1,9 +1,9 @@
-import { AppDispatch, RootState } from "@/app/store";
+import { AppDispatch, RootState } from "@/lib/store";
 import {
   updatePerformance,
   addToHistory,
-} from "@/slice/typing-session-performance-slice";
-import { keyPress } from "@/slice/typing-session-stats-slice";
+} from "@/lib/redux/slice/typing-session-performance-slice";
+import { keyPress } from "@/lib/redux/slice/typing-session-stats-slice";
 import {
   HISTORY_STORAGE_KEY,
   KeyPressInput,

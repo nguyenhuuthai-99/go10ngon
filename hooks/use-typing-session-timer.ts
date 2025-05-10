@@ -1,7 +1,7 @@
 import { use, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { handlePerformanceCalculation } from "@/hooks/use-performance-thunk";
-import { updatePerformance } from "@/slice/typing-session-performance-slice";
+import { handlePerformanceCalculation } from "@/lib/redux/thunk/performance-thunk";
+import { updatePerformance } from "@/lib/redux/slice/typing-session-performance-slice";
 
 export const useTypingSessionTimer = () => {
   const typingSessionState = useAppSelector(

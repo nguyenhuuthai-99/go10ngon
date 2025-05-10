@@ -1,4 +1,4 @@
-type TypingTest = {
-  text: string;
+type TypingText = {
+  text: string[];
   reference?: string;
 };

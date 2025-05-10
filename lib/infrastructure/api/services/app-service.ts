@@ -1,19 +1,48 @@
-export async function getQuote(): Promise<Quote> {
-  const response: Response = await fetch(
-    "https://api.infrastructure.com/quotes",
-  );
-  const json = await response.json();
-
-  return { id: json["id"], text: json["quote"], reference: json["reference"] };
+import { TimedModeDuration, WordCountQuantity } from "@/model/typing-mode";
+import { commonVietnameseWords } from "@/utils/common-words";
+export function getTimedTest(duration: number): string[] {
+  if (duration === TimedModeDuration.short) {
+    return shuffleAndWithdraw(commonVietnameseWords, 150);
+  } else if (duration === TimedModeDuration.medium) {
+    return shuffleAndWithdraw(commonVietnameseWords, 300);
+  } else {
+    return shuffleAndWithdraw(commonVietnameseWords, 450);
+  }
 }
 
-export function getTest() {
-  return (
-    "đường nghiêng điên muôn chiêng chưởng đoẳn Giang Trần không thích phân biệt người\n" +
-    "            tốt hay người xấu. Đối với anh\n" +
-    "            ta, chỉ có những người đồng hành và kẻ thù. Anh ta lập tức triển khai kế hoạch đàn áp kẻ thù và\n" +
-    "            nâng cao tầm vóc của những người đồng hành. Mạch truyện với các tình tiết gay cấn và logic đan\n" +
-    "            xen lẫn nhau, hứa hẹn mang đến cho độc giả những trải nghiệm đáng nhớ. Kết thúc của truyện của\n" +
-    "            Lê Thiên vẫn đầy cảm xúc và sự kiện, khiến độc giả không thể quên được."
-  );
+export function getWordsCountTest(count: number): string[] {
+  if (count === WordCountQuantity.small) {
+    return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.small);
+  } else if (count === WordCountQuantity.medium) {
+    return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.medium);
+  } else {
+    return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.large);
+  }
+}
+
+export function getQuoteTest(): string[] {
+  return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.medium);
+}
+
+function shuffleAndWithdraw(list: string[], count: number) {
+  const result: string[] = [];
+
+  while (result.length < count) {
+    // Shuffle using Fisher-Yates algorithm
+    const shuffled = [...list];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    // Add unique items to result
+    for (let i = 0; i < shuffled.length && result.length < count; i++) {
+      const splitWord = shuffled[i].split(" ");
+      for (let j = 0; j < splitWord.length; j++) {
+        result.push(splitWord[j]);
+      }
+    }
+  }
+
+  return result;
 }

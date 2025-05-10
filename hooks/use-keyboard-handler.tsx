@@ -1,31 +1,31 @@
-import usePerformanceCalculate from "@/hooks/use-char-comparision";
-import { markAsStart } from "@/slice/typing-session-slice";
+import usePerformanceCalculate from "@/hooks/use-performance-calculate";
+import {
+  markAsStart,
+  setTypedWords,
+} from "@/lib/redux/slice/typing-session-slice";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { useDispatch } from "react-redux";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 
 interface Props {
-  typingSession: {
-    currentWordIndex: number;
-    moveToNextWord: () => void;
-    moveToPreviousChar: (restoreInputValue: (value: string) => void) => void;
-    moveCharToIndex: (index: number) => void;
-    updateTypedWords: (value: string) => void;
-  };
-  previousWord: string;
-  targetValue: string;
+  currentWordIndex: number;
+  moveToNextWord: () => void;
+  moveToPreviousChar: (restoreInputValue: (value: string) => void) => void;
+  moveCharToIndex: (index: number) => void;
 }
 export function useKeyboardHandler({
-  typingSession: {
-    currentWordIndex,
-    moveToNextWord,
-    moveToPreviousChar,
-    moveCharToIndex,
-    updateTypedWords,
-  },
-  previousWord,
-  targetValue,
+  currentWordIndex,
+  moveToNextWord,
+  moveToPreviousChar,
+  moveCharToIndex,
 }: Props) {
+  const typingSessionState = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+
+  const targetValue =
+    typingSessionState.typingGameMode.modeContext.text[currentWordIndex];
+  const previousWord = typingSessionState.typedWords[currentWordIndex];
+
   const { isCorrectAndWithin, onDelete, checkMissingChar } =
     usePerformanceCalculate({
       targetValue,
@@ -34,10 +34,7 @@ export function useKeyboardHandler({
 
   const { onPerformanceCalculate } = useTypingSessionPerformance();
 
-  const typingSessionState = useAppSelector(
-    (state) => state.typingSessionState,
-  );
-  const typingSessionDispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   function onKeyDown(
     key: string,
@@ -45,10 +42,10 @@ export function useKeyboardHandler({
     timestamp: number,
     restoreInputValue: (value: string) => void,
   ) {
-    // if (isEnded) return;
+    if (!typingSessionState.isSessionReady) return;
 
-    if (!typingSessionState.isStarted) {
-      typingSessionDispatch(markAsStart());
+    if (!typingSessionState.isStarted || !typingSessionState.isTyping) {
+      dispatch(markAsStart());
     }
 
     if (key === " ") {
@@ -80,6 +77,15 @@ export function useKeyboardHandler({
     }
 
     updateTypedWords(value);
+  }
+
+  function updateTypedWords(value: string) {
+    dispatch(
+      setTypedWords({
+        ...typingSessionState.typedWords,
+        [currentWordIndex]: value,
+      }),
+    );
   }
 
   function onSpacePress() {

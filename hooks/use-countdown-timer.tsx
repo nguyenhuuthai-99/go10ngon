@@ -1,18 +1,38 @@
 import { useEffect, useRef, useState } from "react";
+import { useAppSelector } from "@/hooks/redux-hook";
+import { TimedMode } from "@/model/timed-mode";
 
 interface TimerProps {
-  duration: number;
-  onTimerEnd: () => void;
+  onTimeUp: () => void;
 }
 
-export function useCountdownTimer({ duration, onTimerEnd }: TimerProps) {
+export function useCountdownTimer({ onTimeUp }: TimerProps) {
+  const duration = useAppSelector(
+    (state) =>
+      (state.typingSessionState.typingGameMode.modeContext as TimedMode)
+        .duration,
+  );
   const [remainingTime, setRemainingTime] = useState(duration);
   const isTimerEnd = useRef(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isStarted = useAppSelector(
+    (state) => state.typingSessionState.isStarted,
+  );
 
   useEffect(() => {
     return () => clearTimer();
   }, []);
+
+  useEffect(() => {
+    setRemainingTime(duration);
+  }, [duration]);
+
+  useEffect(() => {
+    if (isStarted) return;
+    resetTimer();
+    return () => clearTimer();
+  }, [isStarted]);
+
   function startTimer() {
     const endTime = Date.now() + duration * 1000;
 
@@ -21,9 +41,9 @@ export function useCountdownTimer({ duration, onTimerEnd }: TimerProps) {
       setRemainingTime(timeLeft);
 
       if (timeLeft <= 0) {
-        clearTimer();
+        onTimeUp();
+        resetTimer();
         isTimerEnd.current = true;
-        onTimerEnd();
       }
     }, 1000);
   }
@@ -41,6 +61,5 @@ export function useCountdownTimer({ duration, onTimerEnd }: TimerProps) {
   return {
     startTimer,
     remainingTime,
-    resetTimer,
   };
 }

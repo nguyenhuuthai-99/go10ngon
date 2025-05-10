@@ -1,59 +1,33 @@
 import { useEffect, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
-import { useCountdownTimer } from "@/hooks/use-countdown-timer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { resetTypingSessionState } from "@/slice/typing-session-slice";
+import { resetTypedWords } from "@/lib/redux/slice/typing-session-slice";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
+import { useTypingSessionState } from "@/hooks/use-typing-session-state";
 
 interface Props {
   words: string[];
   duration?: number;
 }
-export function useTypingSession({ words, duration }: Props) {
+export function useTypingSession({ duration = 0 }: Props) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const [typedWords, setTypedWords] = useState<{ [key: number]: string }>({});
 
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionState.typedWords,
+  );
   const typingSessionState = useAppSelector(
     (state) => state.typingSessionState,
   );
-  const typingSessionDispatch = useAppDispatch();
-  //timer
-  const { remainingTime, resetTimer, startTimer } = useCountdownTimer({
-    duration: duration || 0,
-    onTimerEnd,
-  });
-
   useTypingSessionTimer();
+  useTypingSessionState(resetTypingSession);
 
   const { onKeyDown } = useKeyboardHandler({
-    typingSession: {
-      currentWordIndex,
-      moveToNextWord,
-      moveCharToIndex,
-      moveToPreviousChar,
-      updateTypedWords,
-    },
-    previousWord: typedWords[currentWordIndex],
-    targetValue: words[currentWordIndex],
+    currentWordIndex,
+    moveToNextWord,
+    moveCharToIndex,
+    moveToPreviousChar,
   });
-
-  //initialize typedWords
-  useEffect(() => {
-    const initialTypedWords: { [key: number]: string } = {};
-    words.forEach((value, index) => {
-      initialTypedWords[index] = "";
-    });
-    setTypedWords(initialTypedWords);
-  }, []);
-
-  //trigger end game
-  useEffect(() => {
-    if (isSessionEnd()) {
-      typingSessionDispatch(resetTypingSessionState());
-      // typingSessionStateHandler.resetTypingSessionState();
-    }
-  }, [currentCharIndex, currentWordIndex]);
 
   function moveToNextWord() {
     setCurrentWordIndex((prevIndex) => prevIndex + 1);
@@ -80,36 +54,19 @@ export function useTypingSession({ words, duration }: Props) {
       moveToPreviousWord(restoreInputValue);
     }
   }
-  function updateTypedWords(value: string) {
-    setTypedWords((prev) => ({ ...prev, [currentWordIndex]: value }));
-  }
-
-  function onTimerEnd() {}
 
   function resetTypingSession() {
     setCurrentWordIndex(0);
     setCurrentCharIndex(0);
-    setTypedWords({});
-  }
-
-  function isSessionEnd() {
-    return (
-      currentWordIndex >= words.length ||
-      (currentCharIndex === words[words.length - 1]?.length - 1 &&
-        currentWordIndex === words.length - 1)
-    );
   }
 
   return {
     currentWordIndex,
     currentCharIndex,
-    typedWords,
     typingSessionState,
-    remainingTime,
     onKeyDown,
     moveCharToIndex,
     moveToPreviousChar,
     moveToNextWord,
-    updateTypedWords,
   };
 }
