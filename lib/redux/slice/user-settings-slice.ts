@@ -52,7 +52,7 @@ export const initialUserSettingState: UserSettingsState = {
     showKeyBoard: false,
     showTypingPreview: true,
     showInputField: false,
-    markParent: true,
+    markParent: false,
   },
   caret: {
     speed: CaretSpeed.medium,

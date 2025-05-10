@@ -1,15 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { resetTypedWords } from "@/lib/redux/slice/typing-session-slice";
+import { useAppSelector } from "@/hooks/redux-hook";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";
 import { useTypingSessionState } from "@/hooks/use-typing-session-state";
 
-interface Props {
-  words: string[];
-  duration?: number;
-}
-export function useTypingSession({ duration = 0 }: Props) {
+export function useTypingSession() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
 
@@ -23,12 +18,11 @@ export function useTypingSession({ duration = 0 }: Props) {
   useTypingSessionState(resetTypingSession);
 
   useEffect(() => {
-    if(typingSessionState.isStarted === false){
-      console.log(typingSessionState.typedWords, "typedWords");
-      console.log(typingSessionState., "typedWords");
-    }
-
-  }, [typingSessionState.isStarted]);
+    // if (typingSessionState.isStarted === false) {
+    // console.log(typingSessionState.typedWords, "typedWords");
+    // console.log(typingSessionState.typedWords, "typedWords");
+    // }
+  }, [typingSessionState.typedWords]);
 
   const { onKeyDown } = useKeyboardHandler({
     currentWordIndex,

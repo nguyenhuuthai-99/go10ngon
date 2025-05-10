@@ -1,9 +1,7 @@
 import {
   ChangeEvent,
-  Dispatch,
   KeyboardEvent,
   RefObject,
-  SetStateAction,
   useEffect,
   useRef,
   useState,
@@ -29,6 +27,7 @@ export default function InputField({
 
   const currentKey = useRef("");
   const currentTimestamp = useRef<number>(0);
+  const isIME = useRef(false);
 
   const showInputField = useAppSelector(
     (state) => state.userSettings.appearance.showInputField,
@@ -44,6 +43,7 @@ export default function InputField({
   }, [isStarted]);
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
+    console.log(event.target.value);
     let currentValue;
 
     if (currentKey.current === " ") {
@@ -97,6 +97,9 @@ export default function InputField({
         value={inputValue}
         className={`absolute ${!showInputField && "opacity-0"}`}
         onChange={handeInputChange}
+        onCompositionStart={() => {
+          isIME.current = true;
+        }}
         onKeyDown={handleKeyDown}
         autoFocus
       />
