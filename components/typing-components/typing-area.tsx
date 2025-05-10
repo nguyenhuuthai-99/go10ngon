@@ -93,14 +93,16 @@ export function TypingArea() {
     <div className={"relative"} onMouseDown={(event) => focusInput(event)}>
       {!isFocus && (
         <div
-          className={"absolute flex h-full w-full items-center justify-center"}
+          className={
+            "absolute z-20 flex h-full w-full items-center justify-center backdrop-blur-xs"
+          }
           onMouseDown={(event) => focusInput(event)}
         >
           <FaMousePointer />
           <div>&nbsp;nhấp để trở lại vùng nhập liệu</div>
         </div>
       )}
-      <div className={`${!isFocus && "blur-xs"}`}>
+      <div>
         <div
           className="text-inactive relative flex h-36 flex-wrap overflow-hidden pl-1 text-3xl leading-12 wrap-anywhere text-clip"
           ref={typingAreaRef}

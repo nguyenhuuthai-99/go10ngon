@@ -22,6 +22,14 @@ export function useTypingSession({ duration = 0 }: Props) {
   useTypingSessionTimer();
   useTypingSessionState(resetTypingSession);
 
+  useEffect(() => {
+    if(typingSessionState.isStarted === false){
+      console.log(typingSessionState.typedWords, "typedWords");
+      console.log(typingSessionState., "typedWords");
+    }
+
+  }, [typingSessionState.isStarted]);
+
   const { onKeyDown } = useKeyboardHandler({
     currentWordIndex,
     moveToNextWord,

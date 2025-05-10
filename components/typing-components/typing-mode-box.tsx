@@ -127,7 +127,6 @@ function ModeLevels({ levels }: { levels: number[] }) {
   );
 
   useEffect(() => {
-    console.log(mode);
     if (mode.currentTypingMode === TypingMode.timed) {
       setSelectedLevel(duration);
     } else if (mode.currentTypingMode === TypingMode.wordCount) {
