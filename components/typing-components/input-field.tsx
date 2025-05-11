@@ -19,12 +19,15 @@ export default function InputField({
   handleKeyDownCallBack,
 }: Props) {
   const [inputValue, setInputValue] = useState("");
+  // const [keyEvents, setKeyEvents] = useState<[string, number][]>([]);
+  // const lastValidInputValue = useRef("");
 
   const currentKey = useRef("");
   const currentTimestamp = useRef<number>(0);
   const isIME = useAppSelector((state) => state.typingSessionState.isIME);
   const dispatch = useAppDispatch();
   const { refreshSession, restartSession } = useTypingSessionActions();
+  const timeOut = useRef<NodeJS.Timeout>(null);
 
   const showInputField = useAppSelector(
     (state) => state.userSettings.appearance.showInputField,
@@ -36,7 +39,6 @@ export default function InputField({
 
   useEffect(() => {
     window.addEventListener("keydown", onTypingSessionActions);
-
     return () => {
       window.removeEventListener("keydown", onTypingSessionActions);
     };
@@ -48,24 +50,26 @@ export default function InputField({
   }, [isStarted]);
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
-    console.log(inputValue, event.target.value);
-    let currentValue;
     if (currentKey.current === " ") {
       setInputValue("");
-      currentValue = "";
     } else {
       setInputValue(event.target.value);
-      currentValue = event.target.value;
     }
-    handleKeyDownCallBack(
-      currentKey.current,
-      currentValue,
-      currentTimestamp.current,
-      restoreInputValue,
-    );
+
+    if (timeOut.current !== null) clearTimeout(timeOut.current);
+    timeOut.current = setTimeout(() => {
+      handleKeyDownCallBack(
+        currentKey.current,
+        event.target.value,
+        currentTimestamp.current,
+        restoreInputValue,
+      );
+    }, 15);
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    // console.log(event.key, event.timeStamp);
+    if (timeOut.current) clearTimeout(timeOut.current);
     currentKey.current = event.key;
     currentTimestamp.current = event.timeStamp;
     onBackspaceEmptyInput(event);

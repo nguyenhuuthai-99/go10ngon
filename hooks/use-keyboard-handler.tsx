@@ -49,7 +49,9 @@ export function useKeyboardHandler({
     }
 
     if (key === " ") {
+      console.log(previousWord);
       const missingKeys = checkMissingChar(previousWord);
+      console.log(missingKeys);
 
       onPerformanceCalculate({
         isCorrect: true,
@@ -67,7 +69,6 @@ export function useKeyboardHandler({
     } else {
       moveCharToIndex(value.length);
 
-      // console.log(value, previousWord);
       let isCorrect: boolean = isCorrectAndWithin(value, previousWord);
       onPerformanceCalculate({
         isCorrect,

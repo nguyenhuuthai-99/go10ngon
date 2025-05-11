@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { hasParent, isParent } from "@/lib/utils";
 import { Parent } from "@/model/parent";
+import { useAppSelector } from "@/hooks/redux-hook";
 
 interface Props {
   targetValue: string;
@@ -12,15 +13,34 @@ export default function usePerformanceCalculate({
 }: Props) {
   const parentList = useRef<(Parent | null)[]>([]);
   const validParent = useRef<Map<number, number>>(new Map());
+  const typedWords = useAppSelector(
+    (state) => state.typingSessionState.typedWords,
+  );
 
   useEffect(() => {
+    if (typedWords[currentWordIndex] != "") {
+    }
+    console.log(typedWords[currentWordIndex][2]);
+
     parentList.current = [];
     validParent.current.clear();
 
     for (let i = 0; i < targetValue.length; i++) {
       if (hasParent(targetValue[i])) {
-        const [_, depth] = isParent(targetValue[i], "i");
-        const parent: Parent = { index: i, value: "", depth: depth + 1 };
+        let depth = 0;
+        let found = false;
+        const currentTypedWord = typedWords[currentWordIndex][i];
+        if (currentTypedWord !== undefined) {
+          [found, depth] = isParent(targetValue[i], currentTypedWord);
+        } else {
+          [found, depth] = isParent(targetValue[i], "");
+        }
+        let parent: Parent;
+        if (found) {
+          parent = { index: i, value: currentTypedWord, depth: depth };
+        } else {
+          parent = { index: i, value: "", depth: depth };
+        }
         validParent.current.set(i, depth);
         parentList.current.push(parent);
       } else {
@@ -46,16 +66,20 @@ export default function usePerformanceCalculate({
     let found = false;
     for (let i = 0; i < value.length; i++) {
       const currentChar = value[i];
+
       if (validParent.current.has(i)) {
+        if (currentChar === targetValue[i]) {
+          parentList.current[i]!.value = currentChar;
+          parentList.current[i]!.depth = 0;
+          return true;
+        }
         if (parentList.current[i]?.value !== currentChar) {
-          [found] = isParent(targetValue[i], currentChar);
-          if (parentList.current[i]!.depth > 0) {
-            parentList.current[i]!.depth -= 1;
+          let newDepth = 0;
+          [found, newDepth] = isParent(targetValue[i], currentChar);
+          if (found) {
+            parentList.current[i]!.depth = newDepth;
           }
           parentList.current[i]!.value = currentChar;
-          if (!validParent.current.has(i + 1)) {
-            break;
-          }
         }
       }
     }
@@ -75,7 +99,8 @@ export default function usePerformanceCalculate({
   }
 
   function checkMissingChar(value: string): number {
-    if (value.length > targetValue.length) return 0;
+    // if (value.length > targetValue.length) return 0;
+    console.log(parentList.current);
     let count = 0;
 
     for (let i = 0; i < parentList.current.length; i++) {
