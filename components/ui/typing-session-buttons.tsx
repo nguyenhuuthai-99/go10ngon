@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { BsArrowClockwise, BsArrowRight } from "react-icons/bs";
-import SizeBox from "@/components/ui/size-box";
 import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 export function TypingSessionButtons() {

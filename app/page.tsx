@@ -12,9 +12,7 @@ export default function Home() {
     <StoreProvider>
       <div className="flex h-screen max-h-screen w-full max-w-[1440px] flex-col items-center">
         <Header />
-        {/*<TypingModeBox visability={true} />*/}
         <TypingMain />
-        {/*<SizeBox className={"grow"} />*/}
         <Footer className={"sticky bottom-0"} />
       </div>
     </StoreProvider>

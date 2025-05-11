@@ -3,12 +3,9 @@ import { Timer } from "@/components/ui/timer";
 import { WordCounter } from "@/components/typing-components/word-counter";
 import { TypingPanel } from "@/components/ui/typing-panel";
 import { TypingGameMode } from "@/lib/redux/slice/typing-session-slice";
-import { TimedMode } from "@/model/timed-mode";
-import { WordCountMode } from "@/model/word-count-mode";
 import SizeBox from "@/components/ui/size-box";
 import { useAppSelector } from "@/hooks/redux-hook";
 import TypingModeBox from "@/components/typing-components/typing-mode-box";
-import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
 import { ModeIndicator } from "@/components/typing-components/mode-indicator";
 import { Button } from "@/components/ui/button";
 import { BsArrowClockwise, BsArrowRight } from "react-icons/bs";
@@ -48,33 +45,27 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
         {!isTyping && isStarted && (
           <div
             className={
-              "text-inactive flex w-full flex-wrap items-center justify-center text-center text-xs"
+              "flex w-full flex-wrap items-center justify-center text-center text-xs"
             }
           >
-            <div>
-              <Button
-                className={
-                  "text-foreground bg-card mb-1 cursor-pointer hover:text-white"
-                }
-                onClick={refreshSession}
-              >
-                làm mới <BsArrowRight />
-              </Button>
-              <div>ctr + enter</div>
-            </div>
+            <Button
+              className={
+                "text-foreground bg-card mb-1 cursor-pointer hover:text-white"
+              }
+              onClick={refreshSession}
+            >
+              làm mới <BsArrowRight />
+            </Button>
 
             <SizeBox width={80} />
-            <div>
-              <Button
-                onClick={restartSession}
-                className={
-                  "text-foreground bg-card mb-1 cursor-pointer hover:text-white"
-                }
-              >
-                thử lại <BsArrowClockwise />
-              </Button>
-              <div className={""}>ctr + cách</div>
-            </div>
+            <Button
+              onClick={restartSession}
+              className={
+                "text-foreground bg-card mb-1 cursor-pointer hover:text-white"
+              }
+            >
+              thử lại <BsArrowClockwise />
+            </Button>
           </div>
         )}
       </div>

@@ -19,14 +19,11 @@ export default function InputField({
   handleKeyDownCallBack,
 }: Props) {
   const [inputValue, setInputValue] = useState("");
-  // const [keyEvents, setKeyEvents] = useState<[string, number][]>([]);
-  // const lastValidInputValue = useRef("");
 
   const currentKey = useRef("");
   const currentTimestamp = useRef<number>(0);
   const isIME = useAppSelector((state) => state.typingSessionState.isIME);
   const dispatch = useAppDispatch();
-  const { refreshSession, restartSession } = useTypingSessionActions();
   const timeOut = useRef<NodeJS.Timeout>(null);
 
   const showInputField = useAppSelector(
@@ -36,13 +33,6 @@ export default function InputField({
   const isStarted = useAppSelector(
     (state) => state.typingSessionState.isStarted,
   );
-
-  useEffect(() => {
-    window.addEventListener("keydown", onTypingSessionActions);
-    return () => {
-      window.removeEventListener("keydown", onTypingSessionActions);
-    };
-  }, []);
 
   useEffect(() => {
     if (isStarted) return;
@@ -68,22 +58,12 @@ export default function InputField({
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    // console.log(event.key, event.timeStamp);
     if (timeOut.current) clearTimeout(timeOut.current);
     currentKey.current = event.key;
     currentTimestamp.current = event.timeStamp;
     onBackspaceEmptyInput(event);
   }
 
-  function onTypingSessionActions(event: KeyboardEvent) {
-    if (event.ctrlKey && event.key === " ") {
-      restartSession();
-      setInputValue("");
-    } else if (event.ctrlKey && event.key === "Enter") {
-      refreshSession();
-      setInputValue("");
-    }
-  }
   function onBackspaceEmptyInput(event: React.KeyboardEvent<HTMLInputElement>) {
     if (currentKey.current === "Backspace" && inputValue === "") {
       event.preventDefault();

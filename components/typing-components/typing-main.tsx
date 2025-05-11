@@ -17,7 +17,14 @@ export function TypingMain({ className }: { className?: string }) {
   const theme = useAppSelector((state) => state.userSettings.appearance.theme);
   const { setTheme } = useTheme();
   const dispatch = useAppDispatch();
+  const { refreshSession, restartSession } = useTypingSessionActions();
 
+  useEffect(() => {
+    window.addEventListener("keydown", onTypingSessionActions);
+    return () => {
+      window.removeEventListener("keydown", onTypingSessionActions);
+    };
+  }, []);
   useUserSettings();
   useMouseMove((e) => {
     if (typingSessionState.isTyping) dispatch(markInactive());
@@ -35,6 +42,14 @@ export function TypingMain({ className }: { className?: string }) {
       setTheme(theme);
     }
   }, [theme]);
+
+  function onTypingSessionActions(event: KeyboardEvent) {
+    if (event.ctrlKey && event.key === " ") {
+      restartSession();
+    } else if (event.ctrlKey && event.key === "Enter") {
+      refreshSession();
+    }
+  }
 
   return (
     <div
