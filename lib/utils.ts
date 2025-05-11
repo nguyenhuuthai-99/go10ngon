@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { vietnameseParentMap } from "@/utils/character-map";
+import quotes, { Quote } from "@/utils/quotes";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,6 +13,11 @@ export function stringToList(text: string): string[] {
 
 export function destructWord(word: string): string[] {
   return word.split("");
+}
+
+export function getRandomQuote(): Quote {
+  let index = Math.floor(Math.random() * quotes.length);
+  return quotes[index];
 }
 
 export function hasParent(originalChar: string) {

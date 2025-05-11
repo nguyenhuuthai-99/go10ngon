@@ -36,7 +36,7 @@ export function NotificationButton() {
             {/* Welcome message */}
             <div className="border-border border-b p-4 hover:bg-gray-50">
               <p className="text-sm text-gray-500">
-                Chào mừng bạn đến với gõ10ngón
+                Chào mừng bạn đến với Gõ10Ngón ⌨️
               </p>
             </div>
 

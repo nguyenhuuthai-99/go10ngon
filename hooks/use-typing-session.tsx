@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useKeyboardHandler } from "@/hooks/use-keyboard-handler";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useTypingSessionTimer } from "@/hooks/use-typing-session-timer";

@@ -46,24 +46,35 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
       </div>
       <div className={"flex-1"}>
         {!isTyping && isStarted && (
-          <div className={"flex w-full flex-wrap items-center justify-center"}>
-            <Button
-              className={
-                "text-foreground bg-card cursor-pointer hover:text-white"
-              }
-              onClick={refreshSession}
-            >
-              làm mới <BsArrowRight />
-            </Button>
+          <div
+            className={
+              "text-inactive flex w-full flex-wrap items-center justify-center text-center text-xs"
+            }
+          >
+            <div>
+              <Button
+                className={
+                  "text-foreground bg-card mb-1 cursor-pointer hover:text-white"
+                }
+                onClick={refreshSession}
+              >
+                làm mới <BsArrowRight />
+              </Button>
+              <div>ctr + enter</div>
+            </div>
+
             <SizeBox width={80} />
-            <Button
-              onClick={restartSession}
-              className={
-                "text-foreground bg-card cursor-pointer hover:text-white"
-              }
-            >
-              thử lại <BsArrowClockwise />
-            </Button>
+            <div>
+              <Button
+                onClick={restartSession}
+                className={
+                  "text-foreground bg-card mb-1 cursor-pointer hover:text-white"
+                }
+              >
+                thử lại <BsArrowClockwise />
+              </Button>
+              <div className={""}>ctr + cách</div>
+            </div>
           </div>
         )}
       </div>

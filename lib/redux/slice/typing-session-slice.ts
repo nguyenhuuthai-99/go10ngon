@@ -22,6 +22,7 @@ export interface TypingSessionState {
   isTyping: boolean;
   isEnded: boolean;
   isAFK: boolean;
+  isIME: boolean;
   isSessionReady: boolean;
   typingGameMode: TypingGameMode;
   currentWordIndex: number;
@@ -33,6 +34,7 @@ const initialState: TypingSessionState = {
   isTyping: false,
   isEnded: false,
   isAFK: false,
+  isIME: false,
   isSessionReady: false,
   typingGameMode: {
     currentTypingMode: TypingMode.timed,
@@ -111,6 +113,9 @@ const typingSessionSlice = createSlice({
     updateWordIndex: (state, action) => {
       state.currentWordIndex = action.payload;
     },
+    updateIME: (state, action) => {
+      state.isIME = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTypingGameThunk.fulfilled, (state, action) => {
@@ -159,5 +164,6 @@ export const {
   changeTypingGameMode,
   setAFK,
   updateWordIndex,
+  updateIME,
 } = typingSessionSlice.actions;
 export default typingSessionSlice.reducer;

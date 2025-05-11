@@ -67,6 +67,7 @@ export function useKeyboardHandler({
     } else {
       moveCharToIndex(value.length);
 
+      // console.log(value, previousWord);
       let isCorrect: boolean = isCorrectAndWithin(value, previousWord);
       onPerformanceCalculate({
         isCorrect,

@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import { useUserSettings } from "@/hooks/use-user-settings";
 import { useMouseMove } from "@/hooks/use-mouse-move";
 import { markInactive } from "@/lib/redux/slice/typing-session-slice";
+import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 export function TypingMain({ className }: { className?: string }) {
   const { typingSessionState, remainingTime } = useTypingMain();

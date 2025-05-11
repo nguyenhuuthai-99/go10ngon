@@ -1,5 +1,6 @@
 import { TimedModeDuration, WordCountQuantity } from "@/model/typing-mode";
 import { commonVietnameseWords } from "@/utils/common-words";
+import { getRandomQuote, stringToList } from "@/lib/utils";
 export function getTimedTest(duration: number): string[] {
   if (duration === TimedModeDuration.short) {
     return shuffleAndWithdraw(commonVietnameseWords, 150);
@@ -21,7 +22,8 @@ export function getWordsCountTest(count: number): string[] {
 }
 
 export function getQuoteTest(): string[] {
-  return shuffleAndWithdraw(commonVietnameseWords, WordCountQuantity.medium);
+  const quote = getRandomQuote();
+  return stringToList(quote.text);
 }
 
 function shuffleAndWithdraw(list: string[], count: number) {
