@@ -52,15 +52,31 @@ interface ResultProps {
 }
 function ResultPerformance({ adjustedWpm, accuracy }: ResultProps) {
   return (
-    <div className="font-orbitron flex flex-wrap justify-center text-center text-4xl">
-      <div className={"mr-20"}>
-        <div className="font-bold">{adjustedWpm}</div>
-        <div>wpm</div>
-      </div>
-      <div>
-        <div className="font-bold">{accuracy}</div>
-        <div>%</div>
-      </div>
+    <div className="font-orbitron flex flex-wrap items-center justify-center gap-x-20 text-center text-4xl">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>
+              <div className="font-bold">{adjustedWpm}</div>
+              <div>wpm</div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className={"font-roboto-mono"}>tốc độ</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>
+              <div className="font-bold">{accuracy}</div>
+              <div>%</div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className={"font-roboto-mono"}>
+            độ chính xác
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 }

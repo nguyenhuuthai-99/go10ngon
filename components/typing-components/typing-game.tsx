@@ -1,14 +1,11 @@
 import { TypingMode, WordCountQuantity } from "@/model/typing-mode";
 import { Timer } from "@/components/ui/timer";
-import { WordCounter } from "@/components/ui/word-counter";
+import { WordCounter } from "@/components/typing-components/word-counter";
 import { TypingPanel } from "@/components/ui/typing-panel";
 import { TypingGameMode } from "@/lib/redux/slice/typing-session-slice";
-import { TimedMode } from "@/model/timed-mode";
-import { WordCountMode } from "@/model/word-count-mode";
 import SizeBox from "@/components/ui/size-box";
 import { useAppSelector } from "@/hooks/redux-hook";
 import TypingModeBox from "@/components/typing-components/typing-mode-box";
-import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
 import { ModeIndicator } from "@/components/typing-components/mode-indicator";
 import { Button } from "@/components/ui/button";
 import { BsArrowClockwise, BsArrowRight } from "react-icons/bs";
@@ -29,17 +26,9 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
   function renderModeComponent() {
     if (typingGameMode.currentTypingMode === TypingMode.timed) {
       return <Timer remainingTime={remainingTime!} />;
+    } else {
+      return <WordCounter />;
     }
-
-    if (typingGameMode.currentTypingMode === TypingMode.wordCount) {
-      return (
-        <WordCounter
-          count={(typingGameMode.modeContext as WordCountMode).count}
-        />
-      );
-    }
-
-    return null;
   }
 
   return (
@@ -54,20 +43,25 @@ export function TypingGame({ typingGameMode, remainingTime }: TypingGameProps) {
       </div>
       <div className={"flex-1"}>
         {!isTyping && isStarted && (
-          <div className={"flex w-full flex-wrap items-center justify-center"}>
+          <div
+            className={
+              "flex w-full flex-wrap items-center justify-center text-center text-xs"
+            }
+          >
             <Button
               className={
-                "text-foreground bg-card cursor-pointer hover:text-white"
+                "text-foreground bg-card mb-1 cursor-pointer hover:text-white"
               }
               onClick={refreshSession}
             >
               làm mới <BsArrowRight />
             </Button>
+
             <SizeBox width={80} />
             <Button
               onClick={restartSession}
               className={
-                "text-foreground bg-card cursor-pointer hover:text-white"
+                "text-foreground bg-card mb-1 cursor-pointer hover:text-white"
               }
             >
               thử lại <BsArrowClockwise />

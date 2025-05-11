@@ -1,14 +1,7 @@
-import {
-  ChangeEvent,
-  Dispatch,
-  KeyboardEvent,
-  RefObject,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useAppSelector } from "@/hooks/redux-hook";
+import { ChangeEvent, RefObject, useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { updateIME } from "@/lib/redux/slice/typing-session-slice";
+import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 type Props = {
   isTypingSessionEnd: boolean;
@@ -29,6 +22,9 @@ export default function InputField({
 
   const currentKey = useRef("");
   const currentTimestamp = useRef<number>(0);
+  const isIME = useAppSelector((state) => state.typingSessionState.isIME);
+  const dispatch = useAppDispatch();
+  const timeOut = useRef<NodeJS.Timeout>(null);
 
   const showInputField = useAppSelector(
     (state) => state.userSettings.appearance.showInputField,
@@ -44,35 +40,31 @@ export default function InputField({
   }, [isStarted]);
 
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
-    let currentValue;
-
     if (currentKey.current === " ") {
       setInputValue("");
-      currentValue = "";
     } else {
       setInputValue(event.target.value);
-      currentValue = event.target.value;
     }
-    handleKeyDownCallBack(
-      currentKey.current,
-      currentValue,
-      currentTimestamp.current,
-      restoreInputValue,
-    );
+
+    if (timeOut.current !== null) clearTimeout(timeOut.current);
+    timeOut.current = setTimeout(() => {
+      handleKeyDownCallBack(
+        currentKey.current,
+        event.target.value,
+        currentTimestamp.current,
+        restoreInputValue,
+      );
+    }, 15);
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (timeOut.current) clearTimeout(timeOut.current);
     currentKey.current = event.key;
     currentTimestamp.current = event.timeStamp;
-    onRestart(event);
     onBackspaceEmptyInput(event);
   }
 
-  function onRestart(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.ctrlKey && event.key === " ") {
-    }
-  }
-  function onBackspaceEmptyInput(event: KeyboardEvent<HTMLInputElement>) {
+  function onBackspaceEmptyInput(event: React.KeyboardEvent<HTMLInputElement>) {
     if (currentKey.current === "Backspace" && inputValue === "") {
       event.preventDefault();
       handleKeyDownCallBack(
@@ -97,6 +89,11 @@ export default function InputField({
         value={inputValue}
         className={`absolute ${!showInputField && "opacity-0"}`}
         onChange={handeInputChange}
+        onCompositionStart={() => {
+          if (!isIME) {
+            dispatch(updateIME(true));
+          }
+        }}
         onKeyDown={handleKeyDown}
         autoFocus
       />

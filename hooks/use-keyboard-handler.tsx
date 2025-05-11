@@ -49,7 +49,9 @@ export function useKeyboardHandler({
     }
 
     if (key === " ") {
+      console.log(previousWord);
       const missingKeys = checkMissingChar(previousWord);
+      console.log(missingKeys);
 
       onPerformanceCalculate({
         isCorrect: true,

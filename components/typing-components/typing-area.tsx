@@ -15,15 +15,17 @@ import { useAppSelector } from "@/hooks/redux-hook";
 import { FaMousePointer } from "react-icons/fa";
 
 export function TypingArea() {
-  const typedWords = useAppSelector(
-    (state) => state.typingSessionState.typedWords,
-  );
   const words = useAppSelector(
     (state) => state.typingSessionState.typingGameMode.modeContext.text,
   );
 
-  const { currentWordIndex, currentCharIndex, onKeyDown, typingSessionState } =
-    useTypingSession({ words });
+  const {
+    typedWords,
+    currentWordIndex,
+    currentCharIndex,
+    onKeyDown,
+    typingSessionState,
+  } = useTypingSession();
 
   const typingAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -93,14 +95,16 @@ export function TypingArea() {
     <div className={"relative"} onMouseDown={(event) => focusInput(event)}>
       {!isFocus && (
         <div
-          className={"absolute flex h-full w-full items-center justify-center"}
+          className={
+            "absolute z-20 flex h-full w-full items-center justify-center backdrop-blur-xs"
+          }
           onMouseDown={(event) => focusInput(event)}
         >
           <FaMousePointer />
           <div>&nbsp;nhấp để trở lại vùng nhập liệu</div>
         </div>
       )}
-      <div className={`${!isFocus && "blur-xs"}`}>
+      <div>
         <div
           className="text-inactive relative flex h-36 flex-wrap overflow-hidden pl-1 text-3xl leading-12 wrap-anywhere text-clip"
           ref={typingAreaRef}
@@ -151,7 +155,7 @@ export function TypingArea() {
                       />
                     ))}
                 </WordContainer>
-                {index < words.length - 1 && (
+                {index < words.length && (
                   <div>
                     <CharSpan
                       char=" "

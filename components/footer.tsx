@@ -1,10 +1,9 @@
+"use client";
 import { IconButton } from "@/components/ui/icon-button";
 import {
   FaBug,
   FaDiscord,
-  FaFacebook,
   FaFacebookSquare,
-  FaInstagram,
   FaInstagramSquare,
   FaTiktok,
 } from "react-icons/fa";
@@ -14,12 +13,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FaSquareThreads, FaThreads } from "react-icons/fa6";
+import { FaSquareThreads } from "react-icons/fa6";
 import Link from "next/link";
+import { useAppSelector } from "@/hooks/redux-hook";
 
 function BugButton() {
-  // @ts-ignore
-  // @ts-ignore
   return (
     <Dialog>
       <DialogTrigger>
@@ -45,6 +43,10 @@ function BugButton() {
 }
 
 export function Footer({ className }: { className?: string }) {
+  const { isStarted, isEnded } = useAppSelector(
+    (state) => state.typingSessionState,
+  );
+
   return (
     <div
       className={`flex w-full items-center justify-between gap-3 px-8 pb-4 ${className}`}
@@ -86,6 +88,17 @@ export function Footer({ className }: { className?: string }) {
           <IconButton Icon={FaDiscord} />
         </Link>
       </div>
+      {(isStarted || isEnded) && (
+        <div className="text-inactive flex gap-14">
+          <div>
+            <span className={"text-foreground/50"}>làm mới:</span> ctr + enter
+          </div>
+          <div className={""}>
+            <span className={"text-foreground/50"}>thử lại:</span> ctr + cách
+          </div>
+        </div>
+      )}
+
       <div className={"flex gap-3"}>
         <BugButton />
         <div>v1.0.0</div>
