@@ -57,7 +57,7 @@ export function useKeyboardHandler({
         timestamp,
         numberOfKeys: 1 + missingKeys,
       });
-      onSpacePress();
+      onSpacePress(value);
       return;
     }
 
@@ -88,7 +88,8 @@ export function useKeyboardHandler({
     );
   }
 
-  function onSpacePress() {
+  function onSpacePress(value: string) {
+    if (typingSessionState.typedWords[currentWordIndex] === "") return;
     moveToNextWord();
   }
 

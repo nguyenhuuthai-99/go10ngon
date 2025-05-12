@@ -83,7 +83,7 @@ export function Footer({ className }: { className?: string }) {
         <Link
           target="_blank"
           rel="noopener noreferrer"
-          href={"https://discord.gg/CuW2M6cf86"}
+          href={"https://discord.gg/stttMmpcz7"}
         >
           <IconButton Icon={FaDiscord} />
         </Link>
