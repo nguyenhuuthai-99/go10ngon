@@ -55,7 +55,7 @@ export function ModeIndicator() {
   function ModeTrigger() {
     return (
       <div
-        className={`hidden flex-col items-center justify-center md:flex ${isTyping && "invisible"}`}
+        className={`flex flex-col items-center justify-center md:hidden ${isTyping && "invisible"}`}
       >
         <div
           className={

@@ -38,7 +38,7 @@ export default function TypingModeBox() {
   }
   return (
     <div
-      className={`flex flex-wrap justify-center md:hidden ${isStarted && isTyping ? "invisible" : "visible"} `}
+      className={`hidden flex-wrap justify-center md:flex ${isStarted && isTyping ? "invisible" : "visible"} `}
     >
       <ModeSelections />
       <VerticalDivider

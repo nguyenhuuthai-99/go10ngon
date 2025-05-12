@@ -18,10 +18,6 @@ export default function usePerformanceCalculate({
   );
 
   useEffect(() => {
-    if (typedWords[currentWordIndex] != "") {
-    }
-    console.log(typedWords[currentWordIndex][2]);
-
     parentList.current = [];
     validParent.current.clear();
 
@@ -66,13 +62,7 @@ export default function usePerformanceCalculate({
     let found = false;
     for (let i = 0; i < value.length; i++) {
       const currentChar = value[i];
-
       if (validParent.current.has(i)) {
-        if (currentChar === targetValue[i]) {
-          parentList.current[i]!.value = currentChar;
-          parentList.current[i]!.depth = 0;
-          return true;
-        }
         if (parentList.current[i]?.value !== currentChar) {
           let newDepth = 0;
           [found, newDepth] = isParent(targetValue[i], currentChar);
@@ -99,7 +89,6 @@ export default function usePerformanceCalculate({
   }
 
   function checkMissingChar(value: string): number {
-    // if (value.length > targetValue.length) return 0;
     console.log(parentList.current);
     let count = 0;
 
