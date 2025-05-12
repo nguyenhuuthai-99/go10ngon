@@ -89,7 +89,6 @@ export default function usePerformanceCalculate({
   }
 
   function checkMissingChar(value: string): number {
-    console.log(parentList.current);
     let count = 0;
 
     for (let i = 0; i < parentList.current.length; i++) {
