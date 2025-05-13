@@ -42,7 +42,7 @@ export const handlePerformanceCalculation =
       key: null,
       accuracy,
       adjustedWpm,
-      timestamp: Date.now(),
+      timestamp: currentTime,
     };
 
     dispatch(updatePerformance({ wpm, accuracy, adjustedWpm }));

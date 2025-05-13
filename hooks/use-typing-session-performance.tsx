@@ -34,7 +34,6 @@ export function useTypingSessionPerformance() {
   }, []);
 
   const onPerformanceCalculate = (input: KeyPressInput) => {
-    // appDispatch(handleKeyPress(input));
     appDispatch(keyPress(input));
 
     // Reset inactivity timer
