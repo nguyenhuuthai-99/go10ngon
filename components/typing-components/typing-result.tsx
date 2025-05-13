@@ -64,6 +64,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ResultChart({ history }: { history: SessionRecord[] }) {
+  console.log(history);
   const data = history.map((value, index) => ({
     id: index + 1, // Use as x-axis label (1-based index)
     wpm: Math.floor(value.adjustedWpm * 100) / 100, // Round to 2 decimal places

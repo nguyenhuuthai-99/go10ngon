@@ -5,6 +5,7 @@ import {
 } from "@/lib/redux/slice/typing-session-slice";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
+import { setStartTime } from "@/lib/redux/slice/typing-session-stats-slice";
 
 interface Props {
   currentWordIndex: number;
@@ -44,8 +45,9 @@ export function useKeyboardHandler({
   ) {
     if (!typingSessionState.isSessionReady) return;
 
-    if (!typingSessionState.isStarted || !typingSessionState.isTyping) {
+    if (!typingSessionState.isStarted) {
       dispatch(markAsStart());
+      dispatch(setStartTime(timestamp));
     }
 
     if (key === " ") {

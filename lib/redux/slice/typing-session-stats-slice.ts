@@ -20,18 +20,20 @@ export const typingSessionStatsSlice = createSlice({
   name: "typingSessionStats",
   initialState: initialTypingState,
   reducers: {
+    setStartTime: (state, action) => {
+      state.startTime = action.payload;
+    },
     keyPress: (state, action) => {
       const { isCorrect, timestamp, numberOfKeys } = action.payload;
       state.totalKeystrokes += numberOfKeys;
       state.totalKeyPressed += 1;
       state.correctKeystrokes += isCorrect ? 1 : 0;
-      state.startTime ??= timestamp;
       state.lastTimestamp = timestamp;
     },
     resetTypingStatsState: (state) => initialTypingState,
   },
 });
 
-export const { keyPress, resetTypingStatsState } =
+export const { keyPress, resetTypingStatsState, setStartTime } =
   typingSessionStatsSlice.actions;
 export default typingSessionStatsSlice.reducer;

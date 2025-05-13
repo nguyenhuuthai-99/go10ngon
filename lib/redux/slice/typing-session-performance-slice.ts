@@ -34,7 +34,7 @@ const typingSessionPerformanceSlice = createSlice({
       state.adjustedWpm = Math.round(action.payload.adjustedWpm);
     },
     addToHistory(state, action: PayloadAction<SessionRecord>) {
-      state.history.unshift(action.payload);
+      state.history = [...state.history, action.payload];
       // state.history = state.history.slice(0, 50);
     },
     clearHistory(state) {
