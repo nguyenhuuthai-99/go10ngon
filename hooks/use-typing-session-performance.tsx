@@ -26,12 +26,12 @@ export function useTypingSessionPerformance() {
   const inactivityTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Load history from localStorage once
-  useEffect(() => {
-    const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
-    if (stored) {
-      appDispatch(setHistory(JSON.parse(stored)));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+  //   if (stored) {
+  //     appDispatch(setHistory(JSON.parse(stored)));
+  //   }
+  // }, []);
 
   const onPerformanceCalculate = (input: KeyPressInput) => {
     appDispatch(keyPress(input));

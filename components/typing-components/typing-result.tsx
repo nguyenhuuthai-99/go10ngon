@@ -21,27 +21,108 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { SessionRecord } from "@/lib/redux/slice/typing-session-performance-slice";
 
 export function TypingResult() {
-  const [show, setShow] = useState<boolean>(false);
-
-  const { wpm, accuracy, adjustedWpm } = useAppSelector(
+  const { accuracy, adjustedWpm, history } = useAppSelector(
     (state) => state.typingSessionPerformance,
   );
-
-  useEffect(() => {
-    setShow(!show);
-  }, [wpm, accuracy]);
 
   return (
     <div
       className={`flex h-full max-h-screen w-full flex-col gap-6 overflow-y-auto`}
     >
       <ResultPerformance adjustedWpm={adjustedWpm} accuracy={accuracy} />
+      <ResultChart history={history} />
       <SizeBox height={10} />
       <TypingSessionButtons />
       <ResultHistory />
       <ResultTable />
+    </div>
+  );
+}
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig;
+
+export function ResultChart({ history }: { history: SessionRecord[] }) {
+  const data = history.map((value, index) => ({
+    id: index + 1, // Use as x-axis label (1-based index)
+    wpm: Math.floor(value.adjustedWpm * 100) / 100, // Round to 2 decimal places
+  }));
+  return (
+    <div className="w-full">
+      <ChartContainer
+        className={"h-48"}
+        config={chartConfig}
+        style={{ width: "100%" }}
+      >
+        <AreaChart
+          accessibilityLayer
+          data={data}
+          margin={{
+            left: 12,
+            right: 12,
+            bottom: 20,
+          }}
+        >
+          <CartesianGrid vertical={true} />
+          <XAxis
+            dataKey="id"
+            tickLine={true}
+            tickMargin={8}
+            label={{
+              value: "thời gian",
+              position: "insideBottom",
+              offset: -15,
+              style: { textAnchor: "middle" },
+            }}
+          />
+          <YAxis
+            domain={[0, (dataMax: number) => Math.ceil(dataMax) + 5]}
+            label={{
+              value: "WPM",
+              angle: -90,
+              position: "insideLeft",
+              style: { textAnchor: "middle" },
+            }}
+          />
+          <ChartTooltip
+            cursor={false}
+            content={<ChartTooltipContent indicator="line" />}
+          />
+          <Area
+            animationBegin={1}
+            dataKey="wpm"
+            type="linear"
+            fill="var(--color-desktop)"
+            fillOpacity={0.3}
+            stroke="var(--color-primary)"
+            strokeWidth={2}
+            dot={{
+              fontSize: 10,
+            }}
+          />
+        </AreaChart>
+      </ChartContainer>
     </div>
   );
 }

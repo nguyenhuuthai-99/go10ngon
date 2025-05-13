@@ -47,10 +47,10 @@ export const handlePerformanceCalculation =
 
     dispatch(updatePerformance({ wpm, accuracy, adjustedWpm }));
     dispatch(addToHistory(session));
-    localStorage.setItem(
-      HISTORY_STORAGE_KEY,
-      JSON.stringify([...getState().typingSessionPerformance.history, session]),
-    );
+    // localStorage.setItem(
+    //   HISTORY_STORAGE_KEY,
+    //   JSON.stringify([...getState().typingSessionPerformance.history, session]),
+    // );
   };
 //
 // export const handlePerformanceCalculation =
