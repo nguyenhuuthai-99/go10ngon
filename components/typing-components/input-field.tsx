@@ -42,6 +42,13 @@ export default function InputField({
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
     if (currentKey.current === " ") {
       setInputValue("");
+      handleKeyDownCallBack(
+        currentKey.current,
+        "",
+        currentTimestamp.current,
+        restoreInputValue,
+      );
+      return;
     } else {
       setInputValue(event.target.value);
     }
@@ -58,6 +65,7 @@ export default function InputField({
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    console.log(event.key, event.timeStamp);
     if (timeOut.current) clearTimeout(timeOut.current);
     currentKey.current = event.key;
     currentTimestamp.current = event.timeStamp;
