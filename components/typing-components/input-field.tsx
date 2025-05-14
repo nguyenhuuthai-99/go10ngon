@@ -65,7 +65,6 @@ export default function InputField({
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    console.log(event.key, event.timeStamp);
     if (timeOut.current) clearTimeout(timeOut.current);
     currentKey.current = event.key;
     currentTimestamp.current = event.timeStamp;
@@ -91,6 +90,7 @@ export default function InputField({
   return (
     <div className={"flex w-full items-center justify-center"}>
       <input
+        autoCapitalize="off"
         readOnly={isTypingSessionEnd}
         ref={ref}
         type="text"

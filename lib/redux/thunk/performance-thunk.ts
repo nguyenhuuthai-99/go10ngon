@@ -29,7 +29,14 @@ export const handlePerformanceCalculation =
 
     if (!startTime || !lastTimestamp || totalKeystrokes === 0) return;
 
-    const currentTime = performance.now();
+    let currentTime;
+
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+      currentTime = Date.now();
+    } else {
+      currentTime = performance.now();
+    }
 
     const elapsedMinutes = (currentTime - startTime) / (1000 * 60);
     const wordsTyped = totalKeyPressed / 5;

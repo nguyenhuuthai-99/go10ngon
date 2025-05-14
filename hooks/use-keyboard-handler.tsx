@@ -51,6 +51,8 @@ export function useKeyboardHandler({
       dispatch(setStartTime(timestamp));
     }
 
+    console.log("press");
+
     if (key === " ") {
       const missingKeys = checkMissingChar(previousWord);
 
