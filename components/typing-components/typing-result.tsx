@@ -64,7 +64,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ResultChart({ history }: { history: SessionRecord[] }) {
-  console.log(history);
   const data = history.map((value, index) => ({
     id: index + 1, // Use as x-axis label (1-based index)
     "wpm chuyển tiếp":
@@ -98,6 +97,19 @@ export function ResultChart({ history }: { history: SessionRecord[] }) {
           }}
         >
           <CartesianGrid vertical={true} />
+          <ReferenceLine
+            y={averageWpm}
+            stroke="var(--color-foreground)"
+            strokeOpacity={0.6}
+            strokeDasharray="3 3"
+            label={{
+              value: `Avg: ${averageWpm.toFixed(1)} WPM`,
+              position: "insideBottomRight",
+              fill: "var(--color-foreground)",
+              opacity: 0.6,
+              fontSize: 12,
+            }}
+          />
           <XAxis
             dataKey="id"
             tickLine={true}
