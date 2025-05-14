@@ -41,6 +41,7 @@ export const handlePerformanceCalculation =
       key: null,
       accuracy,
       adjustedWpm,
+      correctKeystrokes,
       timestamp: currentTime,
     };
 

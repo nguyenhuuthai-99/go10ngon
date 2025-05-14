@@ -28,13 +28,13 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ReferenceLine,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { SessionRecord } from "@/lib/redux/slice/typing-session-performance-slice";
 
 export function TypingResult() {
@@ -67,8 +67,20 @@ export function ResultChart({ history }: { history: SessionRecord[] }) {
   console.log(history);
   const data = history.map((value, index) => ({
     id: index + 1, // Use as x-axis label (1-based index)
+    "wpm chuyển tiếp":
+      index === 0
+        ? value.adjustedWpm
+        : Math.floor(
+            ((value.correctKeystrokes - history[index - 1].correctKeystrokes) /
+              5 /
+              ((value.timestamp - history[index - 1].timestamp) / 1000 / 60)) *
+              100,
+          ) / 100,
     wpm: Math.floor(value.adjustedWpm * 100) / 100, // Round to 2 decimal places
   }));
+
+  const averageWpm =
+    data.reduce((sum, point) => sum + point.wpm, 0) / data.length;
   return (
     <div className="w-full">
       <ChartContainer
@@ -106,20 +118,35 @@ export function ResultChart({ history }: { history: SessionRecord[] }) {
               style: { textAnchor: "middle" },
             }}
           />
-          <ChartTooltip
-            cursor={false}
-            content={<ChartTooltipContent indicator="line" />}
-          />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+
+          {/*<Area*/}
+          {/*  animationBegin={1}*/}
+          {/*  dataKey="wpm chuyển tiếp"*/}
+          {/*  type="linear"*/}
+          {/*  fill="var(--color-desktop)"*/}
+          {/*  fillOpacity={0.2}*/}
+          {/*  stroke="var(--color-gray-500)"*/}
+          {/*  strokeWidth={2}*/}
+          {/*  dot={{*/}
+          {/*    strokeWidth: 1,*/}
+          {/*    r: 2, // radius (size)*/}
+          {/*    fill: "white",*/}
+          {/*  }}*/}
+          {/*/>*/}
           <Area
             animationBegin={1}
             dataKey="wpm"
             type="linear"
             fill="var(--color-desktop)"
-            fillOpacity={0.3}
+            fillOpacity={0.2}
             stroke="var(--color-primary)"
+            strokeOpacity={0.7}
             strokeWidth={2}
             dot={{
-              fontSize: 10,
+              strokeWidth: 1,
+              r: 2, // radius (size)
+              fill: "white",
             }}
           />
         </AreaChart>

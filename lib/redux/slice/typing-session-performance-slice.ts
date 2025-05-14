@@ -4,6 +4,7 @@ export interface SessionRecord {
   wpm: number;
   adjustedWpm: number;
   accuracy: number;
+  correctKeystrokes: number;
   key: string | null;
   timestamp: number;
 }
