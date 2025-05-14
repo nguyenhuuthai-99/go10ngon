@@ -21,27 +21,148 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TypingSessionButtons } from "@/components/ui/typing-session-buttons";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ReferenceLine,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { SessionRecord } from "@/lib/redux/slice/typing-session-performance-slice";
 
 export function TypingResult() {
-  const [show, setShow] = useState<boolean>(false);
-
-  const { wpm, accuracy, adjustedWpm } = useAppSelector(
+  const { accuracy, adjustedWpm, history } = useAppSelector(
     (state) => state.typingSessionPerformance,
   );
-
-  useEffect(() => {
-    setShow(!show);
-  }, [wpm, accuracy]);
 
   return (
     <div
       className={`flex h-full max-h-screen w-full flex-col gap-6 overflow-y-auto`}
     >
       <ResultPerformance adjustedWpm={adjustedWpm} accuracy={accuracy} />
+      <ResultChart history={history} />
       <SizeBox height={10} />
       <TypingSessionButtons />
       <ResultHistory />
       <ResultTable />
+    </div>
+  );
+}
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig;
+
+export function ResultChart({ history }: { history: SessionRecord[] }) {
+  const data = history.map((value, index) => ({
+    id: index + 1, // Use as x-axis label (1-based index)
+    "wpm chuyển tiếp":
+      index === 0
+        ? value.adjustedWpm
+        : Math.floor(
+            ((value.correctKeystrokes - history[index - 1].correctKeystrokes) /
+              5 /
+              ((value.timestamp - history[index - 1].timestamp) / 1000 / 60)) *
+              100,
+          ) / 100,
+    wpm: Math.floor(value.adjustedWpm * 100) / 100, // Round to 2 decimal places
+  }));
+
+  const averageWpm =
+    data.reduce((sum, point) => sum + point.wpm, 0) / data.length;
+  return (
+    <div className="w-full">
+      <ChartContainer
+        className={"h-48"}
+        config={chartConfig}
+        style={{ width: "100%" }}
+      >
+        <AreaChart
+          accessibilityLayer
+          data={data}
+          margin={{
+            left: 12,
+            right: 12,
+            bottom: 20,
+          }}
+        >
+          <CartesianGrid vertical={true} />
+          <ReferenceLine
+            y={averageWpm}
+            stroke="var(--color-foreground)"
+            strokeOpacity={0.6}
+            strokeDasharray="3 3"
+            label={{
+              value: `Avg: ${averageWpm.toFixed(1)} WPM`,
+              position: "insideBottomRight",
+              fill: "var(--color-foreground)",
+              opacity: 0.6,
+              fontSize: 12,
+            }}
+          />
+          <XAxis
+            dataKey="id"
+            tickLine={true}
+            tickMargin={8}
+            label={{
+              value: "thời gian",
+              position: "insideBottom",
+              offset: -15,
+              style: { textAnchor: "middle" },
+            }}
+          />
+          <YAxis
+            domain={[0, (dataMax: number) => Math.ceil(dataMax) + 5]}
+            label={{
+              value: "WPM",
+              angle: -90,
+              position: "insideLeft",
+              style: { textAnchor: "middle" },
+            }}
+          />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+
+          {/*<Area*/}
+          {/*  animationBegin={1}*/}
+          {/*  dataKey="wpm chuyển tiếp"*/}
+          {/*  type="linear"*/}
+          {/*  fill="var(--color-desktop)"*/}
+          {/*  fillOpacity={0.2}*/}
+          {/*  stroke="var(--color-gray-500)"*/}
+          {/*  strokeWidth={2}*/}
+          {/*  dot={{*/}
+          {/*    strokeWidth: 1,*/}
+          {/*    r: 2, // radius (size)*/}
+          {/*    fill: "white",*/}
+          {/*  }}*/}
+          {/*/>*/}
+          <Area
+            animationBegin={1}
+            dataKey="wpm"
+            type="linear"
+            fill="var(--color-desktop)"
+            fillOpacity={0.2}
+            stroke="var(--color-primary)"
+            strokeOpacity={0.7}
+            strokeWidth={2}
+            dot={{
+              strokeWidth: 1,
+              r: 2, // radius (size)
+              fill: "white",
+            }}
+          />
+        </AreaChart>
+      </ChartContainer>
     </div>
   );
 }

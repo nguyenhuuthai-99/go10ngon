@@ -42,6 +42,13 @@ export default function InputField({
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
     if (currentKey.current === " ") {
       setInputValue("");
+      handleKeyDownCallBack(
+        currentKey.current,
+        "",
+        currentTimestamp.current,
+        restoreInputValue,
+      );
+      return;
     } else {
       setInputValue(event.target.value);
     }
@@ -83,6 +90,7 @@ export default function InputField({
   return (
     <div className={"flex w-full items-center justify-center"}>
       <input
+        autoCapitalize="off"
         readOnly={isTypingSessionEnd}
         ref={ref}
         type="text"
