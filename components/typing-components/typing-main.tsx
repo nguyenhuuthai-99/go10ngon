@@ -3,13 +3,16 @@ import { TypingGame } from "@/components/typing-components/typing-game";
 import { TypingResult } from "@/components/typing-components/typing-result";
 
 import { useTypingMain } from "@/hooks/use-typing-main";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { Theme } from "@/lib/redux/slice/user-settings-slice";
 import { useTheme } from "next-themes";
 import { useUserSettings } from "@/hooks/use-user-settings";
 import { useMouseMove } from "@/hooks/use-mouse-move";
-import { markInactive } from "@/lib/redux/slice/typing-session-slice";
+import {
+  markInactive,
+  resetInput,
+} from "@/lib/redux/slice/typing-session-slice";
 import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 export function TypingMain({ className }: { className?: string }) {
@@ -46,8 +49,10 @@ export function TypingMain({ className }: { className?: string }) {
   function onTypingSessionActions(event: KeyboardEvent) {
     if (event.ctrlKey && event.key === " ") {
       restartSession();
+      dispatch(resetInput());
     } else if (event.ctrlKey && event.key === "Enter") {
       refreshSession();
+      dispatch(resetInput());
     }
   }
 

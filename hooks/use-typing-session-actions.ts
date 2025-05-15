@@ -12,8 +12,6 @@ import {
 import { resetTypingStatsState } from "@/lib/redux/slice/typing-session-stats-slice";
 import { resetPerformance } from "@/lib/redux/slice/typing-session-performance-slice";
 import { TypingMode } from "@/model/typing-mode";
-import { TimedMode } from "@/model/timed-mode";
-import { WordCountMode } from "@/model/word-count-mode";
 
 export function useTypingSessionActions() {
   const dispatch = useAppDispatch();

@@ -23,6 +23,7 @@ export interface TypingSessionState {
   isEnded: boolean;
   isAFK: boolean;
   isIME: boolean;
+  shouldResetInput: boolean;
   isSessionReady: boolean;
   typingGameMode: TypingGameMode;
   currentWordIndex: number;
@@ -35,6 +36,7 @@ const initialState: TypingSessionState = {
   isEnded: false,
   isAFK: false,
   isIME: false,
+  shouldResetInput: false,
   isSessionReady: false,
   typingGameMode: {
     currentTypingMode: TypingMode.timed,
@@ -74,6 +76,12 @@ const typingSessionSlice = createSlice({
     setAFK: (state) => {
       state.isAFK = true;
     },
+    resetInput: (state) => {
+      state.shouldResetInput = true;
+    },
+    clearResetInputFlag: (state) => {
+      state.shouldResetInput = false;
+    },
     changeTypingGameMode: (state, action) => {
       state.typingGameMode.currentTypingMode = action.payload;
     },
@@ -97,6 +105,7 @@ const typingSessionSlice = createSlice({
       state.isStarted = false;
       state.isEnded = false;
       state.isTyping = false;
+      state.shouldResetInput = false;
       state.currentWordIndex = 0;
       state.typedWords = {};
     },
@@ -106,6 +115,7 @@ const typingSessionSlice = createSlice({
       state.isStarted = false;
       state.isEnded = false;
       state.isTyping = false;
+      state.shouldResetInput = false;
       state.currentWordIndex = 0;
       state.typedWords = {};
       state.typingGameMode.modeContext.text = [];
@@ -158,6 +168,8 @@ export const {
   setReady,
   markAsEnd,
   markAsStart,
+  resetInput,
+  clearResetInputFlag,
   initialTypingSessionState,
   resetTypingSessionState,
   resetTypingSessionStateAndWords,

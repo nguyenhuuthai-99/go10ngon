@@ -1,6 +1,9 @@
 import { ChangeEvent, RefObject, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
-import { updateIME } from "@/lib/redux/slice/typing-session-slice";
+import {
+  clearResetInputFlag,
+  updateIME,
+} from "@/lib/redux/slice/typing-session-slice";
 import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 type Props = {
@@ -29,17 +32,27 @@ export default function InputField({
   const showInputField = useAppSelector(
     (state) => state.userSettings.appearance.showInputField,
   );
-
-  const isStarted = useAppSelector(
-    (state) => state.typingSessionState.isStarted,
+  const isComposing = useRef(false);
+  const shouldResetInput = useAppSelector(
+    (state) => state.typingSessionState.shouldResetInput,
   );
 
-  useEffect(() => {
-    if (isStarted) return;
-    setInputValue("");
-  }, [isStarted]);
-
+  function resetInputOnComposing(): void {
+    if (shouldResetInput) {
+      if (isComposing.current) {
+        requestAnimationFrame(() => {
+          setInputValue("");
+          dispatch(clearResetInputFlag());
+        });
+      } else {
+        setInputValue("");
+        dispatch(clearResetInputFlag());
+      }
+      return;
+    }
+  }
   function handeInputChange(event: ChangeEvent<HTMLInputElement>) {
+    resetInputOnComposing();
     if (currentKey.current === " ") {
       setInputValue("");
       handleKeyDownCallBack(
@@ -100,7 +113,11 @@ export default function InputField({
         onCompositionStart={() => {
           if (!isIME) {
             dispatch(updateIME(true));
+            isComposing.current = true;
           }
+        }}
+        onCompositionEnd={() => {
+          isComposing.current = false;
         }}
         onKeyDown={handleKeyDown}
         autoFocus

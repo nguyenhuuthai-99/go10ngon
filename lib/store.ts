@@ -2,15 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import typingSessionReducer from "@/lib/redux/slice/typing-session-slice";
 import typingSessionPerformanceReducer from "@/lib/redux/slice/typing-session-performance-slice";
 import typingSessionStatsReducer from "@/lib/redux/slice/typing-session-stats-slice";
-import userSettingsSliceReducer, {
-  initialUserSettingState,
-  UserSettingsState,
-} from "@/lib/redux/slice/user-settings-slice";
+import userSettingsSliceReducer from "@/lib/redux/slice/user-settings-slice";
+import authReducer from "@/lib/redux/slice/user-authentication-slice";
 export const makeStore = () => {
   return configureStore({
     reducer: {
       typingSessionState: typingSessionReducer,
       typingSessionPerformance: typingSessionPerformanceReducer,
+      authState: authReducer,
       typingSessionStats: typingSessionStatsReducer,
       userSettings: userSettingsSliceReducer,
     },
