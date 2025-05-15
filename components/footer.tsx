@@ -89,7 +89,7 @@ export function Footer({ className }: { className?: string }) {
         </Link>
       </div>
       {(isStarted || isEnded) && (
-        <div className="text-inactive flex gap-14">
+        <div className="text-inactive hidden gap-14 md:flex">
           <div>
             <span className={"text-foreground/50"}>làm mới:</span> ctr + enter
           </div>
