@@ -25,6 +25,9 @@ import { DialogTitle, Title } from "@radix-ui/react-dialog";
 import UserSettingsSheet from "@/components/ui/user-settings-sheet";
 import { Button } from "@/components/ui/button";
 import { NotificationButton } from "@/components/ui/notification-button";
+import { LoginButton } from "@/components/ui/login_button";
+import { useAppSelector } from "@/hooks/redux-hook";
+import { UserHud } from "@/components/ui/user-hud";
 
 const expandScreen = () => {
   const elem = document.documentElement;
@@ -65,17 +68,10 @@ const exitFullscreen = () => {
 };
 
 export const HeaderMenu = () => {
+  const auth = useAppSelector((state) => state.authState);
   return (
     <ul className="flex items-baseline gap-3">
-      {/*<li className="cursor-pointer font-mono">*/}
-      {/*  nguyenhuuthai*/}
-      {/*  <span className="font-chivo m-0.5 rounded-xs bg-gray-500 px-1 text-white">*/}
-      {/*    25*/}
-      {/*  </span>*/}
-      {/*</li>*/}
-      {/*<li>*/}
-      {/*  <IconButton Icon={FaTrophy} />*/}
-      {/*</li>*/}
+      <li>{auth.email ? <UserHud auth={auth} /> : <LoginButton />}</li>
       <li>
         <ThemeToggle />
       </li>

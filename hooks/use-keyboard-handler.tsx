@@ -6,7 +6,6 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { useTypingSessionPerformance } from "@/hooks/use-typing-session-performance";
 import { setStartTime } from "@/lib/redux/slice/typing-session-stats-slice";
-import { useEffect } from "react";
 
 interface Props {
   currentWordIndex: number;

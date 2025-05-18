@@ -2,7 +2,6 @@
 import Logo from "@/public/assets/logo";
 import { HeaderMenu } from "@/components/ui/header-menu";
 import Link from "next/link";
-import { Space } from "lucide-react";
 import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 
 export default function Header({ className }: { className?: string }) {

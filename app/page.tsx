@@ -1,12 +1,7 @@
 import Header from "@/components/header";
-import TypingModeBox from "@/components/typing-components/typing-mode-box";
 import { TypingMain } from "@/components/typing-components/typing-main";
 import { Footer } from "@/components/footer";
-import { Provider } from "react-redux";
 import StoreProvider from "@/app/store-provider";
-import SizeBox from "@/components/ui/size-box";
-import { useAppDispatch } from "@/hooks/redux-hook";
-import { useTypingSessionActions } from "@/hooks/use-typing-session-actions";
 export default function Home() {
   return (
     <StoreProvider>
