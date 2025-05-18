@@ -73,6 +73,9 @@ const typingSessionSlice = createSlice({
     markAsEnd: (state) => {
       state.isEnded = true;
     },
+    markAsActive: (state) => {
+      state.isTyping = true;
+    },
     setAFK: (state) => {
       state.isAFK = true;
     },
@@ -162,6 +165,7 @@ export const {
   resetTypedWords,
   setTimedContext,
   markInactive,
+  markAsActive,
   setTimedModeDuration,
   setWordCountContext,
   setWordCount,

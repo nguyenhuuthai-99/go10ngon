@@ -1,5 +1,6 @@
 import usePerformanceCalculate from "@/hooks/use-performance-calculate";
 import {
+  markAsActive,
   markAsStart,
   setTypedWords,
 } from "@/lib/redux/slice/typing-session-slice";
@@ -44,6 +45,10 @@ export function useKeyboardHandler({
     restoreInputValue: (value: string) => void,
   ) {
     if (!typingSessionState.isSessionReady) return;
+
+    if (!typingSessionState.isTyping) {
+      dispatch(markAsActive());
+    }
 
     if (!typingSessionState.isStarted) {
       dispatch(markAsStart());
