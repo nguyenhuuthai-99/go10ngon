@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -16,12 +15,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FaGoogle } from "react-icons/fa";
-import { Router } from "next/router";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
 import { setLoading } from "@/lib/redux/slice/user-authentication-slice";
 import Loader from "@/components/ui/loader";
-import { AuthError } from "@firebase/auth";
 
 export function LoginButton() {
   const router = useRouter();
@@ -30,7 +27,6 @@ export function LoginButton() {
   async function handleGoogle() {
     try {
       await logInWithGoogle();
-      router.push("/");
     } catch (err) {
       console.log(err);
     }

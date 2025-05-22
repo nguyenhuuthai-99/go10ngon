@@ -3,13 +3,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { toast } from "sonner";
 import { ToggleIcon } from "@/components/ui/toggle-icon";
-import {
-  FaBell,
-  FaCompressAlt,
-  FaExpandArrowsAlt,
-  FaPalette,
-  FaTrophy,
-} from "react-icons/fa";
+import { FaCompressAlt, FaExpandArrowsAlt } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
 import {
   Sheet,
@@ -21,9 +15,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { DialogTitle, Title } from "@radix-ui/react-dialog";
 import UserSettingsSheet from "@/components/ui/user-settings-sheet";
-import { Button } from "@/components/ui/button";
 import { NotificationButton } from "@/components/ui/notification-button";
 import { LoginButton } from "@/components/ui/login_button";
 import { useAppSelector } from "@/hooks/redux-hook";
