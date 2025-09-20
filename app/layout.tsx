@@ -27,8 +27,9 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: "Go10ngón",
-  description: "Ứng dụng gõ 10 ngón cho tiếng Việt",
+  title: "Gõ 10 ngón - Phần mềm luyện gõ phím cho Tiếng Việt",
+  description:
+    "Phần mềm luyện gõ phím dành riêng cho tiếng Việt, nó cho phép bạn luyện tập và kiểm tra tốc độ đánh máy với nhiều chế độ luyện tập. Bắt đầu ngay",
 };
 
 export default function RootLayout({
